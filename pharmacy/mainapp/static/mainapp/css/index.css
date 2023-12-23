@@ -1,0 +1,113 @@
+#body-container {
+    max-width:510px;
+    height:100vh;
+    margin:auto;
+}
+
+/* Шапка */
+#top-block {
+    text-align: center;
+    padding:1ch;
+    height:50px;
+}
+#top-block p {
+    font-size: 20px;
+    margin: 0;
+    color:rgb(0, 128, 17);
+}
+#top-block a {
+    display: block;
+    margin-top: 20px;
+    text-decoration: none;
+    font-size:15px;
+    color:rgb(0, 128, 17);
+}
+#top-block a:hover {
+    transition: all 0.18s ease-out;
+    font-size:25px;
+}
+#top-block img {
+    height:70px;
+    width:70px;
+}
+#top-block h1 {
+    display: block;
+    background-color: rgb(2, 255, 137);
+    color:white;
+    width:max-content;
+    margin: 8px auto;
+    padding:8px;
+    font-size: 25px;
+}
+
+
+/* Центр */
+#menu-title {
+    height:70px;
+    margin-bottom: 15px;
+}
+#menu-title h2 {
+    font-size:38px;
+    margin-bottom: 50px;
+    color:rgb(0, 128, 6);
+    display: none;
+    margin: 0;
+    text-align: center;
+}
+
+#middle-block {
+    height:calc(100vh - 150px);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+#middle-block::-webkit-scrollbar {
+        width:0;
+}
+#menu-scroll {
+    max-height:690px;
+    padding: 20px 0;
+    overflow: auto;
+    position: relative;
+}
+#menu-scroll::-webkit-scrollbar {
+    width:0;
+}
+#menu-block {
+    max-width: calc(100% - 60px);
+    margin: auto;
+}
+#menu-block .row div {
+    padding:0;
+}
+#menu-block a {
+    display: block;
+    height:150px;
+    width:150px;
+    padding: 25px;
+    margin: 4px auto;
+    transition: box-shadow 0.3s ease;
+}
+#menu-block a:hover {
+    box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.5);
+}
+#menu-block a:hover img {
+    scale:1.4;
+    transition: all 0.18s ease-out;
+    
+}
+#menu-block img {
+    display: block;
+    margin: auto;
+}
+
+/* Подвал */
+#bottom-block {
+    height: 100px;
+}
+#bottom-block p {
+    margin: 0;
+    text-align: center;
+    color:white;
+}

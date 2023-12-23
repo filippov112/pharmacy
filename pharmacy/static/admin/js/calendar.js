@@ -64,7 +64,7 @@ depends on core.js for utility functions like removeChildren or quickElement
             }
             return days;
         },
-        draw: function(month, year, div_id, callback, selected) { // month = 1-12, year = 1-9999
+        draw: function(month, year, div_list, callback, selected) { // month = 1-12, year = 1-9999
             const today = new Date();
             const todayDay = today.getDate();
             const todayMonth = today.getMonth() + 1;
@@ -89,7 +89,7 @@ depends on core.js for utility functions like removeChildren or quickElement
 
             month = parseInt(month);
             year = parseInt(year);
-            const calDiv = document.getElementById(div_id);
+            const calDiv = document.getElementById(div_list);
             removeChildren(calDiv);
             const calTable = document.createElement('table');
             quickElement('caption', calTable, CalendarNamespace.monthsOfYear[month - 1] + ' ' + year);
@@ -158,13 +158,13 @@ depends on core.js for utility functions like removeChildren or quickElement
     };
 
     // Calendar -- A calendar instance
-    function Calendar(div_id, callback, selected) {
-        // div_id (string) is the ID of the element in which the calendar will
+    function Calendar(div_list, callback, selected) {
+        // div_list (string) is the ID of the element in which the calendar will
         //     be displayed
         // callback (string) is the name of a JavaScript function that will be
         //     called with the parameters (year, month, day) when a day in the
         //     calendar is clicked
-        this.div_id = div_id;
+        this.div_list = div_list;
         this.callback = callback;
         this.today = new Date();
         this.currentMonth = this.today.getMonth() + 1;
@@ -175,7 +175,7 @@ depends on core.js for utility functions like removeChildren or quickElement
     }
     Calendar.prototype = {
         drawCurrent: function() {
-            CalendarNamespace.draw(this.currentMonth, this.currentYear, this.div_id, this.callback, this.selected);
+            CalendarNamespace.draw(this.currentMonth, this.currentYear, this.div_list, this.callback, this.selected);
         },
         drawDate: function(month, year, selected) {
             this.currentMonth = month;

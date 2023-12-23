@@ -831,11 +831,11 @@ module.exports = function(XRegExp) {
             bmp: '\uFE30-\uFE4F'
         },
         {
-            name: 'InCJK_Compatibility_Ideographs',
+            name: 'InCJK_Compatibility_listeographs',
             bmp: '\uF900-\uFAFF'
         },
         {
-            name: 'InCJK_Compatibility_Ideographs_Supplement',
+            name: 'InCJK_Compatibility_listeographs_Supplement',
             astral: '\uD87E[\uDC00-\uDE1F]'
         },
         {
@@ -851,27 +851,27 @@ module.exports = function(XRegExp) {
             bmp: '\u3000-\u303F'
         },
         {
-            name: 'InCJK_Unified_Ideographs',
+            name: 'InCJK_Unified_listeographs',
             bmp: '\u4E00-\u9FFF'
         },
         {
-            name: 'InCJK_Unified_Ideographs_Extension_A',
+            name: 'InCJK_Unified_listeographs_Extension_A',
             bmp: '\u3400-\u4DBF'
         },
         {
-            name: 'InCJK_Unified_Ideographs_Extension_B',
+            name: 'InCJK_Unified_listeographs_Extension_B',
             astral: '[\uD840-\uD868][\uDC00-\uDFFF]|\uD869[\uDC00-\uDEDF]'
         },
         {
-            name: 'InCJK_Unified_Ideographs_Extension_C',
+            name: 'InCJK_Unified_listeographs_Extension_C',
             astral: '\uD869[\uDF00-\uDFFF]|[\uD86A-\uD86C][\uDC00-\uDFFF]|\uD86D[\uDC00-\uDF3F]'
         },
         {
-            name: 'InCJK_Unified_Ideographs_Extension_D',
+            name: 'InCJK_Unified_listeographs_Extension_D',
             astral: '\uD86D[\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1F]'
         },
         {
-            name: 'InCJK_Unified_Ideographs_Extension_E',
+            name: 'InCJK_Unified_listeographs_Extension_E',
             astral: '\uD86E[\uDC20-\uDFFF]|[\uD86F-\uD872][\uDC00-\uDFFF]|\uD873[\uDC00-\uDEAF]'
         },
         {
@@ -1027,7 +1027,7 @@ module.exports = function(XRegExp) {
             bmp: '\u3200-\u32FF'
         },
         {
-            name: 'InEnclosed_Ideographic_Supplement',
+            name: 'InEnclosed_listeographic_Supplement',
             astral: '\uD83C[\uDE00-\uDEFF]'
         },
         {
@@ -1275,7 +1275,7 @@ module.exports = function(XRegExp) {
             astral: '\uD801[\uDE00-\uDF7F]'
         },
         {
-            name: 'InLinear_B_Ideograms',
+            name: 'InLinear_B_listeograms',
             astral: '\uD800[\uDC80-\uDCFF]'
         },
         {

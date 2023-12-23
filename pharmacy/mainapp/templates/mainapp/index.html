@@ -1,0 +1,118 @@
+{% extends 'mainapp/base.html' %}
+
+{% block css %}
+<link type="text/css" href="{% static 'mainapp/css/index.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+<div id="body-container">
+    <div id="top-block">
+        <div>
+            <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
+            <h1>БУДЬТЕ ЗДОРОВЫ</h1>
+        </div>
+        <p><strong>{{ user_fio }}</strong></p>
+        <p class="header-job">{{ user_job }}</p>
+        <a href="{% url 'logout' %}">Выйти из системы</a>
+    </div>
+
+    <div id="middle-block">
+        <div id="menu-title">
+            {% if accesses.supplier %}<h2>Поставщики</h2>{% endif %}
+            {% if accesses.contract %}<h2>Договоры</h2>{% endif %}
+            {% if accesses.certificate %}<h2>Сертификаты</h2>{% endif %}
+            {% if accesses.receipt %}<h2>Поставки</h2>{% endif %}
+            {% if accesses.physicalperson %}<h2>Клиенты физ.</h2>{% endif %}
+            {% if accesses.legalentity %}<h2>Клиенты юр.</h2>{% endif %}
+            {% if accesses.prescription %}<h2>Рецепты</h2>{% endif %}
+            {% if accesses.medicine %}<h2>Ассортимент</h2>{% endif %}
+            {% if accesses.medicinegroup %}<h2>Фармацевтические группы</h2>{% endif %}
+            {% if accesses.order %}<h2>Заказы</h2>{% endif %}
+            {% if accesses.doctor %}<h2>Список врачей</h2>{% endif %}
+            {% if is_admin %}<h2>Панель администратора</h2>{% endif %}
+            {% if accesses.medicalfacility %}<h2>Лечебные учреждения</h2>{% endif %}
+        </div>
+        <div id="menu-scroll">
+            <div id="menu-block">
+                <div class="row">
+                    {% if accesses.supplier %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'supplier_list' %}">
+                            <img src="{% static 'mainapp/svg/supplier.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.contract %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'contract_list' %}">
+                            <img src="{% static 'mainapp/svg/contract.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.certificate %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'certificate_list' %}">
+                            <img src="{% static 'mainapp/svg/certificate.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.receipt %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'receipt_list' %}">
+                            <img src="{% static 'mainapp/svg/box.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.physicalperson %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'physicalperson_list' %}">
+                            <img src="{% static 'mainapp/svg/client_f.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.legalentity %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'legalentity_list' %}">
+                            <img src="{% static 'mainapp/svg/client_u.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.prescription %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'prescription_list' %}">
+                            <img src="{% static 'mainapp/svg/prescription.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.medicine %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'medicine_list' %}">
+                            <img src="{% static 'mainapp/svg/medicine.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.medicinegroup %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'medicinegroup_list' %}">
+                            <img src="{% static 'mainapp/svg/medicine_group.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.order %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'order_list' %}">
+                            <img src="{% static 'mainapp/svg/order.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.doctor %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'doctor_list' %}">
+                            <img src="{% static 'mainapp/svg/doctor.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if is_admin %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'admin:index' %}">
+                            <img src="{% static 'mainapp/svg/settings.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                    {% if accesses.medicalfacility %}<div class="col-sm">
+                        <a class="my-button" href="{% url 'medicalfacility_list' %}">
+                            <img src="{% static 'mainapp/svg/hospital.svg' %}" alt="">
+                        </a>
+                    </div>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bottom-block">
+        <p>Автор проекта</p>
+        <p>Учащийся группы ЗЦИС-37</p>
+        <p>Филиппов И.А.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'mainapp/js/index.js' %}"></script>
+{% endblock %}

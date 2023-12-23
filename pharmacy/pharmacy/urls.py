@@ -17,7 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from pharmacy.views import login_view
+
 urlpatterns = [
     path("mainapp/", include("mainapp.urls")),
-    path("admin/", admin.site.urls),
+    path("admin/", admin.site.urls, name='admin'),
+    path('login/', login_view, name='login'),
 ]

@@ -1,46 +1,40 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Авторизация</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
-  <style>
-    /* Ваши пользовательские стили здесь */
-    body {
-      background-color: #f4f4f4;
-    }
-    .login-form {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      margin-top: 100px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <form class="login-form">
-      <h2 class="text-center mb-4">Авторизация</h2>
-      <div class="mb-3">
-        <label for="inputEmail" class="form-label">Email адрес</label>
-        <input type="email" id="inputEmail" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label for="inputPassword" class="form-label">Пароль</label>
-        <input type="password" id="inputPassword" class="form-control">
-      </div>
-      <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="rememberCheck">
-        <label class="form-check-label" for="rememberCheck">Запомнить меня</label>
-      </div>
-      <button type="submit" class="btn btn-primary w-100">Войти</button>
+{% extends 'mainapp/base.html' %}
+
+{% block css %}
+<link type="text/css" href="{% static 'mainapp/ogin.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+<div id="body-container">
+    <div id="top-block">
+        <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
+        <h1>БУДЬТЕ ЗДОРОВЫ</h1>
+    </div>
+
+    <form id="middle-block" action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        <h2 id="form-title">Авторизация</h2>
+        <div class="form-input">
+            <label for="id_username_auth" >Логин</label>
+            <input type="login" name="username"  id="id_username_auth" autocomplete="username" autofocus placeholder="">
+        </div>
+        <div class="form-input">
+            <label for="id_password" >Пароль</label>
+            <input type="password" name="password" id="id_password" autocomplete="current_password" placeholder="">
+        </div>
+        <div class="form-submit">
+            <div>
+                <input class="form-check-input" type="checkbox" value="" name="remember" id="remember">
+                <label class="form-check-label" for="remember">Запомнить меня</label>
+            </div>
+            <button class="my-button sign-in" type="submit">Войти</button>
+        </div>
     </form>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+    <div id="bottom-block">
+        <p>Автор проекта</p>
+        <p>Учащийся группы ЗЦИС-37</p>
+        <p>Филиппов И.А.</p>
+    </div>
+</div>
+{% endblock %}

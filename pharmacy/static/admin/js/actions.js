@@ -90,7 +90,7 @@
 
     window.Actions = function(actionCheckboxes, options) {
         options = Object.assign({}, defaults, options);
-        let list_editable_changed = false;
+        let list_listable_changed = false;
         let lastChecked = null;
         let shiftPressed = false;
 
@@ -151,13 +151,13 @@
                     updateCounter(actionCheckboxes, options);
                     lastChecked = target;
                 } else {
-                    list_editable_changed = true;
+                    list_listable_changed = true;
                 }
             });
         });
 
         document.querySelector('#changelist-form button[name=index]').addEventListener('click', function(event) {
-            if (list_editable_changed) {
+            if (list_listable_changed) {
                 const confirmed = confirm(gettext("You have unsaved changes on individual editable fields. If you run an action, your unsaved changes will be lost."));
                 if (!confirmed) {
                     event.preventDefault();
@@ -170,7 +170,7 @@
         if (el) {
             el.addEventListener('click', function(event) {
                 if (document.querySelector('[name=action]').value) {
-                    const text = list_editable_changed
+                    const text = list_listable_changed
                         ? gettext("You have selected an action, but you haven’t saved your changes to individual fields yet. Please click OK to save. You’ll need to re-run the action.")
                         : gettext("You have selected an action, and you haven’t made any changes on individual fields. You’re probably looking for the Go button rather than the Save button.");
                     if (!confirm(text)) {

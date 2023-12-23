@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="reports.css">
+    <title>Отчет по датам последних поставок</title>
+</head>
+<body>
+    <h2>Отчет по датам последних поставок</h2>
+    <p>На дату: {{ date }}</p>
+    <table>
+        <tr>
+            <th>Договор</th>
+            <th>Поставщик</th>
+            <th>Препарат</th>
+            <th>Дата договора</th>
+            <th>Дата последней поставки</th>
+        </tr>
+        <tr>
+            <td>{{ h.contract }}</td>
+            <td>{{ h.supplier }}</td>
+            <td>{{ h.medicine }}</td>
+            <td>{{ h.date_begin_contract }}</td>
+            <td>{{ h.date_last_add }}</td>
+        </tr>
+    </table>
+</body>
+</html>

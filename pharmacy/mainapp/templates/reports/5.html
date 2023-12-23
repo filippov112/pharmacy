@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="reports.css">
+    <title>Отчет по заказам на лекарства</title>
+</head>
+<body>
+    <h2>Отчет по заказам на лекарства</h2>
+    <p>По препарату: {{ medicine }}</p>
+    <p>За период с {{ dn }} по {{ de }}</p>
+    <table>
+        <tr>
+            <th>Дата</th>
+            <th>Число заказов</th>
+            <th>Объем сбытой продукции</th>
+            <th>Сумма заказов</th>
+        </tr>
+        <tr>
+            <td>{{ h.date }}</td>
+            <td>{{ h.count_order }}</td>
+            <td>{{ h.count_object }}</td>
+            <td>{{ h.summ_order }}</td>
+        </tr>
+    </table>
+    <p>Всего сбыто товара за период: {{ count_object }}р.</p>
+    <p>На общую сумму: {{ summ_order }}р.</p>
+</body>
+</html>

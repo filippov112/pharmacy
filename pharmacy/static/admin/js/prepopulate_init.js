@@ -9,7 +9,7 @@
             ', .empty-form .form-row.field-' + field.name
         ).addClass('prepopulated_field');
         $(field.id).data('dependency_list', field.dependency_list).prepopulate(
-            field.dependency_ids, field.maxLength, field.allowUnicode
+            field.dependency_lists, field.maxLength, field.allowUnicode
         );
     });
 }

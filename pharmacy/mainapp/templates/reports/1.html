@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="reports.css">
+    <title>Отчет по продажам за период</title>
+</head>
+<body>
+    <h2>Отчет по продажам за период</h2>
+    <p>За период с {{ dn }} по {{ de }}</p>
+    <table>
+        <tr>
+            <th>Номер заказа</th>
+            <th>Дата</th>
+            <th>Покупатель</th>
+            <th>Единиц товара</th>
+            <th>Общая сумма заказа</th>
+        </tr>
+        <tr>
+            <td>{{ h.num }}</td>
+            <td>{{ h.date }}</td>
+            <td>{{ h.client }}</td>
+            <td>{{ h.count }}</td>
+            <td>{{ h.summ }}</td>
+        </tr>
+    </table>
+</body>
+</html>

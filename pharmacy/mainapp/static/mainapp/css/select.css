@@ -1,0 +1,56 @@
+.table-wrap[select] {
+    position: absolute;
+    max-width: 800px;
+    max-height: 800px;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height:100%;
+    background-color: #fff;
+    box-shadow:0 0 10px 1px black;
+    display: none;
+    z-index: 1005;
+}
+.table-wrap[select].active {
+    display: block;
+}
+.table-wrap[select] tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.table-wrap[select] tr:active {
+    background-color: #008000;
+}
+.table-wrap[select] input {
+    display: block;
+    border: 0;
+    background-color: #008a00;
+    color:white;
+    width:100%;
+    padding: 5px;
+    font-size: 15px;
+}
+.table-wrap[select] input:focus {
+    outline:0;
+}
+
+
+button[select] {
+    padding:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:34px;
+    background-color: white;
+    border:2px solid #008000;
+    width: 100%;
+    overflow: hidden;
+}
+button[select] input {
+    display: none;
+}
+button[select] p {
+    margin: 0;
+    font-size: 13px;
+}

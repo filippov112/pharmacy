@@ -1,0 +1,93 @@
+:root {
+    --red:rgb(172, 0, 0);
+    --red-hover:rgb(219, 0, 0);
+    --red-focus:rgb(255, 1, 1);
+}
+
+
+/* чекбокс */
+.form-check-input:checked {
+    background-color: rgb(0, 128, 0);
+    border-color: rgb(0, 128, 0);
+    border: 1px solid #ddd;
+}
+.form-check-input:focus {
+    box-shadow: none;
+    border: 1px solid #ddd;
+}
+.form-check-input {
+    margin:0;
+    margin-right:10px;
+    display: inline-block;
+    border: 1px solid #ddd;
+}
+
+
+
+/* кнопка */
+.my-button:hover {
+    background-color: rgb(2, 255, 137);
+    transition: all 0.18s ease-out
+}
+.my-button {
+    border:0;
+    background-color: rgb(0, 128, 0);
+}
+.my-button:focus {
+    background-color: rgb(2, 194, 18);
+    transition: all 0.18s ease-out
+}
+.my-button.disable {
+    background-color: rgb(112, 112, 112);
+    pointer-events: none;
+}
+.my-button svg *,.my-button svg * {
+    fill:white;
+}
+a.my-button:hover svg *, a.my-button:hover svg {
+    fill:black;
+}
+
+
+
+/* красная кнопка */
+.my-button-red:hover {
+    background-color: var(--red-hover);
+    transition: all 0.18s ease-out
+}
+.my-button-red {
+    border:0;
+    background-color: var(--red);
+}
+.my-button-red:focus {
+    background-color: var(--red-focus);
+    transition: all 0.18s ease-out
+}
+
+
+
+/* Стрелочный чекбокс */
+div.arrow-check {
+    height:30px;
+    padding:5px;
+}
+div.arrow-check input[type="checkbox"] {
+    display: none; /* скрываем стандартный чекбокс */
+}
+div.arrow-check label {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+}
+div.arrow-check label::before {
+    content: url('../svg/arrow.svg'); /* задаем изображение стрелки вверх */
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    transition: transform 0.3s; /* добавляем плавную анимацию поворота */
+}
+div.arrow-check input[type="checkbox"]:checked + label::before {
+    transform: rotate(180deg); /* поворачиваем изображение при выборе чекбокса */
+}

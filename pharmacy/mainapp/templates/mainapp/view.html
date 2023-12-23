@@ -1,0 +1,166 @@
+{% extends 'mainapp/base.html' %}
+
+{% block css %}
+    <link type="text/css" href="{% static 'mainapp/css/modal.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/table.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/view_difficult.css' %}"  rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/view.css' %}"  rel="stylesheet" />
+{% endblock %}
+
+
+{% block body %}
+    <div id="header">
+        <button id="show-sidebar">
+            <img src="{% static 'mainapp/svg/menu.svg' %}">
+        </button>
+        <div id="header-title">
+            {% for l in bread_crumbs %}
+            <a href="{% url l.link %}">{{ l.title }}</a>
+            <img src="{% static 'mainapp/svg/right.svg' %}">
+            {% endfor %}
+            <p>{{ title_view }}</p>
+        </div>
+        <div>
+            <button id="delete-record">
+                <img src="{% static 'mainapp/svg/delete.svg' %}">
+            </button>
+            <a href="{% url edit_link %}" id="edit-record">
+                <img src="{% static 'mainapp/svg/edit.svg' %}">
+            </a>
+        </div>
+    </div>
+
+    <div id="body-container">
+        <div id="right-block">
+            <div id="right-block-head">
+                {{ title_view }}
+            </div>
+            {% for field in content_view %}
+                {% if field.type == 'image' %}
+                <div class="record-image-block">
+                    <img src="{{ field.link }}">
+                </div>
+                {% endif %}
+
+                {% if field.type == 'text' %}
+                <div class="record-text-block">
+                    <div class="rtb-title">{{ field.title }}</div>
+                    <div class="rtb-body">{{ field.text }}</div>
+                </div>
+                {% endif %}
+
+                {% if field.type == 'link' %}
+                <div class="record-link-block">
+                    <div>{{ field.title }}:</div>
+                    <a href="{{ field.link }}">{{ field.text }}</a>
+                </div>
+                {% endif %}
+
+                {% if field.type == 'file' %}
+                <div class="record-link-block">
+                   <div>{{ field.title }}:</div>
+                   <a href="{{ field.link }}" download>{{ field.text }}</a>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div id="resize-block"></div>
+        <div id="left-block">
+            {% for table in side_tables %}
+            <div class="table-wrap">
+                <div class="table-title">{{ table.title }}</div>
+                {% if table.linked %}
+                <table class="myTable" linked link="{{ table.link }}">
+                {% else %}
+                <table class="myTable">
+                {% endif %}
+                    <thead>
+                        <tr>
+                            {% for f in table.head %}
+                            <th class="resizable">{{ f }}<div class="resizable-handle"></div></th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in table.records %}
+
+                            {% if table.linked %}
+                            <tr rec_id="{{ record.id }}">
+                            {% else %}
+                            <tr>
+                            {% endif %}
+
+                                {% for f in record %}
+                                <td>
+                                    {% if f.type == 'text' %}{{ f.text }}{% endif %}
+                                    {% if f.type == 'file' %}<a href="{{ f.link }}" download>{{ f.text }}</a>{% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div>
+            <div class="logo">
+                <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
+                <h1>БУДЬТЕ ЗДОРОВЫ</h1>
+            </div>
+            <div class="sidebar-account">
+                <p><strong>{{ user_fio }}</strong></p>
+                <p>{{ user_job }}</p>
+                <a href="{% url 'logout' %}">Выйти из системы</a>
+            </div>
+        </div>
+
+        <ul>
+            {% for punkt in side_menu %}
+                {% if punkt.pk == punkt_selected %}
+                <li class="active">
+                {% else %}
+                <li>
+                {% endif %}
+                    <a href="{% url punkt.url_name %}">{{punkt.title}}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="sidebar-footer">
+            <p>Автор проекта</p>
+            <p>Учащийся группы ЗЦИС-37</p>
+            <p>Филиппов И.А.</p>
+        </div>
+    </div>
+
+    <div id="page-overlay"></div>
+
+    <div id="modal-delete">
+        <div>
+            <p>Подтвердите удаление</p>
+        </div> 
+        <form method="post">
+            {% csrf_token %}
+            <p id="delete-messedge"></p>
+            <input type="number" id="delete-rec" name="delete-rec" value="1">
+            <div>
+                <button class="my-button" type="submit">Да</button>
+                <button class="my-button-red" id="cancel-delete">Нет</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="{% static 'mainapp/js/view-resize.js' %}"></script>
+    <script src="{% static 'mainapp/js/delete_record.js' %}"></script>
+    <script src="{% static 'mainapp/js/sidebar.js' %}"></script>
+    <script src="{% static 'mainapp/js/overlay.js' %}"></script>
+    <script src="{% static 'mainapp/js/table-resize.js' %}"></script>
+{% endblock %}

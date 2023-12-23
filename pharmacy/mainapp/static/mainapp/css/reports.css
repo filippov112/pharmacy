@@ -1,0 +1,38 @@
+.report-title {
+    font-size: 30px;
+    padding:10px;
+    background-color: #f2ffe2;
+}
+.report-body{
+    display: flex;
+    width:100%;
+    justify-content: space-between;
+    background-color: #cdffd5;
+    padding: 15px;
+}
+.r-r {
+    display: flex;
+}
+.r-c {
+    margin:0 15px;
+}
+.r-c p {
+    margin:0;
+    margin-bottom: 7px;
+    font-size: 20px;
+    font-weight: 500;
+}
+.r-c input, .r-c button {
+    font-size: 20px;
+    min-width:200px;
+    font-weight: 500;
+}
+.r-c button p {
+    font-size: 20px;
+}
+.report-submit {
+    color:white !important;
+    font-size: 20px;
+    font-weight: 500;
+    padding: 0 15px;
+}

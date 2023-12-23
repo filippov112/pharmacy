@@ -1,0 +1,171 @@
+:root {
+    --filter-size:0px;
+}
+
+
+/* Блок сортировки */
+#sorting {
+    position: fixed;
+    z-index: 1001;
+    width:400px;
+    overflow-y:scroll;
+    background-color: #2c5169;
+    transition: top 0.5s;
+    box-shadow:0 0 10px 1px black;
+    right:0;
+    top:-10000px;
+}
+#sorting::-webkit-scrollbar {
+    width:0;
+}
+#sorting form {
+    height:100%;
+    width:100%;
+}
+.sort-container {
+    height:calc(100% - 50px);
+}
+.head-sort {
+    height:50px;
+    display: flex;
+    position: relative;
+    border-bottom: 1px solid white;
+}
+.head-sort * {
+    color:white;
+    font-size: 16px;
+    
+}
+.head-sort div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.head-sort div:not(:last-child), .group>*:not(:last-child):not(:first-child) {
+    border-right:1px solid white;
+}
+.sort-cube {
+    min-width:50px;
+    min-height:50px;
+}
+.group>* {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} 
+.group-name+div {
+    min-width:100px;
+}
+.sort-cube img {
+    display: block;
+    fill:white;
+    height:18px;
+    width:18px;
+    margin: auto;
+}
+.group {
+    display: flex;
+}
+.group:not(:last-child) {
+    border-bottom: 1px solid white;
+}
+.group * {
+    color:white;
+}
+.group button {
+    border:0;
+    background-color: #ffffff00;
+}
+.group button img {
+    width:30px;
+    height:30px;
+}
+.down img {
+    transform: rotate(180deg);
+}
+input[type="checkbox"].sort-cube {
+    border:0;
+    width:50px;
+    height:50px;
+    margin:0;
+    border-radius: 0;
+}
+.group-name {
+    width:100%;
+    padding-left:10px;
+}
+.group-name p {
+    margin: 0;
+}
+.group .sort-cube:hover {
+    background-color: #02ff89;
+}
+.group input.sorting-number {
+    display: none;
+}
+#submit-sorting {
+    width:100%;
+    height:50px;
+    bottom:0;
+    border:0;
+    color:white;
+    font-size:15px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+#submit-sorting:hover, #submit-sorting:focus {
+    color:#2c5169;
+}
+
+
+
+
+
+/* Рабочая область */
+#my-container {
+    /* display: flex; */
+    position:fixed;
+    top:50px;
+    left:0;
+    height: calc(100vh - 50px);
+    width:100%;
+}
+.table-wrap {
+    height:100%;
+    width:100%;
+}
+#work-pane, #filter-pane {
+    height: calc(100vh - 50px);
+    float:left;
+}
+#work-pane {
+    width:calc(100vw - var(--filter-size));
+    background-color: rgba(221, 255, 221, 0.897);
+    transform:width;
+    position: relative;
+}
+#filter-pane {
+    width:var(--filter-size);
+    background-color: white;
+    padding:15px;
+    overflow-y:auto;
+}
+.filter-row {
+    display: flex;
+    margin-bottom:7px;
+    justify-content:space-between;
+}
+.filter-row>*{
+    width:100%;
+    margin-right:10px;
+}
+.filter-group:not(:last-child) {
+    margin-bottom:15px;
+    padding-bottom: 7px;
+    border-bottom: 2px solid rgb(0, 128, 0);
+}
+#filter-pane button {
+    color:white;
+    padding: 10px;
+}
+

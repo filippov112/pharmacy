@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="reports.css">
+    <title>Отчет по списанию просроченных препаратов</title>
+</head>
+<body>
+    <h2>Отчет по списанию просроченных препаратов</h2>
+    <p>По состоянию на {{ date }}</p>
+    <table>
+        <tr>
+            <th>Препарат</th>
+            <th>Поставщик</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th>Дата партии</th>
+            <th>Срок истекает</th>
+        </tr>
+        <tr>
+            <td>{{ h.medicine }}</td>
+            <td>{{ h.supplier }}</td>
+            <td>{{ h.count }}</td>
+            <td>{{ h.price }}</td>
+            <td>{{ h.date_begin }}</td>
+            <td>{{ h.date_end }}</td>
+        </tr>
+    </table>
+</body>
+</html>

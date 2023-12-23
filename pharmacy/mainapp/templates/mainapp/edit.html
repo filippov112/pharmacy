@@ -1,0 +1,281 @@
+{% extends 'mainapp/base.html' %}
+
+{% block css %}
+    <link type="text/css" href="{% static 'mainapp/css/modal.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/table.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/select.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/view_difficult.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/view.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/edit.css' %}" rel="stylesheet" />
+{% endblock %}
+
+
+
+{% block body %}
+    <div id="header">
+        <button id="show-sidebar">
+            <img src="{% static 'mainapp/svg/menu.svg' %}">
+        </button>
+        <div id="header-title">
+            {% for l in bread_crumbs %}
+            <a href="{% url l.link %}">{{ l.title }}</a>
+            <img src="{% static 'mainapp/svg/right.svg' %}">
+            {% endfor %}
+            <p>{{ title_view }}</p>
+        </div>
+        <div>
+            <button id="save-record">
+                <img src="{% static 'mainapp/svg/save.svg' %}">
+            </button>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div id="body-container">
+            
+            <div id="right-block">
+                <div id="right-block-head">
+                    Редактирование записи
+                </div>
+                {% for input in input_fields %}
+                    <div class="edit-input-block">
+                        <div>{{ input.title }}</div>
+                        <div>
+                            {% if input.type == 'image' %}
+                            <label>
+                                <input image type="file" name="{{ input.name }}">
+                                <img src="{{ input.url }}">
+                            </label>
+                            {% endif %}
+
+                            {% if input.type == 'string' %}
+                            <input type="text" name="{{ input.name }}" value="{{ input.value }}">
+                            {% endif %}
+
+                            {% if input.type == 'text' %}
+                            <textarea name="{{ input.name }}">
+                                {{ input.value }}
+                            </textarea>
+                            {% endif %}
+
+                            {% if input.type == 'number' %}
+                            <input type="number" name="{{ input.name }}" value="{{ input.value }}">
+                            {% endif %}
+
+                            {% if input.type == 'date' %}
+                            <input type="date" name="{{ input.name }}" value="{{ input.value }}">
+                            {% endif %}
+
+                            {% if input.type == 'file' %}
+                            <label>
+                                <p>{{ input.text_value }}</p>
+                                <input type="file" name="{{ input.name }}">
+                            </label>
+                            {% endif %}
+
+                            {% if input.type == 'link' %}
+                            <button select select-name="medicine">
+                                <input type="number" name="{{ input.name }}">
+                                <p>{{ input.text_value }}</p>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <button id="save-record-button" type="submit"></button>
+            </div>
+
+            <div id="resize-block"></div>
+
+            <div id="left-block">
+                {% for table in side_tables %}
+                <div class="table-wrap">
+                    <div class="table-title">
+                        <h2>{{ table.title }}</h2>
+                        <img src="{% static 'mainapp/svg/add.svg' %}">
+                    </div>
+                    <table class="myTable">
+                        <thead>
+                            <tr>
+                                {% for f in table.head %}
+                                <th class="resizable">{{ f }}<div class="resizable-handle"></div></th>
+                                {% endfor %}
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody name="{{ table.name }}" fields="{{ table.structure_fields }}">
+                            
+                            <tr>
+                                <td>
+                                    <input type="text" name="record-0-0">
+                                </td>
+                                <td>
+                                    <input type="number" name="record-0-1">
+                                </td>
+                                <td>
+                                    <label>
+                                        <p></p>
+                                        <input type="file" name="record-0-2">
+                                    </label>
+                                </td>
+                                <td>
+                                    <button select select-name="doctor">
+                                        <input type="number" name="" id="">
+                                        <p></p>
+                                    </button>
+                                </td>
+                                <td>
+                                    <img src="svg/delete.svg" class="table-edit-delete">
+                                </td>
+                            </tr>
+                        
+                            <!-- ... -->
+    
+                        </tbody>
+                    </table>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div> 
+    </form>
+    
+
+    <!-- БЛОК ВЫБОРОК -->
+
+    <div class="table-wrap" select select-name="medicine">
+        <div class="table-title">
+            <h2>Медицина</h2>
+            <input class="select-search">
+        </div>
+        <table class="myTable">
+            <tbody>
+                
+                <tr record="1">
+                    <td class="select-record">Строка 1</td>
+                </tr>
+                <tr record="2">
+                    <td class="select-record">Строка 2</td>
+                </tr>
+                <tr record="3">
+                    <td class="select-record">Строка 3</td>
+                </tr>
+                <tr record="4">
+                    <td class="select-record">Строка 4</td>
+                </tr>
+                <tr record="5">
+                    <td class="select-record">Строка 5</td>
+                </tr>
+                <tr record="6">
+                    <td class="select-record">Строка 6</td>
+                </tr>
+                <tr record="7">
+                    <td class="select-record">Строка 7</td>
+                </tr>
+                <tr record="8">
+                    <td class="select-record">Строка 8</td>
+                </tr>
+                <tr record="9">
+                    <td class="select-record">Строка 9</td>
+                </tr>
+                <tr record="10">
+                    <td class="select-record">Строка 10</td>
+                </tr>
+                  
+                <!-- ... -->
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-wrap" select select-name="doctor">
+        <div class="table-title">
+            <h2>Доктора</h2>
+            <input class="select-search">
+        </div>
+        <table class="myTable">
+            <tbody>
+                
+                <tr record="1">
+                    <td class="select-record">Строка 1</td>
+                </tr>
+                <tr record="2">
+                    <td class="select-record">Строка 2</td>
+                </tr>
+                <tr record="3">
+                    <td class="select-record">Строка 3</td>
+                </tr>
+                <tr record="4">
+                    <td class="select-record">Строка 4</td>
+                </tr>
+                <tr record="5">
+                    <td class="select-record">Строка 5</td>
+                </tr>
+                <tr record="6">
+                    <td class="select-record">Строка 6</td>
+                </tr>
+                <tr record="7">
+                    <td class="select-record">Строка 7</td>
+                </tr>
+                <tr record="8">
+                    <td class="select-record">Строка 8</td>
+                </tr>
+                <tr record="9">
+                    <td class="select-record">Строка 9</td>
+                </tr>
+                <tr record="10">
+                    <td class="select-record">Строка 10</td>
+                </tr>
+                  
+                <!-- ... -->
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- КОНЕЦ БЛОКА ВЫБОРОК -->
+
+    <div id="sidebar">
+        <div>
+            <div class="logo">
+                <img src="favicon.jpg" alt="">
+                <h1>БУДЬТЕ ЗДОРОВЫ</h1>
+            </div>
+            <div class="sidebar-account">
+                <p><strong>Филиппов И.А.</strong></p>
+                <p>Администратор</p>
+                <a href="/login">Выйти из системы</a>
+            </div>
+        </div>
+
+        <ul>
+            <li class="active">
+                <a href="{% url punkt.url_name %}">Название пункта 1</a>
+            </li>   
+            <!-- ... -->
+        </ul>
+
+        <div class="sidebar-footer">
+            <p>Автор проекта</p>
+            <p>Учащийся группы ЗЦИС-37</p>
+            <p>Филиппов И.А.</p>
+        </div>
+    </div>
+
+    <div id="page-overlay"></div>
+{% endblock %}
+
+
+
+{% block scripts %}
+    <script src="{% static 'mainapp/js/view-resize.js' %}"></script>
+    <script src="{% static 'mainapp/js/sidebar.js' %}"></script>
+    <script src="{% static 'mainapp/js/overlay.js' %}"></script>
+    <script src="{% static 'mainapp/js/table-resize.js' %}"></script>
+    <script src="{% static 'mainapp/js/save_record.js' %}"></script>
+    <script src="{% static 'mainapp/js/select.js' %}"></script>
+    <script src="{% static 'mainapp/js/table-edit.js' %}"></script>
+{% endblock %}

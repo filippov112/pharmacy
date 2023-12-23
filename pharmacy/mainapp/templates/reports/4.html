@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="reports.css">
+    <title>Отчет по доходам и расходам</title>
+</head>
+<body>
+    <h2>Отчет по доходам и расходам</h2>
+    <p>За период с {{ dn }} по {{ de }}</p>
+    <table>
+        <tr>
+            <th>Дата</th>
+            <th>Число заказов</th>
+            <th>Число поставок</th>
+            <th>Сумма с заказов</th>
+            <th>Стоимость поставок</th>
+        </tr>
+        <tr>
+            <td>{{ h.date }}</td>
+            <td>{{ h.count_order }}</td>
+            <td>{{ h.count_add }}</td>
+            <td>{{ h.summ_order }}</td>
+            <td>{{ h.summ_add }}</td>
+        </tr>
+    </table>
+    <p>Расходы за период: {{ summ_minus }}р.</p>
+    <p>Доходы за период: {{ summ_plus }}р.</p>
+</body>
+</html>
