@@ -32,6 +32,7 @@
 
     <form method="post">
         {% csrf_token %}
+        <input type="text" name="files-side-records" id="files-side-records">
         <div id="body-container">
             
             <div id="right-block">
@@ -106,33 +107,38 @@
                             </tr>
                         </thead>
                         <tbody name="{{ table.name }}" fields="{{ table.structure_fields }}">
-                            
+                            {% for record in table.records %}
                             <tr>
+                                {% for f in record %}
                                 <td>
-                                    <input type="text" name="record-0-0">
+                                    {% if f.type == 'text' %}
+                                        <input type="text" name="{{ table.name }}-{{ record.id }}-{{ f.id }}">
+                                    {% endif %}
+
+                                    {% if f.type == 'number' %}
+                                        <input type="number" name="{{ table.name }}-{{ record.id }}-{{ f.id }}">
+                                    {% endif %}
+
+                                    {% if f.type == 'file' %}
+                                        <label>
+                                            <p>{{ f.text }}</p>
+                                            <input load="{{ record.pk }}" type="file" name="{{ table.name }}-{{ record.id }}-{{ f.id }}">
+                                        </label>
+                                    {% endif %}
+
+                                    {% if f.type == 'link' %}
+                                        <button select select-name="{{ f.select }}">
+                                            <input type="number" name="{{ table.name }}-{{ record.id }}-{{ f.id }}">
+                                            <p>{{ f.text }}</p>
+                                        </button>
+                                    {% endif %}
                                 </td>
+                                {% endfor %}
                                 <td>
-                                    <input type="number" name="record-0-1">
-                                </td>
-                                <td>
-                                    <label>
-                                        <p></p>
-                                        <input type="file" name="record-0-2">
-                                    </label>
-                                </td>
-                                <td>
-                                    <button select select-name="doctor">
-                                        <input type="number" name="" id="">
-                                        <p></p>
-                                    </button>
-                                </td>
-                                <td>
-                                    <img src="svg/delete.svg" class="table-edit-delete">
+                                    <img src="{% static 'mainapp/svg/delete.svg' %}" class="table-edit-delete">
                                 </td>
                             </tr>
-                        
-                            <!-- ... -->
-    
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -145,117 +151,49 @@
 
     <!-- БЛОК ВЫБОРОК -->
 
-    <div class="table-wrap" select select-name="medicine">
+    {% for select in list_selects %}
+    <div class="table-wrap" select select-name="{{ select.name }}">
         <div class="table-title">
-            <h2>Медицина</h2>
+            <h2>{{ select.title }}</h2>
             <input class="select-search">
         </div>
         <table class="myTable">
             <tbody>
-                
-                <tr record="1">
-                    <td class="select-record">Строка 1</td>
+                {% for r in select.records %}
+                <tr record="{{ r.pk }}">
+                    <td class="select-record">{{ r.text }}</td>
                 </tr>
-                <tr record="2">
-                    <td class="select-record">Строка 2</td>
-                </tr>
-                <tr record="3">
-                    <td class="select-record">Строка 3</td>
-                </tr>
-                <tr record="4">
-                    <td class="select-record">Строка 4</td>
-                </tr>
-                <tr record="5">
-                    <td class="select-record">Строка 5</td>
-                </tr>
-                <tr record="6">
-                    <td class="select-record">Строка 6</td>
-                </tr>
-                <tr record="7">
-                    <td class="select-record">Строка 7</td>
-                </tr>
-                <tr record="8">
-                    <td class="select-record">Строка 8</td>
-                </tr>
-                <tr record="9">
-                    <td class="select-record">Строка 9</td>
-                </tr>
-                <tr record="10">
-                    <td class="select-record">Строка 10</td>
-                </tr>
-                  
-                <!-- ... -->
-
+                {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <div class="table-wrap" select select-name="doctor">
-        <div class="table-title">
-            <h2>Доктора</h2>
-            <input class="select-search">
-        </div>
-        <table class="myTable">
-            <tbody>
-                
-                <tr record="1">
-                    <td class="select-record">Строка 1</td>
-                </tr>
-                <tr record="2">
-                    <td class="select-record">Строка 2</td>
-                </tr>
-                <tr record="3">
-                    <td class="select-record">Строка 3</td>
-                </tr>
-                <tr record="4">
-                    <td class="select-record">Строка 4</td>
-                </tr>
-                <tr record="5">
-                    <td class="select-record">Строка 5</td>
-                </tr>
-                <tr record="6">
-                    <td class="select-record">Строка 6</td>
-                </tr>
-                <tr record="7">
-                    <td class="select-record">Строка 7</td>
-                </tr>
-                <tr record="8">
-                    <td class="select-record">Строка 8</td>
-                </tr>
-                <tr record="9">
-                    <td class="select-record">Строка 9</td>
-                </tr>
-                <tr record="10">
-                    <td class="select-record">Строка 10</td>
-                </tr>
-                  
-                <!-- ... -->
-
-            </tbody>
-        </table>
-    </div>
-
+    {% endfor %}
 
     <!-- КОНЕЦ БЛОКА ВЫБОРОК -->
 
     <div id="sidebar">
         <div>
             <div class="logo">
-                <img src="favicon.jpg" alt="">
+                <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
                 <h1>БУДЬТЕ ЗДОРОВЫ</h1>
             </div>
             <div class="sidebar-account">
-                <p><strong>Филиппов И.А.</strong></p>
-                <p>Администратор</p>
-                <a href="/login">Выйти из системы</a>
+                <p><strong>{{ user_fio }}</strong></p>
+                <p>{{ user_job }}</p>
+                <a href="{% url 'logout' %}">Выйти из системы</a>
             </div>
         </div>
 
         <ul>
-            <li class="active">
-                <a href="{% url punkt.url_name %}">Название пункта 1</a>
-            </li>   
-            <!-- ... -->
+            {% for punkt in side_menu %}
+                {% if punkt.pk == punkt_selected %}
+                <li class="active">
+                {% else %}
+                <li>
+                {% endif %}
+                    <a href="{% url punkt.url_name %}">{{punkt.title}}</a>
+                </li>
+            {% endfor %}
         </ul>
 
         <div class="sidebar-footer">

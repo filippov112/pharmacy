@@ -16,13 +16,55 @@ function refrashNamesInputs() {
     })
 }
 
+
+
+// Список актуальных файловых записей, не подлежащих удалению при сохранении
+let FSR = document.getElementById("files-side-records");
+// Удаление элемента из списка по совпадению
+function removeFirstElement(array, element) {
+  var index = array.indexOf(element);
+  if (index !== -1) {
+    array.splice(index, 1);
+  }
+}
+
+
 // Обновление обработчиков удаления
 function refrashHandlerRemove() {
     Array.from(document.querySelectorAll('tbody[name] .table-edit-delete')).forEach(btn => btn.addEventListener('click', (e)=>{
-        e.target.parentElement.parentElement.remove();
+        let row = e.target.parentElement.parentElement;
+
+        // Проверка на удаление старых файловых записей
+        let files_input = row.querySelector("input[type=file][load]");
+        if (files_input) {
+            let file_rec = files_input.getAttribute("load");
+            if (FSR && file_rec) {
+                let mfsr = FSR.value.split(",");
+                removeFirstElement(mfsr, file_rec);
+                FSR.value = mfsr.join(",");
+            }
+        }
+
+        row.remove();
         refrashNamesInputs();
     }));
 }
+
+// Проверка на именение старых файловых записей
+Array.from(document.querySelectorAll('input[type=file][load]')).forEach(inp => inp.addEventListener('change', (e)=>{
+
+    let file_rec = e.target.getAttribute('load');
+    if (FSR && file_rec) {
+        let mfsr = FSR.value.split(",");
+        removeFirstElement(mfsr, file_rec);
+        FSR.value = mfsr.join(",");
+    }
+
+}));
+
+
+
+
 // Инициализация обработчиков при редактировании уже имеющейся записи
 refrashHandlerRemove();
 

@@ -1,6 +1,9 @@
 #save-record-button {
     display: none;
 }
+#files-side-records {
+    display:none;
+}
 .edit-input-block:not(:last-child) {
     margin-bottom:20px;
 }

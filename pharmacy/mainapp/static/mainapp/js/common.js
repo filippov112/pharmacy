@@ -16,8 +16,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function refrashHandlerInputFiles() {
   Array.from(document.querySelectorAll('label:not(:has(img)) input[type=file]')).forEach(inp => inp.addEventListener('change', (e)=>{
-    let file = e.target.files[0];
-    e.target.previousElementSibling.innerText = file.name;
+
+    if (e.target.files) {
+      if (e.target.files[0]) {
+        let file = e.target.files[0];
+        e.target.previousElementSibling.innerText = file.name;
+      }
+    }
+
   }));
 }
 refrashHandlerInputFiles();
