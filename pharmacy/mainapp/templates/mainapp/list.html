@@ -1,4 +1,5 @@
 {% extends 'mainapp/base.html' %}
+{% load static %}
 
 {% block css %}
     <link type="text/css" href="{% static 'mainapp/css/list.css' %}" rel="stylesheet" />
@@ -88,40 +89,6 @@
             </form>
         </div>
     </div>
-
-    <div id="sidebar">
-        <div>
-            <div class="logo">
-                <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
-                <h1>БУДЬТЕ ЗДОРОВЫ</h1>
-            </div>
-            <div class="sidebar-account">
-                <p><strong>{{ user_fio }}</strong></p>
-                <p>{{ user_job }}</p>
-                <a href="{% url 'logout' %}">Выйти из системы</a>
-            </div>
-        </div>
-
-        <ul>
-            {% for punkt in side_menu %}
-                {% if punkt.pk == punkt_selected %}
-                <li class="active">
-                {% else %}
-                <li>
-                {% endif %}
-                    <a href="{% url punkt.url_name %}">{{punkt.title}}</a>
-                </li>
-            {% endfor %}
-        </ul>
-
-        <div class="sidebar-footer">
-            <p>Автор проекта</p>
-            <p>Учащийся группы ЗЦИС-37</p>
-            <p>Филиппов И.А.</p>
-        </div>
-    </div>
-
-    <div id="page-overlay"></div>
 
     <div id="sorting">
         <form method="post">

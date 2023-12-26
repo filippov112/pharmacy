@@ -55,7 +55,7 @@ ROOT_URLCONF = 'pharmacy.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,9 +79,9 @@ DATABASES = {
     "default": {
         "ENGINE": "mssql",
         "NAME": "pharmacy_base",
-        "USER": "sa",
-        "PASSWORD": "sa",
-        "HOST": "OVERLORD-ONE\FILSERVER",
+        "USER": "django-user",
+        "PASSWORD": "12345",
+        "HOST": "FILYAULTRABOOK\SQLEXPRESS",
         "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server",
         },
     },
@@ -145,7 +145,8 @@ CACHES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'login'
 DEFAULT_CHARSET = 'utf-8'
 
 WKHTMLTOPDF_PATH = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe"

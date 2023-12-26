@@ -25,6 +25,42 @@
 {% block body %}
 {% endblock %}
 
+
+{% if sidebar %}
+    <div id="sidebar">
+        <div>
+            <div class="logo">
+                <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
+                <h1>БУДЬТЕ ЗДОРОВЫ</h1>
+            </div>
+            <div class="sidebar-account">
+                <p><strong>{{ user.fio }}</strong></p>
+                <p>{{ user.job }}</p>
+                <a href="{% url 'logout' %}">Выйти из системы</a>
+            </div>
+        </div>
+        <ul>
+            {% for punkt in side_menu %}
+                {% if punkt.name == punkt_selected %}
+                <li class="active">
+                {% else %}
+                <li>
+                {% endif %}
+                    <a href="{{ punkt.url }}">{{punkt.title}}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="sidebar-footer">
+            <p>Автор проекта</p>
+            <p>Учащийся группы ЗЦИС-37</p>
+            <p>Филиппов И.А.</p>
+        </div>
+    </div>
+
+    <div id="page-overlay"></div>
+{% endif %}
+
+
     <div id="servMesBlock">{{ error_message }}</div>
     <script src="{% static 'mainapp/js/common.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

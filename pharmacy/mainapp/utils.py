@@ -20,24 +20,123 @@ def get_list_v(*kwargs):
     return list_v
 
 
-# def get_default_context(request, record=-1):
-#     return {
-#         'add_record': 'owner_new',
-#         'self_account': get_self_account(request),
-#         'side_menu': [
-#             {'pk': 0, 'title': "Заглавная", 'url_name': 'races_list'},
-#             {'pk': 1, 'title': "Список лошадей", 'url_name': 'horses_list'},
-#             {'pk': 2, 'title': "Список жокеев", 'url_name': 'jockeys_list'},
-#             {'pk': 3, 'title': "Список владельцев", 'url_name': 'owners_list'},
-#             {'pk': 4, 'title': "Список печати", 'url_name': 'reports_list'},
-#         ],
-#         'rule_edit': request.user.id == record or request.user.is_superuser,
-#         'punkt_selected': -1,
-#         'is_login': request.user.is_authenticated,
-#         'is_admin': request.user.is_superuser,
-#         'list_v': [],
-#         'photo': '',
-#     }
+def get_default_context(punkt_selected='', user=None):
+    prf = Profile.objects.get(user_id=user.id)
+    admin = user.is_superuser
+    return {
+        'user': {'fio': user.last_name+' '+user.first_name[0].upper()+'.'+prf.middle_name[0].upper()+'.',
+                 'job': prf.position,
+                 },
+        'sidebar': punkt_selected != 'login',
+        'side_menu': get_side_menu(user),
+        'side_menu': [
+            {'name': 0, 'title': "Заглавная", 'url_name': 'races_list'},
+            {'name': 1, 'title': "Список лошадей", 'url_name': 'horses_list'},
+            {'name': 2, 'title': "Список жокеев", 'url_name': 'jockeys_list'},
+            {'name': 3, 'title': "Список владельцев", 'url_name': 'owners_list'},
+            {'name': 4, 'title': "Список печати", 'url_name': 'reports_list'},
+        ],
+        'punkt_selected': -1,
+        'is_admin': admin,
+        'list_v': [],
+    }
+
+def get_side_menu(usr):
+    pmsns = usr.user_permissions.all()
+    punkts = []
+    if usr.is_superuser:
+        punkts.append({
+            'name': 'settings',
+            'title': 'Панель администратора',
+            'url': reverse('admin:index'),
+            'static_path': 'mainapp/svg/settings.svg',
+        })
+    for p in pmsns:
+        match p:
+            case 'supplier':
+                punkts.append({
+                    'name': p,
+                    'title': 'Реестр поставщиков',
+                    'url': reverse('supplier_list'),
+                    'static_path': 'mainapp/svg/supplier.svg',
+                })
+            case 'contract':
+                punkts.append({
+                    'name': p,
+                    'title': 'Договора поставок',
+                    'url': reverse('contract_list'),
+                    'static_path': 'mainapp/svg/contract.svg',
+                })
+            case 'certificate':
+                punkts.append({
+                    'name': p,
+                    'title': 'Сертификаты качества',
+                    'url': reverse('certificate_list'),
+                    'static_path': 'mainapp/svg/certificate.svg',
+                })
+            case 'receipt':
+                punkts.append({
+                    'name': p,
+                    'title': 'Поставки',
+                    'url': reverse('receipt_list'),
+                    'static_path': 'mainapp/svg/box.svg',
+                })
+            case 'physic':
+                punkts.append({
+                    'name': p,
+                    'title': 'Клиенты физ.',
+                    'url': reverse('physic_list'),
+                    'static_path': 'mainapp/svg/client_f.svg',
+                })
+            case 'legal':
+                punkts.append({
+                    'name': p,
+                    'title': 'Клиенты юр.',
+                    'url': reverse('legal_list'),
+                    'static_path': 'mainapp/svg/client_u.svg',
+                })
+            case 'prescription':
+                punkts.append({
+                    'name': p,
+                    'title': 'Рецепты',
+                    'url': reverse('prescription_list'),
+                    'static_path': 'mainapp/svg/prescription.svg',
+                })
+            case 'medicine':
+                punkts.append({
+                    'name': p,
+                    'title': 'Каталог препаратов',
+                    'url': reverse('medicine_list'),
+                    'static_path': 'mainapp/svg/medicine.svg',
+                })
+            case 'med_group':
+                punkts.append({
+                    'name': p,
+                    'title': 'Группы препаратов',
+                    'url': reverse('med_group_list'),
+                    'static_path': 'mainapp/svg/medicine_group.svg',
+                })
+            case 'order':
+                punkts.append({
+                    'name': p,
+                    'title': 'Список заказов',
+                    'url': reverse('order_list'),
+                    'static_path': 'mainapp/svg/order.svg',
+                })
+            case 'doctor':
+                punkts.append({
+                    'name': p,
+                    'title': 'Реестр врачей',
+                    'url': reverse('doctor_list'),
+                    'static_path': 'mainapp/svg/doctor.svg',
+                })
+            case 'facility':
+                punkts.append({
+                    'name': p,
+                    'title': 'Реестр учреждений',
+                    'url': reverse('facility_list'),
+                    'static_path': 'mainapp/svg/hospital.svg',
+                })
 
 
 # def get_self_account(_request):
