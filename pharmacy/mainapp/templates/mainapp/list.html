@@ -8,30 +8,23 @@
 {% endblock %}
 
 
-{% block body %}
-    <div id="header">
-        <button id="show-sidebar">
-            <img src="{% static 'mainapp/svg/menu.svg' %}">
-        </button>
-        <div id="header-title">
-            {{ title_list }}
-        </div>
-        <div>
-            <button id="delete-elements">
-                <img src="{% static 'mainapp/svg/basket.svg' %}">
-            </button>
-            <a href="{% url add_record %}" id="add-b">
-                <img src="{% static 'mainapp/svg/add.svg' %}">
-            </a>
-            <button id="sorting-b" onclick="show_sort()">
-                <img src="{% static 'mainapp/svg/sort.svg' %}">
-            </button>
-            <button id="filter-b">
-                <img src="{% static 'mainapp/svg/filter.svg' %}">
-            </button>
-        </div>
-    </div>
+{% block head %}
+<button id="delete-elements">
+    <img src="{% static 'mainapp/svg/basket.svg' %}">
+</button>
+<a href="{% url add_record %}" id="add-b">
+    <img src="{% static 'mainapp/svg/add.svg' %}">
+</a>
+<button id="sorting-b" onclick="show_sort()">
+    <img src="{% static 'mainapp/svg/sort.svg' %}">
+</button>
+<button id="filter-b">
+    <img src="{% static 'mainapp/svg/filter.svg' %}">
+</button>
+{% endblock %}
 
+
+{% block body %}
     <div id="my-container">
         <div id="work-pane">
             <div class="table-wrap">
@@ -53,7 +46,7 @@
                                 <input type="checkbox" class="delete-record form-check-input" value="{{ e.id }}">
                             </td>
                             {% for f in e.fields %}
-                            <td>{{ f.value }}</td>
+                            <td>{{ f }}</td>
                             {% endfor %}
                         </tr>
                         {% endfor %}
@@ -63,9 +56,9 @@
         </div>
 
         <div id="filter-pane">
-            <form method="post" id="filter-table">
+            <form method="post" id="filter-table" name="filters">
                 {% csrf_token %}
-                {% for group in filter_groups_table %}
+                {% for group in filters %}
                 <div class="filter-group">
                     <div class="filter-row">
                         {% for field in group %}
@@ -80,9 +73,11 @@
                 </div>
                 {% endfor %}
 
+                <input type="text" style="display:none;" name="parameter_sorting" id="parameter_sorting">
+
                 <div class="filter-group">
                     <div class="filter-row">
-                        <button class="my-button" type="submit">Применить</button>
+                        <button class="my-button" type="submit" id="submit-filter">Применить</button>
                         <button class="my-button" id="drop-filters">Сбросить</button>
                     </div> 
                 </div>
@@ -91,10 +86,8 @@
     </div>
 
     <div id="sorting">
-        <form method="post">
-            {% csrf_token %}
+        <div>
             <div class="sort-container">
-                
                 <div class="head-sort">
                     <div class="sort-cube">Вкл.</div>
                     <div class="sort-cube">
@@ -103,15 +96,16 @@
                     <div class="group-name">Название поля</div>
                     <div>Приоритет</div>
                 </div>
-
                 <div id="groups">
+
                     {% for s in sorting_table %}
-                    <div class="group">
-                        <input type="number" class="sorting-number">
-                        <input type="checkbox" class="form-check-input sort-cube">
+                    <div class="group" name="{{ s.name }}">
+                        <input type="checkbox" class="sort-check form-check-input sort-cube">
                         <div class="arrow-check sort-cube">
-                            <input type="checkbox" id="sort-{{ s.id }}">
-                            <label for="sort-{{ s.id }}"></label>
+                            <label>
+                                <input type="checkbox" class="sort-dir">
+                                <img src="{% static 'mainapp/svg/arrow.svg' %}">
+                            </label>
                         </div>
                         <div class="group-name">
                             <p>{{ s.title }}</p>
@@ -126,19 +120,18 @@
                     {% endfor %}
 
                 </div>
-
             </div>
-            <button id="submit-sorting" class="my-button" type="submit">Применить</button>
-        </form>
+            <button id="submit-sorting" class="my-button">Применить</button>
+        </div>
     </div>
 
     <div id="modal-delete">
         <div>
             <p>Подтвердите удаление</p>
         </div> 
-        <form method="post">
+        <form method="post" name="table_delete">
             {% csrf_token %}
-            <p id="delete-messedge"></p>
+            <p id="delete-message"></p>
             <input type="text" id="delete-list" name="delete-list">
             <div>
                 <button class="my-button" type="submit">Да</button>

@@ -69,25 +69,25 @@ a.my-button:hover svg *, a.my-button:hover svg {
 /* Стрелочный чекбокс */
 div.arrow-check {
     height:30px;
-    padding:5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 div.arrow-check input[type="checkbox"] {
     display: none; /* скрываем стандартный чекбокс */
 }
 div.arrow-check label {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:50px;
+    height:50px;
 }
-div.arrow-check label::before {
-    content: url('../svg/arrow.svg'); /* задаем изображение стрелки вверх */
-    display: block;
+div.arrow-check label img {
     width: 20px;
     height: 20px;
-    margin: auto;
     transition: transform 0.3s; /* добавляем плавную анимацию поворота */
 }
-div.arrow-check input[type="checkbox"]:checked + label::before {
+div.arrow-check label:has(input[type="checkbox"]:checked) img {
     transform: rotate(180deg); /* поворачиваем изображение при выборе чекбокса */
 }

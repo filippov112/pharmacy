@@ -22,6 +22,26 @@
 </style>
 <body>
 
+{% if header %}
+<div id="header">
+        <button id="show-sidebar">
+            <img src="{% static 'mainapp/svg/menu.svg' %}">
+        </button>
+        <div id="header-title">
+            {% for l in bread_crumbs %}
+            <a href="{{ l.link }}">{{ l.title }}</a>
+            <img src="{% static 'mainapp/svg/right.svg' %}">
+            {% endfor %}
+            <p>{{ title_view }}</p>
+        </div>
+        <div>
+            {% block head %}
+            {% endblock %}
+        </div>
+    </div>
+{% endif %}
+
+
 {% block body %}
 {% endblock %}
 
@@ -30,7 +50,7 @@
     <div id="sidebar">
         <div>
             <div class="logo">
-                <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
+                <img src="{% static 'mainapp/other/favicon.jpg' %}">
                 <h1>БУДЬТЕ ЗДОРОВЫ</h1>
             </div>
             <div class="sidebar-account">
@@ -60,8 +80,7 @@
     <div id="page-overlay"></div>
 {% endif %}
 
-
-    <div id="servMesBlock">{{ error_message }}</div>
+    <div id="servMesBlock">{{ error }}</div>
     <script src="{% static 'mainapp/js/common.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 {% block scripts %}

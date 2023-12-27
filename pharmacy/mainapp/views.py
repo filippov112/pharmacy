@@ -1,125 +1,422 @@
-from django.http import HttpResponse
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-# from mainapp.reports import render_pdf, get_report
-# from utils import *
+from django.urls import reverse
 
-
-# Create your views here.
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm
+from .models import Medicine
+from .utils import get_default_context, required_presc
+
 
 def login_view(request):
-    if request.method == 'POST':
-        form = CustomAuthenticationForm(data=request.POST, remember=request.POST.get('remember'))
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            if form.remember:
-                request.session.set_expiry(2592000)  # устанавливаем срок действия сессии на 30 дней (в секундах)
-            return redirect('home')
+    # Обрабатываем представление только для неавторизованных пользователей
+    if not request.user.is_authenticated:
+        load_view = False
+        error = ''
+        # Отправка данных авторизации
+        if request.method == 'POST':
+            form = CustomAuthenticationForm(data=request.POST, remember=request.POST.get('remember'))
+            if form.is_valid():
+                user = form.get_user()
+                login(request, user)
+                if form.remember:
+                    request.session.set_expiry(
+                        2592000)  # устанавливаем срок действия сессии на 30 дней (в секундах)
+            # Отправленные данные некорректны
+            else:
+                load_view = True
+                error = 'Введенные данные некорректны!'
+        # Переход на страницу авторизации
+        else:
+            load_view = True
+            form = CustomAuthenticationForm()
+        if load_view:
+            context = get_default_context(punkt_selected='login')
+            custom_context = {'form': form, 'error': error, }
+            return render(request, 'mainapp/login.html', context | custom_context)
+
+    # Если пользователь уже авторизован, либо авторизация прошла без ошибок,
+    # перенаправляем на главную страницу
+    return redirect('index')
+
+
+@login_required
+def index_view(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def prescription_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def order_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def legal_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def physic_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def doctor_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def facility_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def receipt_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def certificate_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def contract_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def supplier_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def medicine_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def med_group_id(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/view.html', context | custom_context)
+
+
+@login_required
+def prescription_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def order_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def legal_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def physic_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def doctor_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def facility_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def receipt_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def certificate_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def contract_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def supplier_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def medicine_edit(request):
+    if request.resolver_match.view_name == 'prescription_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def med_group_edit(request):
+
+    if request.resolver_match.view_name == 'med_group_new':
+        pass
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/simple_view_edit.html', context | custom_context)
+
+
+@login_required
+def prescription_list(request):
+    # Номер, Клиент, Лекарство, Врач, Статус
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'prescription_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def order_list(request):
+    # Номер, Дата, Клиент физ., Клиент юр., Продавец
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'order_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def legal_list(request):
+    # Название, Адрес, ИНН, КПП
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'legal_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def physic_list(request):
+    # ФИО, Город, Адрес, Дата рождения
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'physic_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def doctor_list(request):
+    # ФИО, Учреждение, Специализация, Должность
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'doctor_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def facility_list(request):
+    # Название, Город, Адрес
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'facility_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def med_group_list(request):
+    # Наименование
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'med_group_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def receipt_list(request):
+    # Договор, дата
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'receipt_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def certificate_list(request):
+    # Номер, Лекарство, Поставщик, Дата начала
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'certificate_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def contract_list(request):
+    # Номер, Поставщик, Дата начала
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'contract_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def supplier_list(request):
+    # Наименование, Город, Адрес
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'supplier_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['', '', ''],
+    }
+    return render(request, 'mainapp/index.html', context | custom_context)
+
+
+@login_required
+def medicine_list(request):
+    # Артикул, Наименование, Фарм.группа, Требует рецепта
+    records = []
+    if request.method == "POST":
+        form_name = request.POST.get('form_name')
+        if form_name == "filters":
+            records = Medicine.objects.all()
+            # ...
+            records = records.order_by(*request.POST.parameter_sorting.split(","))
+        if form_name == "table_delete":
+            pass
     else:
-        form = CustomAuthenticationForm()
-    return render(request, 'mainapp/login.html', {'form': form})
+        records = Medicine.objects.all()
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {
+        'add_record': 'medicine_new',
+        'link_table': reverse('prescription_id'),
+        'desc_table': ['Артикул', 'Наименование', 'Группа препаратов', 'Необходимость рецепта'],
+        'elem_table': [{'id': x.id, 'fields': [x.article, x.name, x.group.__str__(), required_presc(x.pre_required)]} for x in records],
+        'filters': [
+            [{'title': "Поиск по названию", 'name': 'f-name', 'type': 'text'}, ],
+            [{'title': "Поиск по артиклу", 'name': 'f-article', 'type': 'text'}, ],
+            [{'title': "Группы", 'name': 'f-group', 'type': 'number'}, ],
+            [{'title': "Обязательность рецепта", 'name': 'f-pre_required', 'type': 'checkbox'}, ],
+        ],
+        'sorting_table': [
+            {'name': 'article', 'title': 'Артикул'},
+            {'name': 'name', 'title': 'Наименование'},
+            {'name': 'group.group_name', 'title': 'Группа препаратов'},
+            {'name': 'pre_required', 'title': 'Необходимость рецепта'},
+        ]
+    }
+    return render(request, 'mainapp/list.html', context | custom_context)
 
 
-# def login(request):
-#     return render(request, 'mainapp/login.html')
+@login_required
+def reports_list(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)
 
 
-# def error_access(request):
-#     return render(request, 'mainapp/error_access.html', context=get_default_context(request))
-#
-#
-# def reports_list(request):
-#     if request.method == 'POST':
-#         d = replace_null(request.POST)
-#
-#         req = {}
-#         req['dn'] = datetime.strptime(d['dn'], "%Y-%m-%d").date() if 'dn' in d.keys() else ''
-#         req['de'] = datetime.strptime(d['de'], "%Y-%m-%d").date() if 'de' in d.keys() else ''
-#         req['report'] = int(d['report']) if d['report'] != '' else ''
-#         req['jockey'] = Jockey.objects.filter(id=int(d['jockey'])) if 'jockey' in d.keys() else ''
-#         req['horse'] = Horse.objects.filter(id=int(d['horse'])) if 'horse' in d.keys() else ''
-#         req['race'] = Race.objects.filter(id=int(d['race'])) if 'race' in d.keys() else ''
-#
-#         template_path, context = get_report(req)
-#
-#         pdf = render_pdf(template_path, context)
-#         response = HttpResponse(pdf, content_type="application/pdf")
-#         response['Content-Disposition'] = "attachment;"
-#         return response
-#     else:
-#         context = get_default_context(request)
-#         custom_context = {
-#             'title': 'Список печати',
-#             'title_table': 'Список печати',
-#             'item_selected': 4,
-#
-#             'list_v': get_list_v(
-#                 ['table_horses', 'Лошади', Horse, False],
-#                 ['table_jokey', 'Наездники', Jockey, False],
-#                 ['table_races', 'Заезды', Race, False],
-#             ),
-#
-#             'reports': [
-#                 {
-#                     'report_name': 'Рейтинг лошадей за период.pdf',
-#                     'report': 0,
-#                     'title': 'Рейтинг лошадей за период',
-#                     'has_date_block': True,
-#                 },
-#                 {
-#                     'report_name': 'Рейтинг жокеев за период.pdf',
-#                     'report': 1,
-#                     'title': 'Рейтинг жокеев за период',
-#                     'has_date_block': True,
-#                 },
-#                 {
-#                     'report_name': 'Статистика жокея за период.pdf',
-#                     'report': 2,
-#                     'title': 'Статистика жокея за период',
-#                     'links': [
-#                         {
-#                             'title': 'Жокей',
-#                             'name': 'jockey',
-#                             'table': 'table_jokey',
-#                         },
-#                     ],
-#                     'has_date_block': True,
-#                 },
-#                 {
-#                     'report_name': 'Статистика лошади за период.pdf',
-#                     'report': 3,
-#                     'title': 'Статистика лошади за период',
-#                     'links': [
-#                         {
-#                             'title': 'Лошадь',
-#                             'name': 'horse',
-#                             'table': 'table_horses',
-#                         },
-#                     ],
-#                     'has_date_block': True,
-#                 },
-#                 {
-#                     'report_name': 'Список заездов с результатами за период.pdf',
-#                     'report': 4,
-#                     'title': 'Список заездов с результатами за период',
-#                     'has_date_block': True,
-#                 },
-#                 {
-#                     'report_name': 'Распечатка заезда.pdf',
-#                     'report': 5,
-#                     'title': 'Распечатка заезда',
-#                     'links': [
-#                         {
-#                             'title': 'Заезд',
-#                             'name': 'race',
-#                             'table': 'table_races',
-#                         },
-#                     ],
-#                     'has_date_block': False,
-#                 },
-#             ]
-#         }
-#         return render(request, 'mainapp/reports.html', context=context | custom_context)
+@login_required
+def error_access(request):
+    context = get_default_context(punkt_selected='index', user=request.user)
+    custom_context = {}
+    return render(request, 'mainapp/index.html', context | custom_context)

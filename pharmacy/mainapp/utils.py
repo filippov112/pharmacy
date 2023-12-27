@@ -1,4 +1,4 @@
-from models import *
+from .models import *
 from datetime import datetime
 from django.core.files.storage import FileSystemStorage
 
@@ -20,26 +20,33 @@ def get_list_v(*kwargs):
     return list_v
 
 
-def get_default_context(punkt_selected='', user=None):
-    prf = Profile.objects.get(user_id=user.id)
-    admin = user.is_superuser
-    return {
-        'user': {'fio': user.last_name+' '+user.first_name[0].upper()+'.'+prf.middle_name[0].upper()+'.',
-                 'job': prf.position,
-                 },
+def get_default_context(punkt_selected='', title_view='', user=None, error=''):
+    rez = {
+        'title_view': title_view,
         'sidebar': punkt_selected != 'login',
-        'side_menu': get_side_menu(user),
-        'side_menu': [
-            {'name': 0, 'title': "Заглавная", 'url_name': 'races_list'},
-            {'name': 1, 'title': "Список лошадей", 'url_name': 'horses_list'},
-            {'name': 2, 'title': "Список жокеев", 'url_name': 'jockeys_list'},
-            {'name': 3, 'title': "Список владельцев", 'url_name': 'owners_list'},
-            {'name': 4, 'title': "Список печати", 'url_name': 'reports_list'},
-        ],
-        'punkt_selected': -1,
-        'is_admin': admin,
+        'header': punkt_selected != 'login' and punkt_selected != 'index',
+        'punkt_selected': punkt_selected,
         'list_v': [],
+        'error': error,
     }
+    if user is not None:
+        try:
+            prf = Profile.objects.get(user=user.id)
+        except:
+            prf = {}
+        side_menu = get_side_menu(user)
+        dic_sm = {obj['name']: obj for obj in side_menu}
+        if punkt_selected in dic_sm:
+            rez.bread_crumbs = [{'link': dic_sm.get[punkt_selected].url, 'title': dic_sm[punkt_selected].title}]
+        rez['side_menu'] = side_menu
+        if len(user.first_name) > 0 and len(prf.get('middle_name', '')) > 0:
+            rez['user'] = {
+                'fio': user.last_name+' '+user.first_name[0].upper()+'.'+prf.get('middle_name', '')[0].upper()+'.',
+                'job': prf.get('position', ''),
+            }
+        rez['is_admin'] = user.is_superuser
+    return rez
+
 
 def get_side_menu(usr):
     pmsns = usr.user_permissions.all()
@@ -137,16 +144,7 @@ def get_side_menu(usr):
                     'url': reverse('facility_list'),
                     'static_path': 'mainapp/svg/hospital.svg',
                 })
-
-
-# def get_self_account(_request):
-#     profile = Profile.objects.filter(user=_request.user.id)
-#     if profile.exists():
-#         if Owner.objects.filter(user=profile[0].id).exists():
-#             return reverse('owner_id', args=[Owner.objects.get(user=profile[0].id).id])
-#         if Jockey.objects.filter(user=profile[0].id).exists():
-#             return reverse('jockey_id', args=[Jockey.objects.get(user=profile[0].id).id])
-#     return '#'
+    return punkts
 
 
 def replace_null(dic, row=''):
@@ -168,40 +166,9 @@ def replace_null(dic, row=''):
             ret_dic[key] = dic[key]
     return ret_dic
 
-#
-# def save_user(d, record, obj):
-#     acc = obj.objects.get(id=record)
-#     prof = Profile.objects.get(id=acc.user.id)
-#     usr = User.objects.get(id=prof.user.id)
-#
-#     dic = replace_null(d.POST)
-#
-#     prof.s_passport = int(dic['s_passport'])
-#     prof.n_passport = int(dic['n_passport'])
-#     usr.first_name = dic['first_name']
-#     usr.last_name = dic['last_name']
-#     usr.email = dic['email']
-#     prof.middle_name = dic['middle_name']
-#     prof.phone = dic['phone']
-#     prof.w_passport = dic['w_passport']
-#     prof.city = City.objects.get(id=int(dic['city']))
-#     prof.birth = datetime.strptime(dic['birth'], "%Y-%m-%d").date()
-#     prof.d_passport = datetime.strptime(dic['d_passport'], "%Y-%m-%d").date()
-#     if obj == Jockey:
-#         acc.category = dic['category']
-#
-#     if d.FILES:
-#         if prof.photo:
-#             prof.photo.delete(False)
-#         file = d.FILES['photo']
-#         fs = FileSystemStorage()
-#         filename = fs.save(
-#             'photos/user/' + datetime.now().year.__str__() + '/' + datetime.now().month.__str__() + '/' + datetime.now().day.__str__() + '/' + file.name,
-#             file)
-#         prof.photo = filename
-#
-#     acc.save()
-#     prof.save()
-#     usr.save()
-#
-#     return acc.id
+
+def required_presc(v):
+    if v:
+        return "Требует"
+    else:
+        return "Не требует"

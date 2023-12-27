@@ -3,7 +3,7 @@ let deleteButton = document.getElementById("delete-record");
 
 deleteButton.addEventListener('click', function() {
     const mes = `Вы подтверждаете удаление записи?`;
-    document.getElementById("delete-messedge").textContent = mes;
+    document.getElementById("delete-message").textContent = mes;
     document.getElementById("modal-delete").classList.add("active");
     document.getElementById("page-overlay").classList.add("active");
 });

@@ -26,7 +26,7 @@ class Medicine(models.Model):
     group = models.ForeignKey(MedicineGroup, on_delete=models.SET_NULL, verbose_name='Группа', blank=True, null=True)  # Группа
     expiration_date = models.DateField( verbose_name='Срок годности')  # Срок годности
     storage_conditions = models.TextField(blank=True, verbose_name='Условия хранения')  # Условия хранения
-    prescription_required = models.BooleanField(default=False, blank=True, verbose_name='Требует рецепта')  # Требует рецепта
+    pre_required = models.BooleanField(default=False, blank=True, verbose_name='Требует рецепта')  # Требует рецепта
     interactions = models.TextField(blank=True, verbose_name='Взаимодействие')  # Взаимодействие
     limitations = models.TextField(blank=True, verbose_name='Ограничения')  # Ограничения
     side_effects = models.TextField(blank=True, verbose_name='Побочные эффекты')  # Побочные эффекты
@@ -68,19 +68,20 @@ class Supplier(models.Model):
 class Contract(models.Model):
     id = models.AutoField(primary_key=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, verbose_name='Поставщик')  # Ссылка на модель "Поставщик"
-    delivery_terms = models.TextField( verbose_name='Сроки поставки')  # Сроки поставки
-    batch_sizes = models.TextField( verbose_name='Размеры партий')  # Размеры партий
-    payment_method = models.TextField( verbose_name='Способ оплаты')  # Способ оплаты
-    delivery_conditions = models.TextField( verbose_name='Условия доставки')  # Условия доставки
-    start_date = models.DateField( verbose_name='Дата начала')  # Дата начала
-    end_date = models.DateField( verbose_name='Дата окончания')  # Дата окончания
+    number = models.IntegerField(verbose_name='Номер', unique=True)  # Номер договора
+    delivery_terms = models.TextField(verbose_name='Сроки поставки')  # Сроки поставки
+    batch_sizes = models.TextField(verbose_name='Размеры партий')  # Размеры партий
+    payment_method = models.TextField(verbose_name='Способ оплаты')  # Способ оплаты
+    delivery_conditions = models.TextField(verbose_name='Условия доставки')  # Условия доставки
+    start_date = models.DateField(verbose_name='Дата начала')  # Дата начала
+    end_date = models.DateField(verbose_name='Дата окончания')  # Дата окончания
     prolongation = models.TextField(blank=True, verbose_name='Возможность пролонгации')  # Возможность пролонгации
     other_conditions = models.TextField(blank=True, verbose_name='Прочие условия сторон')  # Прочие условия сторон
     document_scan = models.FileField( verbose_name='Скан документа', upload_to='photos/contract/')  # Скан документа
 
-    Index(fields=['id', 'supplier'])
+    Index(fields=['number', 'supplier'])
     def __str__(self):
-        return f"Контракт с поставщиком {self.supplier} от {self.start_date}"  # Возвращает информацию о договоре в админке
+        return f"Договор №{self.number}"  # Возвращает информацию о договоре в админке
     def get_absolute_url(self):
         return reverse('contract_list', args=[str(self.id)])
     class Meta:
@@ -281,11 +282,13 @@ class Profile(models.Model):
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
     date = models.DateField( verbose_name='Дата')  # Дата
+    number = models.IntegerField( verbose_name='Номер', unique=True)  # Номер заказа
     physical_person = models.ForeignKey(PhysicalPerson, on_delete=models.PROTECT, blank=True, null=True, verbose_name='Физическое лицо')  # Физическое лицо
     legal_entity = models.ForeignKey(LegalEntity, on_delete=models.PROTECT, blank=True, null=True, verbose_name='Юридическое лицо')  # Юридическое лицо
     seller = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Продавец')  # Продавец
 
-    Index(fields=['id', 'date', 'physical_person', 'legal_entity', 'seller' ])
+    Index(fields=['number', 'date', 'physical_person', 'legal_entity', 'seller', ])
+
     def clean(self):
         if self.physical_person is None and self.legal_entity is None:
             raise ValidationError('Необходимо заполнить либо поле "Физическое лицо", либо "Юридическое лицо"')
@@ -295,7 +298,7 @@ class Order(models.Model):
         super(Order, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"Заказ №{self.id}"  # Отображение названия юридического лица в админке
+        return f"Заказ №{self.number}"  # Отображение названия юридического лица в админке
     def get_absolute_url(self):
         return reverse('order_list', args=[str(self.id)])
     class Meta:

@@ -12,8 +12,8 @@
             <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
             <h1>БУДЬТЕ ЗДОРОВЫ</h1>
         </div>
-        <p><strong>{{ user_fio }}</strong></p>
-        <p class="header-job">{{ user_job }}</p>
+        <p><strong>{{ user.fio }}</strong></p>
+        <p class="header-job">{{ user.job }}</p>
         <a href="{% url 'logout' %}">Выйти из системы</a>
     </div>
 

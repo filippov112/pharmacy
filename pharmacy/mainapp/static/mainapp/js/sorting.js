@@ -1,6 +1,8 @@
 // Блок сортировки таблиц
-
 let block = document.getElementById('sorting');
+let button = document.getElementById("submit-filter");
+let psevdo_button = document.getElementById("submit-sorting");
+let input = document.getElementById("parameter_sorting");
 
 
 // Кнопка вызова окна сортировки
@@ -8,14 +10,8 @@ function show_sort() {
     block.classList.toggle("active");
     block.style.top = block.style.top === "50px" ? -block.clientHeight + "px" : "50px";
 }
+block.style.top = -block.clientHeight + "px";
 
-// Простановка порядка сортировки
-function updateInputNumbers() {
-  const inputs = document.querySelectorAll('.sorting-number'); // Нельзя выносить из функции, т.к. нужно состояние на момент вызова функции
-  inputs.forEach(function(input, inputIndex) {
-      input.value = inputIndex;
-  });
-}
 
 // Перестановка группы
 function moveGroup(group, direction) {
@@ -29,15 +25,8 @@ function moveGroup(group, direction) {
       } else {
           groups[targetIndex].insertAdjacentElement('beforebegin', group);
       }
-      updateInputNumbers();
   }
 }
-
-
-
-block.style.top = -block.clientHeight + "px";
-updateInputNumbers(); // Изначальная сортировка (пригодится для сброса сортировки по умолчанию)
-
 // Рычаги поднятия группы
 document.querySelectorAll('.up').forEach(function(button) {
   button.addEventListener('click', function(event) {
@@ -45,7 +34,6 @@ document.querySelectorAll('.up').forEach(function(button) {
     moveGroup(this.parentElement, 'up');
   });
 });
-
 // Рычаги опускания группы
 document.querySelectorAll('.down').forEach(function(button) {
   button.addEventListener('click', function(event) {
@@ -54,3 +42,28 @@ document.querySelectorAll('.down').forEach(function(button) {
   });
 });
 
+
+// Формирование строки параметров сортировки при нажатии отправки формы
+psevdo_button.addEventListener('click', function(e) {
+  let fields = Array.from(document.getElementsByClassName("group")).map( (x)=>{ return x.getAttribute("name") });
+  let checks = Array.from(document.getElementsByClassName("sort-check")).map( (x)=> { return x.checked });
+  let dirs = Array.from(document.getElementsByClassName("sort-dir")).map( (x)=> { return x.checked });
+
+  let rez = "";
+
+  for(i = 0; i < checks.length; i++){
+    if (checks[i]) {
+      if (rez !== "") {
+        rez += ",";
+      }
+      if (dirs[i]) {
+        rez += "-"+fields[i];
+      } else {
+        rez += fields[i];
+      }
+    }
+  }
+
+  input.value = rez;
+  button.click();
+});

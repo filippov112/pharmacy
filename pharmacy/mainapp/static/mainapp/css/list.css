@@ -18,7 +18,7 @@
 #sorting::-webkit-scrollbar {
     width:0;
 }
-#sorting form {
+#sorting>div {
     height:100%;
     width:100%;
 }
@@ -99,9 +99,6 @@ input[type="checkbox"].sort-cube {
 }
 .group .sort-cube:hover {
     background-color: #02ff89;
-}
-.group input.sorting-number {
-    display: none;
 }
 #submit-sorting {
     width:100%;

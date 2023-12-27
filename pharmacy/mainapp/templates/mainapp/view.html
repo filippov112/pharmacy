@@ -9,28 +9,17 @@
 {% endblock %}
 
 
-{% block body %}
-    <div id="header">
-        <button id="show-sidebar">
-            <img src="{% static 'mainapp/svg/menu.svg' %}">
-        </button>
-        <div id="header-title">
-            {% for l in bread_crumbs %}
-            <a href="{% url l.link %}">{{ l.title }}</a>
-            <img src="{% static 'mainapp/svg/right.svg' %}">
-            {% endfor %}
-            <p>{{ title_view }}</p>
-        </div>
-        <div>
-            <button id="delete-record">
-                <img src="{% static 'mainapp/svg/delete.svg' %}">
-            </button>
-            <a href="{% url edit_link %}" id="edit-record">
-                <img src="{% static 'mainapp/svg/edit.svg' %}">
-            </a>
-        </div>
-    </div>
+{% block head %}
+<button id="delete-record">
+    <img src="{% static 'mainapp/svg/delete.svg' %}">
+</button>
+<a href="{% url edit_link %}" id="edit-record">
+    <img src="{% static 'mainapp/svg/edit.svg' %}">
+</a>
+{% endblock %}
 
+
+{% block body %}
     <div id="body-container">
         <div id="right-block">
             <div id="right-block-head">
@@ -113,7 +102,7 @@
         </div> 
         <form method="post">
             {% csrf_token %}
-            <p id="delete-messedge"></p>
+            <p id="delete-message"></p>
 <!--            <input type="number" id="delete-rec" name="delete-rec" value="1">-->
             <div>
                 <button class="my-button" type="submit">Да</button>

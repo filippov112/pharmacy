@@ -67,7 +67,7 @@ deleteButton.addEventListener('click', function() {
     if (valuesArray.length > 0) {
       document.getElementById('delete-list').value = valuesArray.join(', ');
       const mes = `Вы подтверждаете удаление ${valuesArray.length} записи(-ей)?`;
-      document.getElementById("delete-messedge").textContent = mes;
+      document.getElementById("delete-message").textContent = mes;
       document.getElementById("modal-delete").classList.add("active");
       document.getElementById("page-overlay").classList.add("active");
     }  

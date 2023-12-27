@@ -8,11 +8,11 @@
 {% block body %}
 <div id="body-container">
     <div id="top-block">
-        <img src="{% static 'mainapp/other/favicon.jpg' %}" alt="">
+        <img src="{% static 'mainapp/other/favicon.jpg' %}">
         <h1>БУДЬТЕ ЗДОРОВЫ</h1>
     </div>
 
-    <form id="middle-block" action="{% url 'login' %}" method="POST">
+    <form id="middle-block" method="POST">
         {% csrf_token %}
         <h2 id="form-title">Авторизация</h2>
         <div class="form-input">

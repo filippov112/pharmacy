@@ -13,34 +13,23 @@
 {% endblock %}
 
 
-{% block body %}
-    <div id="header">
-        <button id="show-sidebar">
-            <img src="{% static 'mainapp/svg/menu.svg' %}">
+{% block head %}
+    {% if task == 'view' %}
+        <button id="delete-record">
+            <img src="{% static 'mainapp/svg/delete.svg' %}">
         </button>
-        <div id="header-title">
-            {% for l in bread_crumbs %}
-            <a href="{% url l.link %}">{{ l.title }}</a>
-            <img src="{% static 'mainapp/svg/right.svg' %}">
-            {% endfor %}
-            <p>{{ title_view }}</p>
-        </div>
-        <div>
-            {% if task == 'view' %}
-                <button id="delete-record">
-                    <img src="{% static 'mainapp/svg/delete.svg' %}">
-                </button>
-                <a href="{% url edit_link %}" id="edit-record">
-                    <img src="{% static 'mainapp/svg/edit.svg' %}">
-                </a>
-            {% else %}
-                <button id="save-record">
-                    <img src="{% static 'mainapp/svg/save.svg' %}">
-                </button>
-            {% endif %}
-        </div>
-    </div>
+        <a href="{% url edit_link %}" id="edit-record">
+            <img src="{% static 'mainapp/svg/edit.svg' %}">
+        </a>
+    {% else %}
+        <button id="save-record">
+            <img src="{% static 'mainapp/svg/save.svg' %}">
+        </button>
+    {% endif %}
+{% endblock %}
 
+
+{% block body %}
     {% if task != 'view' %}<form method="post" enctype="multipart/form-data">{% csrf_token %}{% endif %}
         <div id="body-container">
             <div id="right-block-head">
@@ -161,7 +150,7 @@
             <p>Подтвердите удаление</p>
         </div> 
         <form method="post">
-            <p id="delete-messedge"></p>
+            <p id="delete-message"></p>
 <!--            <input type="number" id="delete-rec" name="delete-rec" value="10">-->
             <div>
                 <button class="my-button" type="submit">Да</button>
