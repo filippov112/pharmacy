@@ -1,4 +1,3 @@
-
 #body-container {
     display: flex;
     justify-content: space-between;
@@ -9,9 +8,9 @@
 
 /* Шапка */
 #top-block {
-    height:50px;
     text-align: center;
     padding:1ch;
+    height: 25vh;
 }
 #top-block  img {
     height:70px;
@@ -22,9 +21,9 @@
     background-color: rgb(2, 255, 137);
     color:white;
     width:max-content;
-    margin: 8px auto;
-    padding:8px;
-    font-size: 25px;
+    margin: 0.4rem auto;
+    padding:0.25rem;
+    font-size: 1.25rem;
 }
 
 
@@ -74,21 +73,16 @@
     font-size:20px;
 }
 
-
-
-
-
-
-
-
-
 /* Подвал */
 #bottom-block {
-    height: 100px;
+    height:20vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    padding:3rem;
 }
 #bottom-block p {
     margin: 0;
     text-align: center;
     color:white;
 }
-
