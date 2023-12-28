@@ -40,7 +40,7 @@ def login_view(request):
     return redirect('index')
 
 
-@login_required
+@login_required(login_url=login_view)
 def index_view(request):
     context = get_default_context(punkt_selected='index', user=request.user)
     custom_context = {}
@@ -117,11 +117,13 @@ def supplier_id(request):
     return render(request, 'mainapp/index.html', context | custom_context)
 
 
-@login_required
-def medicine_id(request):
-    context = get_default_context(punkt_selected='index', user=request.user)
-    custom_context = {}
-    return render(request, 'mainapp/index.html', context | custom_context)
+@login_required(login_url=login_view)
+def medicine_id(request, record):
+    context = get_default_context(bread_crumbs=True, punkt_selected='medicine', user=request.user)
+    custom_context = {
+        'edit_link': reverse('medicine_edit', args=[record])
+    }
+    return render(request, 'mainapp/view.html', context | custom_context)
 
 
 @login_required
@@ -372,7 +374,7 @@ def supplier_list(request):
     return render(request, 'mainapp/index.html', context | custom_context)
 
 
-@login_required
+@login_required(login_url=login_view)
 def medicine_list(request):
     # Артикул, Наименование, Фарм.группа, Требует рецепта
     records = []
@@ -386,12 +388,11 @@ def medicine_list(request):
             pass
     else:
         records = Medicine.objects.all()
-    context = get_default_context(punkt_selected='index', user=request.user)
+    context = get_default_context(punkt_selected='medicine', user=request.user)
     custom_context = {
-        'add_record': 'medicine_new',
-        'link_table': reverse('prescription_id'),
+        'add_record': reverse('medicine_new', args=['new']),
         'desc_table': ['Артикул', 'Наименование', 'Группа препаратов', 'Необходимость рецепта'],
-        'elem_table': [{'id': x.id, 'fields': [x.article, x.name, x.group.__str__(), required_presc(x.pre_required)]} for x in records],
+        'elem_table': [{'link': reverse('medicine_id', args=[x.id]), 'id': x.id, 'fields': [x.article, x.name, x.group.__str__(), required_presc(x.pre_required)]} for x in records],
         'filters': [
             [{'title': "Поиск по названию", 'name': 'f-name', 'type': 'text'}, ],
             [{'title': "Поиск по артиклу", 'name': 'f-article', 'type': 'text'}, ],

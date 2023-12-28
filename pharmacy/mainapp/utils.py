@@ -20,7 +20,7 @@ def get_list_v(*kwargs):
     return list_v
 
 
-def get_default_context(punkt_selected='', title_view='', user=None, error=''):
+def get_default_context(bread_crumbs=False, punkt_selected='', title_view='', user=None, error=''):
     rez = {
         'title_view': title_view,
         'sidebar': punkt_selected != 'login',
@@ -36,20 +36,20 @@ def get_default_context(punkt_selected='', title_view='', user=None, error=''):
             prf = {}
         side_menu = get_side_menu(user)
         dic_sm = {obj['name']: obj for obj in side_menu}
-        if punkt_selected in dic_sm:
-            rez.bread_crumbs = [{'link': dic_sm.get[punkt_selected].url, 'title': dic_sm[punkt_selected].title}]
+        if bread_crumbs:
+            rez['bread_crumbs'] = [{'link': dic_sm[punkt_selected]['url'], 'title': dic_sm[punkt_selected]['title']}]
         rez['side_menu'] = side_menu
-        if len(user.first_name) > 0 and len(prf.get('middle_name', '')) > 0:
+        if len(user.first_name) > 0 and len(getattr(prf, 'middle_name', '')) > 0:
             rez['user'] = {
-                'fio': user.last_name+' '+user.first_name[0].upper()+'.'+prf.get('middle_name', '')[0].upper()+'.',
-                'job': prf.get('position', ''),
+                'fio': user.last_name+' '+user.first_name[0].upper()+'.'+prf.middle_name[0].upper()+'.',
+                'job': prf.position,
             }
         rez['is_admin'] = user.is_superuser
     return rez
 
 
 def get_side_menu(usr):
-    pmsns = usr.user_permissions.all()
+    perms = usr.user_permissions.all()
     punkts = []
     if usr.is_superuser:
         punkts.append({
@@ -58,7 +58,9 @@ def get_side_menu(usr):
             'url': reverse('admin:index'),
             'static_path': 'mainapp/svg/settings.svg',
         })
-    for p in pmsns:
+        perms = ['supplier', 'contract', 'certificate', 'receipt', 'physic', 'legal', 'prescription', 'medicine',
+                 'med_group', 'order', 'doctor', 'facility']
+    for p in perms:
         match p:
             case 'supplier':
                 punkts.append({

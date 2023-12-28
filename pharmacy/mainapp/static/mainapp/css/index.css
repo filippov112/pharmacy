@@ -58,6 +58,7 @@
 
 #middle-block {
     height:55vh;
+    width:100%;
     max-width: 510px;
     display: flex;
     align-items: center;

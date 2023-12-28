@@ -13,7 +13,7 @@
 <button id="delete-record">
     <img src="{% static 'mainapp/svg/delete.svg' %}">
 </button>
-<a href="{% url edit_link %}" id="edit-record">
+<a href="{{ edit_link }}" id="edit-record">
     <img src="{% static 'mainapp/svg/edit.svg' %}">
 </a>
 {% endblock %}

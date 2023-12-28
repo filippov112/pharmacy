@@ -204,11 +204,10 @@ input[type=text]:focus, input[type=number]:focus {
     left:0;
     width:350px;
     height:100vh;
-    overflow-y:scroll;
     transition: all 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content:stretch;
 }
 #sidebar::-webkit-scrollbar {
     width:0;
@@ -217,27 +216,35 @@ input[type=text]:focus, input[type=number]:focus {
     margin:0;
 }
 #sidebar .logo {
-    text-align: center;
-    padding:1ch;
+    height:15vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     background-color: #24495f;
-    margin: 0;
-    padding: 40px 0;
 }
 #sidebar img {
-    height:70px;
-    width:70px;
+    height:7vh;
+    width:7vh;
 }
 #sidebar h1 {
     display: block;
     background-color: rgb(2, 255, 137);
     color:white;
     width:max-content;
-    margin: 8px auto;
-    padding:8px;
-    font-size: 25px;
+    margin: 1vh auto;
+    padding:0.5vh;
+    font-size: 2vh;
 }
-#sidebar .sidebar-footer, #sidebar .sidebar-account {
-    padding:20px;
+#sidebar .sidebar-footer{
+    height:10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #f6f6f6;
+}
+#sidebar .sidebar-account {
     background-color: #f6f6f6;
     text-align: center;
 }
@@ -246,10 +253,19 @@ input[type=text]:focus, input[type=number]:focus {
     color: #202020;
     margin:0;
 }
+#sidebar .sidebar-account>div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height:10vh;
+}
 #sidebar .sidebar-account a {
-    display: block;
-    padding:10px;
-    font-size: 18px;
+    height:7vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
     transition: all 0.3s ease;
 }
 #sidebar .sidebar-account a:hover {
@@ -258,7 +274,6 @@ input[type=text]:focus, input[type=number]:focus {
 }
 #sidebar .sidebar-account p+p {
     color:#1a965a;
-    margin-bottom: 20px;
 }
 #sidebar .sidebar-footer p {
     margin: 0;
@@ -267,9 +282,11 @@ input[type=text]:focus, input[type=number]:focus {
     color:#202020;
 }
 #sidebar ul {
+    height:58vh;
+    overflow-y: auto;
     list-style: none;
     padding: 0;
-    /* margin-top:-100px; */
+    margin:0;
 }
 #sidebar ul li {
     display: block;
@@ -306,8 +323,6 @@ input[type=text]:focus, input[type=number]:focus {
 #sidebar ul li a:hover:after, #sidebar ul li.active a:after {
     opacity: 1;
 }
-
-
 
 
 /* Затенение */

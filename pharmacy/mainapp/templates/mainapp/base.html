@@ -54,8 +54,10 @@
                 <h1>БУДЬТЕ ЗДОРОВЫ</h1>
             </div>
             <div class="sidebar-account">
-                <p><strong>{{ user.fio }}</strong></p>
-                <p>{{ user.job }}</p>
+                <div>
+                    <p><strong>{{ user.fio }}</strong></p>
+                    <p>{{ user.job }}</p>
+                </div>
                 <a href="{% url 'logout' %}">Выйти из системы</a>
             </div>
         </div>

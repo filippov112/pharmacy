@@ -12,7 +12,7 @@
 <button id="delete-elements">
     <img src="{% static 'mainapp/svg/basket.svg' %}">
 </button>
-<a href="{% url add_record %}" id="add-b">
+<a href="{{ add_record }}" id="add-b">
     <img src="{% static 'mainapp/svg/add.svg' %}">
 </a>
 <button id="sorting-b" onclick="show_sort()">
@@ -28,7 +28,7 @@
     <div id="my-container">
         <div id="work-pane">
             <div class="table-wrap">
-                <table class="myTable" linked link="{{ link_table }}">
+                <table class="myTable">
                     <thead>
                         <tr>
                             <th class="delete-col my-button">
@@ -41,7 +41,7 @@
                     </thead>
                     <tbody>
                         {% for e in elem_table %}
-                        <tr rec_id="{{ e.id }}">
+                        <tr link="{{ e.link }}">
                             <td class="delete-col my-button">
                                 <input type="checkbox" class="delete-record form-check-input" value="{{ e.id }}">
                             </td>

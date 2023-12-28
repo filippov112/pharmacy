@@ -7,7 +7,7 @@ from .views import index_view, login_view, error_access, reports_list, medicine_
     med_group_edit
 
 urlpatterns = [
-    path('index', index_view, name='index'),
+    path('', index_view, name='index'),
 
     path('prescription/<int:record>', prescription_id, name='prescription_id'),
     path('order/<int:record>', order_id, name='order_id'),
