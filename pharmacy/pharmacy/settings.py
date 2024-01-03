@@ -79,9 +79,9 @@ DATABASES = {
     "default": {
         "ENGINE": "mssql",
         "NAME": "pharmacy_base",
-        "USER": "django-user",
-        "PASSWORD": "12345",
-        "HOST": "FILYAULTRABOOK\SQLEXPRESS",
+        "USER": "sa",
+        "PASSWORD": "sa",
+        "HOST": "OVERLORD-ONE\FILSERVER",
         "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server",
         },
     },

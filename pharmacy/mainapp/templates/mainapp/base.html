@@ -62,13 +62,13 @@
             </div>
         </div>
         <ul>
-            {% for punkt in side_menu %}
-                {% if punkt.name == punkt_selected %}
+            {% for t in side_menu %}
+                {% if t.name == task %}
                 <li class="active">
                 {% else %}
                 <li>
                 {% endif %}
-                    <a href="{{ punkt.url }}">{{punkt.title}}</a>
+                    <a href="{{ t.url }}">{{ t.title }}</a>
                 </li>
             {% endfor %}
         </ul>
