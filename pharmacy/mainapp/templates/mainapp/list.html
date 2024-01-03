@@ -33,7 +33,9 @@
                     <thead>
                         <tr>
                             <th class="delete-col my-button">
-                                <input type="checkbox" class="delete-record form-check-input">
+                                <div>
+                                    <input type="checkbox" class="delete-record form-check-input">
+                                </div>
                             </th>
                             {% for d in desc_table %}
                             <th class="resizable">{{ d }}<div class="resizable-handle"></div></th>
@@ -44,7 +46,9 @@
                         {% for e in elem_table %}
                         <tr link="{{ e.link }}">
                             <td class="delete-col my-button">
-                                <input type="checkbox" class="delete-record form-check-input" value="{{ e.id }}">
+                                <div>
+                                    <input type="checkbox" class="delete-record form-check-input" value="{{ e.id }}">
+                                </div>
                             </td>
                             {% for f in e.fields %}
                             <td>{{ f }}</td>
