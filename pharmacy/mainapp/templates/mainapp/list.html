@@ -5,6 +5,7 @@
     <link type="text/css" href="{% static 'mainapp/css/list.css' %}" rel="stylesheet" />
     <link type="text/css" href="{% static 'mainapp/css/modal.css' %}" rel="stylesheet" />
     <link type="text/css" href="{% static 'mainapp/css/table.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/select.css' %}" rel="stylesheet" />
 {% endblock %}
 
 
@@ -58,16 +59,36 @@
         <div id="filter-pane">
             <form method="post" id="filter-table" name="filters">
                 {% csrf_token %}
-                {% for group in filters %}
+                {% for f in filters %}
                 <div class="filter-group">
+                    {% if f.type != 'checkbox' %}
                     <div class="filter-row">
-                        {% for field in group %}
-                        <div class="filter-label">{{ field.title }}</div>
+                        {% for name in f.names %}
+                        <div class="filter-label">{{ name }}</div>
                         {% endfor %}
                     </div>
+                    {% endif %}
                     <div class="filter-row">
-                        {% for field in group %}
-                        <input type="{{ field.type }}" name="{{ field.name }}">
+                        {% for i in f.inputs %}
+
+                            {% if f.type == 'link' %}
+                                <button select select-name="{{ f.select }}" multi>
+                                    <input type="text" name="{{ i }}">
+                                    <p></p>
+                                </button>
+                            {% endif %}
+
+                            {% if f.type == 'checkbox' %}
+                                <label>
+                                    <input class="form-check-input" type="checkbox" name="{{ i }}">
+                                    <div class="filter-label">{{ f.name }}</div>
+                                </label>
+                            {% endif %}
+
+                            {% if f.type != 'checkbox' and f.type != 'link' %}
+                                <input type="{{ f.type }}" name="{{ i }}">
+                            {% endif %}
+
                         {% endfor %}
                     </div>
                 </div>
@@ -139,6 +160,45 @@
             </div>
         </form>
     </div>
+
+    <!-- БЛОК ВЫБОРОК -->
+
+    {% for select in list_selects %}
+    <div class="table-wrap" select select-name="{{ select.name }}">
+        <div class="table-title">
+            <h2>{{ select.title }}</h2>
+            <input class="select-search">
+            <button class="confirm-select">Подтвердить</button>
+        </div>
+        <table class="myTable">
+            <thead>
+                <tr>
+                    <th class="delete-col my-button">
+                        <div>
+                            <input type="checkbox" class="multi-select-record form-check-input">
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in select.records %}
+                <tr record="{{ r.pk }}">
+                    <td class="delete-col my-button">
+                        <div>
+                            <input type="checkbox" class="multi-select-record form-check-input" value="{{ r.pk }}">
+                        </div>
+                    </td>
+                    <td class="select-record">{{ r.text }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+
+    <!-- КОНЕЦ БЛОКА ВЫБОРОК -->
+
 {% endblock %}
 
 
@@ -150,4 +210,5 @@
     <script src="{% static 'mainapp/js/table-resize.js' %}"></script>
     <script src="{% static 'mainapp/js/table-delete-records.js' %}"></script>
     <script src="{% static 'mainapp/js/table-link.js' %}"></script>
+    <script src="{% static 'mainapp/js/select.js' %}"></script>
 {% endblock %}

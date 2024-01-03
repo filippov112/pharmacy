@@ -106,8 +106,8 @@
                             {% endif %}
 
                             {% if input.type == 'link' %}
-                                <button select select-name="medicine">
-                                    <input type="number" name="{{ input.name }}">
+                                <button select select-name="{{ input.select }}">
+                                    <input type="text" name="{{ input.name }}">
                                     <p>{{ input.text_value }}</p>
                                 </button>
                             {% endif %}
@@ -128,11 +128,27 @@
             <div class="table-title">
                 <h2>{{ select.title }}</h2>
                 <input class="select-search">
+                <button class="confirm-select">Подтвердить</button>
             </div>
             <table class="myTable">
+                <thead>
+                    <tr>
+                        <th class="delete-col my-button">
+                            <div>
+                                <input type="checkbox" class="multi-select-record form-check-input">
+                            </div>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for r in select.records %}
                     <tr record="{{ r.pk }}">
+                        <td class="delete-col my-button">
+                            <div>
+                                <input type="checkbox" class="multi-select-record form-check-input" value="{{ r.pk }}">
+                            </div>
+                        </td>
                         <td class="select-record">{{ r.text }}</td>
                     </tr>
                     {% endfor %}

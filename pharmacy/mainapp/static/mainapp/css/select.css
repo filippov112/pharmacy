@@ -19,10 +19,16 @@
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
-.table-wrap[select] tr:active {
+.table-wrap[select] thead tr th{
+    background-color: #016101;
+}
+.table-wrap[select] tbody tr:has(.multi-select-record:checked) {
     background-color: #008000;
 }
-.table-wrap[select] input {
+.table-wrap[select] tbody tr:has(.multi-select-record:checked) td {
+    color:white;
+}
+.table-wrap[select] .table-title input {
     display: block;
     border: 0;
     background-color: #008a00;
@@ -31,7 +37,7 @@
     padding: 5px;
     font-size: 15px;
 }
-.table-wrap[select] input:focus {
+.table-wrap[select] .table-title  input:focus {
     outline:0;
 }
 
@@ -53,4 +59,31 @@ button[select] input {
 button[select] p {
     margin: 0;
     font-size: 13px;
+}
+
+.table-title .confirm-select {
+    height:100%;
+    padding:0 15px;
+    margin-left: 15px;
+    background-color: #35bb00;
+    color:white;
+}
+
+.multi-select-record {
+    display:none;
+    vertical-align: middle;
+}
+.multi-select-record:checked, .delete-col:hover .multi-select-record {
+    display:inline-block;
+}
+
+
+.table-wrap[select][not-multi] .delete-col {
+    display: none;
+}
+.table-wrap[select][not-multi] thead {
+    display: none;
+}
+.table-wrap[select][not-multi] .confirm-select {
+    display: none;
 }

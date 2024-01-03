@@ -33,24 +33,24 @@ function handlerValuesArray(elem) {
 document.querySelectorAll('tbody .delete-record').forEach(function (checkbox) {
     checkbox.addEventListener('change', function() {
         handlerValuesArray(this);
-        let table = this.parentElement.parentElement.parentElement.parentElement;
+        let table = this.parentElement.parentElement.parentElement.parentElement.parentElement;
         const count_rec_false =  Array.from(table.querySelectorAll('tbody .delete-record:not(:checked)')).length;
         table.querySelector('thead .delete-record').checked = count_rec_false === 0;
     } );
 });
 // Обработка клика по ячейке чекбокса
-document.querySelectorAll('.delete-col').forEach(el => el.addEventListener('mousedown', function(e) {
+document.querySelectorAll('.table-wrap:not([select]).delete-col').forEach(el => el.addEventListener('mousedown', function(e) {
     if (e.target.tagName.toLowerCase() !== 'input') {
         let chb = e.target.querySelector('.delete-record');
         chb.click();
-    } 
+    }
 }));
 
 
 // Общий чекбокс
 document.querySelectorAll('thead .delete-record').forEach(function (checkbox) {
     checkbox.addEventListener('change', function () {
-        let tbody = this.parentElement.parentElement.parentElement.nextElementSibling;
+        let tbody = this.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
         tbody.querySelectorAll('.delete-record').forEach( checkB =>  {
             checkB.checked = this.checked
             handlerValuesArray(checkB, 0);
@@ -70,5 +70,5 @@ deleteButton.addEventListener('click', function() {
       document.getElementById("delete-message").textContent = mes;
       document.getElementById("modal-delete").classList.add("active");
       document.getElementById("page-overlay").classList.add("active");
-    }  
+    }
 });

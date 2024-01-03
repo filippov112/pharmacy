@@ -26,13 +26,14 @@ table.myTable tbody td:has(a):hover {
     background-color: #00b400;
 }
 .table-title {
-    position:sticky; 
-    top:0; 
-    height:40px; 
-    padding:0 50px; 
-    background-color: #016101; 
-    display: flex; 
-    align-items: center; 
+    position:sticky;
+    top:0;
+    height:40px;
+    padding:0 50px;
+    background-color: #016101;
+    color:white;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     text-align: left;
 }
@@ -40,12 +41,12 @@ table.myTable tbody td:has(a):hover {
     display: block;
     margin: 0;
     margin-right: 50px;
-    color:white; 
-    font-size: 20px; 
+    color:white;
+    font-size: 20px;
 }
 thead {
   position: sticky;
-  top: 0; 
+  top: 0;
 }
 .table-wrap:has(.table-title) thead {
     top: 40px;
@@ -76,9 +77,12 @@ thead th {
 }
 table.myTable .delete-col {
     width:50px;
-    text-align: center;
     transition:background-color 0.1s ease;
     cursor: pointer;
+}
+table.myTable .delete-col div {
+    display: flex;
+    align-items: center;
 }
 td.delete-col {
     background-color: #ffffff00;
@@ -86,8 +90,6 @@ td.delete-col {
 .delete-record {
     display:none;
     vertical-align: middle;
-    margin-bottom:4px;
-    /* width: */
 }
 .delete-record:checked, .delete-col:hover .delete-record {
     display:inline-block;

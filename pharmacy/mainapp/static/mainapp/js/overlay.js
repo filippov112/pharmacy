@@ -12,10 +12,8 @@ function disactive() {
 
     let vs = document.querySelectorAll(".table-wrap[select]");
     for (let i = 0; i < vs.length; i++) {
-        vs[i].classList.remove("active");
-        resetSearch(vs[i]);
+        if (typeof closeSelectWindow === 'function') {
+            closeSelectWindow(vs[i])
+        }
     }
-    try {
-        active_button = null;
-    } catch {}
 }

@@ -165,4 +165,10 @@ input[type="checkbox"].sort-cube {
     color:white;
     padding: 10px;
 }
-
+.filter-group label:has(input[type=checkbox]) {
+    display: flex;
+    align-items: center;
+}
+.filter-label {
+    font-size: 18px;
+}
