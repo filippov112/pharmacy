@@ -4,58 +4,64 @@ from django.core.files.storage import FileSystemStorage
 
 
 # Список выборок
-def get_selects(*kwargs):
+def get_selects(s_list):
     list_s = []
-    for v in kwargs:
+    for v in s_list:
         obj = check_select(v)
         if obj != {}:
             list_s.append(obj)
     return list_s
 def check_select(s):
     match s:
-        case 'supplier':
+        case 's-supplier':
             return {
                 'name': s,
                 'title': 'Поставщики',
                 'records': [ {'pk': x.id, 'text': x.__str__() } for x in Supplier.objects.all()]
             }
-        case 'contract':
+        case 's-contract':
             return {
                 'name': s,
                 'title': 'Договоры',
                 'records': [{'pk': x.id, 'text': x.__str__()} for x in Contract.objects.all()]
             }
-        case 'medicine':
+        case 's-medicine':
             return {
                 'name': s,
                 'title': 'Каталог препаратов',
                 'records': [{'pk': x.id, 'text': x.__str__()} for x in Medicine.objects.all()]
             }
-        case 'physical':
+        case 's-med-group':
+            return {
+                'name': s,
+                'title': 'Группы препаратов',
+                'records': [{'pk': x.id, 'text': x.__str__()} for x in MedicineGroup.objects.all()]
+            }
+        case 's-physical':
             return {
                 'name': s,
                 'title': 'Клиенты Физ.',
                 'records': [{'pk': x.id, 'text': x.__str__()} for x in PhysicalPerson.objects.all()]
             }
-        case 'legal':
+        case 's-legal':
             return {
                 'name': s,
                 'title': 'Клиенты Юр.',
                 'records': [{'pk': x.id, 'text': x.__str__()} for x in LegalEntity.objects.all()]
             }
-        case 'user':
+        case 's-user':
             return {
                 'name': s,
                 'title': 'Сотрудники',
                 'records': [{'pk': x.id, 'text': x.__str__()} for x in User.objects.all()]
             }
-        case 'doctor':
+        case 's-doctor':
             return {
                 'name': s,
                 'title': 'Врачи',
                 'records': [{'pk': x.id, 'text': x.__str__()} for x in Doctor.objects.all()]
             }
-        case 'facility':
+        case 's-facility':
             return {
                 'name': s,
                 'title': 'Лечебные организации',
@@ -193,25 +199,60 @@ def get_side_menu(usr=None, su_mod=False):
                 })
     return tasks
 
+# Базовые компоненты списков
+def get_list_context(_name, _elements, _records, no_elem_table=False):
+    ret = {}
 
-def replace_null(dic, row=''):
-    ret_dic = {}
-    for key in dic.keys():
-        if dic[key] == '':
-            if key in ['couple-' + row + '-3', 'time_begin', 'time_end']:
-                ret_dic[key] = '00:00'
-            if key in ['date', 'birth', 'd_passport', 'dn']:
-                ret_dic[key] = '1900-01-01'
-            if key in ['de']:
-                ret_dic[key] = '2045-05-09'
-            if key in ['couple-' + row + '-0', 'couple-' + row + '-1', 'hippodrome', 'city', 'owner', 'race', 'horse',
-                       'jockey']:
-                ret_dic[key] = '-1'
-            if key in ['couple-' + row + '-2', 'distance', 'summa', 's_passport', 'n_passport', 'age', 'report']:
-                ret_dic[key] = '0'
-        else:
-            ret_dic[key] = dic[key]
-    return ret_dic
+    ret['desc_table'] = [x['title'] for x in _elements]
+
+    if not no_elem_table:
+        ret['elem_table'] = [
+            {
+                'link': reverse(_name, '_id', args=[x.id]),
+                'id': x.id,
+                'fields': [
+                    getattr(x, e['field']) if e['type'] != 'link' else getattr(x, e['field']).__str__()
+                    for e in _elements
+                ]
+            }
+            for x in _records
+        ]
+
+    ret['filters'] = [
+        {
+            'names': ['f-'+e['field'],] if e['type'] != 'date' else ['f-'+e['field']+'-dn', 'f-'+e['field']+'-dk'],
+            'title': e['title'],
+            'type': e['type'],
+            'select': e['select'] if e['type'] == 'link' else ''
+        }
+        for e in _elements
+    ]
+
+    ret['sorting_table'] = [{'name': e['field'], 'title': e['title']} for e in _elements]
+
+    ret['list_selects'] = get_selects([e['select'] if e['type'] == 'link' else '' for e in _elements])
+
+    return ret
+
+
+# def replace_null(dic, row=''):
+#     ret_dic = {}
+#     for key in dic.keys():
+#         if dic[key] == '':
+#             if key in ['couple-' + row + '-3', 'time_begin', 'time_end']:
+#                 ret_dic[key] = '00:00'
+#             if key in ['date', 'birth', 'd_passport', 'dn']:
+#                 ret_dic[key] = '1900-01-01'
+#             if key in ['de']:
+#                 ret_dic[key] = '2045-05-09'
+#             if key in ['couple-' + row + '-0', 'couple-' + row + '-1', 'hippodrome', 'city', 'owner', 'race', 'horse',
+#                        'jockey']:
+#                 ret_dic[key] = '-1'
+#             if key in ['couple-' + row + '-2', 'distance', 'summa', 's_passport', 'n_passport', 'age', 'report']:
+#                 ret_dic[key] = '0'
+#         else:
+#             ret_dic[key] = dic[key]
+#     return ret_dic
 
 
 

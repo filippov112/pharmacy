@@ -8,7 +8,7 @@ function refrashHandlerLinks() {
         links[l].addEventListener("click", function(e) {
             e.preventDefault();
             let vib = document.querySelector('.table-wrap[select-name="'+this.getAttribute("select-name")+'"]');
-            let multi = e.target.getAttribute("multi");
+            let multi = this.getAttribute("multi");
             if (multi === null) {
                 vib.setAttribute("not-multi", true);
             }
