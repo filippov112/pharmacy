@@ -102,7 +102,7 @@ tr:hover {
     background-color: rgba(237, 255, 247, 0.877);
 }
 
-table[linked] td:not(.delete-col) {
+table tr[link] td:not(.delete-col) {
     cursor: pointer;
 }
 

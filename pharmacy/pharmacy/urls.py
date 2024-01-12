@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.urls import include, path
+from django.conf.urls import (
+handler400, handler403, handler404, handler500
+)
+handler404 = 'mainapp.handlers.commons.error_access'
 
 urlpatterns = [
     path("", include("mainapp.urls")),

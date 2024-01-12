@@ -49,7 +49,7 @@ class Supplier(models.Model):
     city = models.CharField(max_length=100, verbose_name='Город')  # Город
     address = models.CharField(max_length=200, verbose_name='Адрес')  # Адрес
     phone = models.CharField(max_length=20, blank=True, verbose_name='Телефон')  # Телефон
-    email = models.EmailField(max_length=100, blank=True, verbose_name='Электронная почта')  # Электронная почта
+    email = models.CharField(max_length=100, blank=True, verbose_name='Электронная почта')  # Электронная почта
     inn = models.CharField(max_length=12, verbose_name='ИНН')  # ИНН
     kpp = models.CharField(max_length=9, verbose_name='КПП')  # КПП
     ogrn = models.CharField(max_length=13, verbose_name='ОГРН')  # ОГРН

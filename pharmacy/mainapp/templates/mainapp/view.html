@@ -59,11 +59,7 @@
             {% for table in side_tables %}
             <div class="table-wrap">
                 <div class="table-title">{{ table.title }}</div>
-                {% if table.linked %}
-                <table class="myTable" linked link="{{ table.link }}">
-                {% else %}
                 <table class="myTable">
-                {% endif %}
                     <thead>
                         <tr>
                             {% for f in table.head %}
@@ -72,15 +68,13 @@
                         </tr>
                     </thead>
                     <tbody>
-
                         {% for record in table.records %}
-                            {% if table.linked %}
-                            <tr rec_id="{{ record.id }}">
+                            {% if record.link != '' %}
+                            <tr link="{{ record.link }}">
                             {% else %}
                             <tr>
                             {% endif %}
-
-                                {% for f in record %}
+                                {% for f in record.fields %}
                                 <td>
                                     {% if f.type == 'text' %}{{ f.text }}{% endif %}
                                     {% if f.type == 'file' %}<a href="{{ f.link }}" download>{{ f.text }}</a>{% endif %}
@@ -88,7 +82,6 @@
                                 {% endfor %}
                             </tr>
                         {% endfor %}
-
                     </tbody>
                 </table>
             </div>
@@ -103,7 +96,6 @@
         <form method="post">
             {% csrf_token %}
             <p id="delete-message"></p>
-<!--            <input type="number" id="delete-rec" name="delete-rec" value="1">-->
             <div>
                 <button class="my-button" type="submit">Да</button>
                 <button class="my-button-red" id="cancel-delete">Нет</button>
@@ -119,4 +111,5 @@
     <script src="{% static 'mainapp/js/sidebar.js' %}"></script>
     <script src="{% static 'mainapp/js/overlay.js' %}"></script>
     <script src="{% static 'mainapp/js/table-resize.js' %}"></script>
+    <script src="{% static 'mainapp/js/table-link.js' %}"></script>
 {% endblock %}

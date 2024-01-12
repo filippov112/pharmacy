@@ -1,11 +1,14 @@
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.template import RequestContext
 from django.urls import reverse
-
 from ..forms import CustomAuthenticationForm
-from ..models import Medicine
-from ..utils import get_default_context, required_presc
+from ..models import Medicine, Prescription, Order, LegalEntity, PhysicalPerson, Doctor, MedicalFacility, MedicineGroup, Receipt, \
+    Certificate, Contract, Supplier
+from ..utils import get_default_context, required_presc, get_view_context, get_user_permissions, check_user_rules, get_list_context
+from pharmacy.settings import STATIC_URL
 
 
 def login_view(request):
@@ -54,8 +57,14 @@ def reports_list(request):
     return render(request, 'mainapp/index.html', context | custom_context)
 
 
-@login_required(login_url=login_view)
-def error_access(request):
+def error_access(request, exception=0):
     context = get_default_context('index', user=request.user)
-    custom_context = {}
-    return render(request, 'mainapp/index.html', context | custom_context)
+    custom_context = {
+        'fav': STATIC_URL + 'mainapp/other/favicon.jpg',
+        'error': STATIC_URL + 'mainapp/css/error.css',
+        'common': STATIC_URL + 'mainapp/css/common.css',
+        'def': STATIC_URL + 'mainapp/css/default.css',
+        'smile': STATIC_URL + 'mainapp/svg/smile.svg',
+        'bg': STATIC_URL + 'mainapp/other/bg.jpg',
+    }
+    return render(request, '404.html', context | custom_context, status=404)

@@ -39,7 +39,7 @@ document.querySelectorAll('tbody .delete-record').forEach(function (checkbox) {
     } );
 });
 // Обработка клика по ячейке чекбокса
-document.querySelectorAll('.table-wrap:not([select]).delete-col').forEach(el => el.addEventListener('mousedown', function(e) {
+document.querySelectorAll('.table-wrap:not([select]) .delete-col').forEach(el => el.addEventListener('mousedown', function(e) {
     if (e.target.tagName.toLowerCase() !== 'input') {
         let chb = e.target.querySelector('.delete-record');
         chb.click();

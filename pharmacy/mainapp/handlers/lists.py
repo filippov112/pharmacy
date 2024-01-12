@@ -1,7 +1,5 @@
 from .commons import *
-from ..models import Prescription, Order, LegalEntity, PhysicalPerson, Doctor, MedicalFacility, MedicineGroup, Receipt, \
-    Certificate, Contract, Supplier
-from ..utils import get_list_context, get_selects
+
 
 
 @login_required(login_url=login_view)
@@ -20,11 +18,11 @@ def medicine_list(request):
         form_name = request.POST.get('form_name')
         if form_name == "filters":
             pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_medicine'):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id=any(dl)).delete()
+            records = o.objects.all()
     else:
         records = o.objects.all()
 
