@@ -30,11 +30,12 @@ def medicine_list(request):
     list_context = get_list_context(n, elements, records, no_elem_table=True)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
+        'desc_table': [x['title'] for x in elements],
         'elem_table': [
             {
                 'link': reverse('medicine_id', args=[x.id]),
                 'id': x.id,
-                'fields': [x.article, x.name, x.group.__str__(), required_presc(x.pre_required)]
+                'fields': [x.article, x.name, str(x.group), required_presc(x.pre_required)]
             }
             for x in records
         ],
@@ -48,7 +49,7 @@ def prescription_list(request):
     n = 'prescription'
     elements = [
         {'field': 'number'              , 'title': 'Номер'          , 'type': 'text'},
-        {'field': 'physical_person'     , 'title': 'Клиент'         , 'type': 'link'    , 'select': 's-physical'},
+        {'field': 'physical_person'     , 'title': 'Клиент'         , 'type': 'link'    , 'select': 's-physic'},
         {'field': 'prescription_date'   , 'title': 'Дата рецепта'   , 'type': 'date'},
         {'field': 'doctor'              , 'title': 'Врач'           , 'type': 'link'    , 'select': 's-doctor'},
         {'field': 'status'              , 'title': 'Статус'         , 'type': 'text'},
@@ -84,7 +85,7 @@ def order_list(request):
     elements = [
         {'field': 'number'          , 'title': 'Номер заказа'   , 'type': 'number'  },
         {'field': 'date'            , 'title': 'Дата заказа'    , 'type': 'date'    },
-        {'field': 'physical_person' , 'title': 'Клиент физ.'    , 'type': 'link', 'select': 's-physical'},
+        {'field': 'physical_person' , 'title': 'Клиент физ.'    , 'type': 'link', 'select': 's-physic'},
         {'field': 'legal_entity'    , 'title': 'Клиент юр.'     , 'type': 'link', 'select': 's-legal'},
         {'field': 'seller'          , 'title': 'Продавец'       , 'type': 'link', 'select': 's-user'},
     ]
@@ -103,9 +104,23 @@ def order_list(request):
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, no_elem_table=True)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
+        'desc_table': ['Номер заказа', 'Дата заказа', 'Клиент', 'Продавец'],
+        'elem_table': [
+            {
+                'link': reverse(n + '_id', args=[x.id]),
+                'id': x.id,
+                'fields': [
+                    x.number,
+                    x.date,
+                    str(x.physical_person) if x.physical_person else str(x.legal_entity),
+                    str(x.seller),
+                ]
+            }
+            for x in records
+        ],
     }
     return render(request, 'mainapp/list.html', default_context | list_context | custom_context)
 
@@ -360,7 +375,7 @@ def contract_list(request):
     n = 'contract'
     elements = [
         {'field': 'number'      , 'title': 'Номер'      , 'type': 'number'  },
-        {'field': 'supplier'    , 'title': 'Поставщик'  , 'type': 'link'    , 'select': 's-supplier'},
+        {'field': 'supplier'    , 'title': 'Поставщик'  , 'type': 'link'    , 'select':'s-supplier' },
         {'field': 'start_date'  , 'title': 'Дата начала', 'type': 'date'    },
     ]
     # Номер, Поставщик, Дата начала

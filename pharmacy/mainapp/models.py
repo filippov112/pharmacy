@@ -206,17 +206,29 @@ class Doctor(models.Model):
     work_schedule = models.CharField(max_length=100, verbose_name='График работы')  # График работы
 
     Index(fields=['id', 'last_name', 'first_name', 'middle_name', 'facility'])
+
+    def FIO(self, last_name, first_name, middle_name):
+        formatted_name = last_name.capitalize() if last_name else ''
+        if first_name and len(first_name) > 0:
+            formatted_name += ' ' + first_name[0].upper() + '.' if formatted_name else first_name[0] + '.'
+        if middle_name and len(middle_name) > 0:
+            formatted_name += ' ' + middle_name[0].upper() + '.' if formatted_name else middle_name[0] + '.'
+        return formatted_name
+
     def __str__(self):
-        return f"{self.last_name} {self.first_name} - {self.specialization}"  # Отображение врача в админке
+        ln = self.last_name if self.last_name else ''
+        fn = self.first_name if self.first_name else ''
+        mn = self.middle_name if self.middle_name else ''
+        return self.FIO(ln, fn, mn)
+
     def get_absolute_url(self):
         return reverse('doctor_list', args=[str(self.id)])
+
     class Meta:
         verbose_name = 'Врач'
         verbose_name_plural = 'Врачи'
         ordering = ['facility', 'last_name', 'first_name', 'middle_name']
         db_table = 'Doctor'
-
-
 
 class PhysicalPerson(models.Model):
     id = models.AutoField(primary_key=True)
@@ -231,8 +243,20 @@ class PhysicalPerson(models.Model):
     benefits = models.TextField(blank=True, verbose_name='Предоставляемые льготы')  # Предоставляемые льготы
 
     Index(fields=['id', 'last_name', 'first_name', 'middle_name' ])
+
+    def FIO(self, last_name, first_name, middle_name):
+        formatted_name = last_name.capitalize() if last_name else ''
+        if first_name and len(first_name) > 0:
+            formatted_name += ' ' + first_name[0].upper() + '.' if formatted_name else first_name[0] + '.'
+        if middle_name and len(middle_name) > 0:
+            formatted_name += ' ' + middle_name[0].upper() + '.' if formatted_name else middle_name[0] + '.'
+        return formatted_name
+
     def __str__(self):
-        return f"{self.last_name} {self.first_name}"  # Отображение имени и фамилии лица в админке
+        ln = self.last_name if self.last_name else ''
+        fn = self.first_name if self.first_name else ''
+        mn = self.middle_name if self.middle_name else ''
+        return self.FIO(ln, fn, mn)
     def get_absolute_url(self):
         return reverse('physicalperson_list', args=[str(self.id)])
     class Meta:
@@ -274,6 +298,21 @@ class Profile(models.Model):
     phone = models.CharField(max_length=15, verbose_name='Телефон')  # Телефон
 
     Index(fields=['user', ])
+
+    def FIO(self, last_name, first_name, middle_name):
+        formatted_name = last_name.capitalize() if last_name else ''
+        if first_name and len(first_name) > 0:
+            formatted_name += ' ' + first_name[0].upper() + '.' if formatted_name else first_name[0] + '.'
+        if middle_name and len(middle_name) > 0:
+            formatted_name += ' ' + middle_name[0].upper() + '.' if formatted_name else middle_name[0] + '.'
+        return formatted_name
+
+    def __str__(self):
+        ln = self.user.last_name if self.user.last_name else ''
+        fn = self.user.first_name if self.user.first_name else ''
+        mn = self.middle_name if self.middle_name else ''
+        return self.FIO(ln, fn, mn)
+
     class Meta:
         verbose_name = 'Профиль'
         verbose_name_plural = 'Профили'
@@ -285,7 +324,7 @@ class Order(models.Model):
     number = models.IntegerField( verbose_name='Номер', unique=True)  # Номер заказа
     physical_person = models.ForeignKey(PhysicalPerson, on_delete=models.PROTECT, blank=True, null=True, verbose_name='Физическое лицо')  # Физическое лицо
     legal_entity = models.ForeignKey(LegalEntity, on_delete=models.PROTECT, blank=True, null=True, verbose_name='Юридическое лицо')  # Юридическое лицо
-    seller = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Продавец')  # Продавец
+    seller = models.ForeignKey(Profile, on_delete=models.PROTECT, verbose_name='Продавец')  # Продавец
 
     Index(fields=['number', 'date', 'physical_person', 'legal_entity', 'seller', ])
 
@@ -335,7 +374,7 @@ class Prescription(models.Model):
 
     Index(fields=['id', 'number', 'physical_person'])
     def __str__(self):
-        return f"Рецепт №{self.number} от {self.prescription_date}, Врач - {self.doctor.__str__()}"
+        return f"Рецепт №{self.number} от {self.prescription_date}, Врач - {str(self.doctor)}"
     def get_absolute_url(self):
         return reverse('prescription_list', args=[str(self.id)])
     class Meta:

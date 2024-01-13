@@ -1,9 +1,32 @@
 from django.contrib.auth.models import Group
+from django.urls import reverse
 
-from .models import *
+
+
 from datetime import datetime
 from django.core.files.storage import FileSystemStorage
 
+from .models import Medicine, Prescription, Order, LegalEntity, PhysicalPerson, Doctor, MedicalFacility, \
+    MedicineGroup, Receipt, Certificate, Contract, Supplier, PrescComposition, Profile
+
+
+def get_gender(b):
+    return "Жен." if b else "Муж."
+
+
+def get_link(url_name, field):
+    if field:
+        return reverse(url_name, args=[field.id])
+    return ''
+
+# Формируем фио из составляющих
+def get_FIO(last_name, first_name, middle_name):
+    formatted_name = last_name.capitalize() if last_name else ''
+    if first_name and len(first_name) > 0:
+        formatted_name += ' ' + first_name[0].upper() + '.' if formatted_name else first_name[0] + '.'
+    if middle_name and len(middle_name) > 0:
+        formatted_name += ' ' + middle_name[0].upper() + '.' if formatted_name else middle_name[0] + '.'
+    return formatted_name
 
 def check_user_rules(usr, rule):
     if usr.is_superuser or rule in get_user_permissions(usr):
@@ -23,26 +46,6 @@ def get_user_permissions(usr):
             perms.add(p.codename)
     return perms
 
-# def replace_null(dic, row=''):
-#     ret_dic = {}
-#     for key in dic.keys():
-#         if dic[key] == '':
-#             if key in ['couple-' + row + '-3', 'time_begin', 'time_end']:
-#                 ret_dic[key] = '00:00'
-#             if key in ['date', 'birth', 'd_passport', 'dn']:
-#                 ret_dic[key] = '1900-01-01'
-#             if key in ['de']:
-#                 ret_dic[key] = '2045-05-09'
-#             if key in ['couple-' + row + '-0', 'couple-' + row + '-1', 'hippodrome', 'city', 'owner', 'race', 'horse',
-#                        'jockey']:
-#                 ret_dic[key] = '-1'
-#             if key in ['couple-' + row + '-2', 'distance', 'summa', 's_passport', 'n_passport', 'age', 'report']:
-#                 ret_dic[key] = '0'
-#         else:
-#             ret_dic[key] = dic[key]
-#     return ret_dic
-
-
 
 # Логическое поле "Требует рецепта" для модели лекарства
 def required_presc(v):
@@ -53,69 +56,30 @@ def required_presc(v):
 
 
 # Список выборок
-def get_selects(s_list):
-    list_s = []
-    for v in s_list:
-        obj = check_select(v)
-        if obj != {}:
-            list_s.append(obj)
-    return list_s
-def check_select(s):
-    match s:
-        case 's-supplier':
-            return {
-                'name': s,
-                'title': 'Поставщики',
-                'records': [ {'pk': x.id, 'text': x.__str__() } for x in Supplier.objects.all()]
-            }
-        case 's-contract':
-            return {
-                'name': s,
-                'title': 'Договоры',
-                'records': [{'pk': x.id, 'text': x.__str__()} for x in Contract.objects.all()]
-            }
-        case 's-medicine':
-            return {
-                'name': s,
-                'title': 'Каталог препаратов',
-                'records': [{'pk': x.id, 'text': x.__str__()} for x in Medicine.objects.all()]
-            }
-        case 's-med-group':
-            return {
-                'name': s,
-                'title': 'Группы препаратов',
-                'records': [{'pk': x.id, 'text': x.__str__()} for x in MedicineGroup.objects.all()]
-            }
-        case 's-physical':
-            return {
-                'name': s,
-                'title': 'Клиенты Физ.',
-                'records': [{'pk': x.id, 'text': x.__str__()} for x in PhysicalPerson.objects.all()]
-            }
-        case 's-legal':
-            return {
-                'name': s,
-                'title': 'Клиенты Юр.',
-                'records': [{'pk': x.id, 'text': x.__str__()} for x in LegalEntity.objects.all()]
-            }
-        case 's-user':
-            return {
-                'name': s,
-                'title': 'Сотрудники',
-                'records': [{'pk': x.id, 'text': x.__str__()} for x in User.objects.all()]
-            }
-        case 's-doctor':
-            return {
-                'name': s,
-                'title': 'Врачи',
-                'records': [{'pk': x.id, 'text': x.__str__()} for x in Doctor.objects.all()]
-            }
-        case 's-facility':
-            return {
-                'name': s,
-                'title': 'Лечебные организации',
-                'records': [{'pk': x.id, 'text': x.__str__()} for x in MedicalFacility.objects.all()]
-            }
+def get_title_select(s_name):
+    match s_name:
+        case 's-supplier': return 'Поставщики'
+        case 's-contract': return 'Договоры'
+        case 's-medicine': return 'Каталог препаратов'
+        case 's-med-group': return 'Группы препаратов'
+        case 's-physic': return 'Клиенты Физ.'
+        case 's-legal': return 'Клиенты Юр.'
+        case 's-user': return 'Сотрудники'
+        case 's-doctor': return 'Врачи'
+        case 's-facility': return 'Лечебные организации'
+    return ''
+
+def get_obj_select(s_name):
+    match s_name:
+        case 's-supplier': return Supplier
+        case 's-contract': return Contract
+        case 's-medicine': return Medicine
+        case 's-med-group': return MedicineGroup
+        case 's-physic': return PhysicalPerson
+        case 's-legal': return LegalEntity
+        case 's-user': return Profile
+        case 's-doctor': return Doctor
+        case 's-facility': return MedicalFacility
     return {}
 
 # Сайдбар
@@ -247,7 +211,7 @@ def get_default_context(_task='', user=None):
         try:
             prf = Profile.objects.get(user=user.id)
             rez['user'] = {
-                'fio': user.last_name + ' ' + user.first_name[0].upper() + '.' + prf.middle_name[0].upper() + '.',
+                'fio': get_FIO(user.last_name, user.first_name, prf.middle_name),
                 'job': prf.position,
             }
         except:
@@ -260,9 +224,18 @@ def get_default_context(_task='', user=None):
 def get_list_context(_name, _elements, _records, no_elem_table=False):
     ret = {}
     ret['title_view'] = { x['name']: x['title'] for x in get_side_menu(su_mod=True)}[_name]
-    ret['desc_table'] = [ x['title'] for x in _elements ]
     ret['sorting_table'] = [{'name': e['field'], 'title': e['title']} for e in _elements]
-    ret['list_selects'] = get_selects([e['select'] if e['type'] == 'link' else '' for e in _elements])
+
+    ret['list_selects'] = []
+    for e in _elements:
+        if e['type'] == 'link':
+            s = e['select']
+            ret['list_selects'].append({
+                'name': s,
+                'title': get_title_select(s),
+                'records': [{'pk': x.id, 'text': str(x)} for x in get_obj_select(s).objects.all()]
+            })
+
     ret['filters'] = [
         {
             'names': ['f-' + e['field'], ] if e['type'] != 'date' else ['f-' + e['field'] + '-dn',
@@ -274,12 +247,13 @@ def get_list_context(_name, _elements, _records, no_elem_table=False):
         for e in _elements
     ]
     if not no_elem_table:
+        ret['desc_table'] = [x['title'] for x in _elements]
         ret['elem_table'] = [
             {
                 'link': reverse(_name+'_id', args=[x.id]),
                 'id': x.id,
                 'fields': [
-                    getattr(x, e['field']) if e['type'] != 'link' else getattr(x, e['field']).__str__()
+                    getattr(x, e['field']) if e['type'] != 'link' else str(getattr(x, e['field']))
                     for e in _elements
                 ]
             }
@@ -292,6 +266,6 @@ def get_list_context(_name, _elements, _records, no_elem_table=False):
 def get_view_context(_name, _record, _ob):
     ret = {}
     ret['edit_link'] = reverse(_name+'_edit', args=[_record])
-    ret['title_view'] = _ob.__str__()
+    ret['title_view'] = str(_ob)
     ret['bread_crumbs'] = get_bread_crumbs(_name)
     return ret

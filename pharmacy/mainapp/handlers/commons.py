@@ -5,9 +5,11 @@ from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.urls import reverse
 from ..forms import CustomAuthenticationForm
-from ..models import Medicine, Prescription, Order, LegalEntity, PhysicalPerson, Doctor, MedicalFacility, MedicineGroup, Receipt, \
-    Certificate, Contract, Supplier
-from ..utils import get_default_context, required_presc, get_view_context, get_user_permissions, check_user_rules, get_list_context
+from ..models import Medicine, Prescription, Order, LegalEntity, PhysicalPerson, Doctor, MedicalFacility, \
+    MedicineGroup, Receipt, Certificate, Contract, Supplier, PrescComposition, OrderComposition, ReceiptItem,\
+    CertificateAttachment, ContractMedicine
+from ..utils import get_default_context, required_presc, get_view_context, get_user_permissions, check_user_rules, \
+    get_list_context, get_FIO, get_gender, get_link
 from pharmacy.settings import STATIC_URL
 
 
