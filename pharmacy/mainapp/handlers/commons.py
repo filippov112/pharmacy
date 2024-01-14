@@ -1,3 +1,5 @@
+from django.db import IntegrityError
+from django.http import HttpResponseServerError
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -9,15 +11,15 @@ from ..models import Medicine, Prescription, Order, LegalEntity, PhysicalPerson,
     MedicineGroup, Receipt, Certificate, Contract, Supplier, PrescComposition, OrderComposition, ReceiptItem,\
     CertificateAttachment, ContractMedicine
 from ..utils import get_default_context, required_presc, get_view_context, get_user_permissions, check_user_rules, \
-    get_list_context, get_FIO, get_gender, get_link
+    get_list_context, get_FIO, get_gender, get_link, get_edit_context, save_record
 from pharmacy.settings import STATIC_URL
 
 
 def login_view(request):
+    error = ''
     # Обрабатываем представление только для неавторизованных пользователей
     if not request.user.is_authenticated:
         load_view = False
-        error = ''
         # Отправка данных авторизации
         if request.method == 'POST':
             form = CustomAuthenticationForm(data=request.POST, remember=request.POST.get('remember'))
@@ -36,7 +38,7 @@ def login_view(request):
             load_view = True
             form = CustomAuthenticationForm()
         if load_view:
-            context = get_default_context('login')
+            context = get_default_context('login', title='Авторизация')
             custom_context = {'form': form, 'error': error, }
             return render(request, 'mainapp/login.html', context | custom_context)
 
@@ -47,14 +49,16 @@ def login_view(request):
 
 @login_required(login_url=login_view)
 def index_view(request):
-    context = get_default_context('index', user=request.user)
+    error = ''
+    context = get_default_context('index', user=request.user, title='Заглавная')
     custom_context = {}
     return render(request, 'mainapp/index.html', context | custom_context)
 
 
 @login_required(login_url=login_view)
 def reports_list(request):
-    context = get_default_context('index', user=request.user)
+    error = ''
+    context = get_default_context('index', user=request.user, title='')
     custom_context = {}
     return render(request, 'mainapp/index.html', context | custom_context)
 

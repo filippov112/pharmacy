@@ -4,14 +4,20 @@ from .commons import *
 @permission_required('mainapp.view_prescription', raise_exception=True)
 @login_required(login_url=login_view)
 def prescription_id(request, record):
+    error = ''
     ob = Prescription.objects.get(id=record)
     n = 'prescription'
+    fn = 'prescription'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_prescription'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # Скан, Номер, Физ.лицо, Врач, Дата рецепта, Дата обращения, Статус
         'content_view': [
@@ -46,14 +52,20 @@ def prescription_id(request, record):
 @permission_required('mainapp.view_order', raise_exception=True)
 @login_required(login_url=login_view)
 def order_id(request, record):
+    error = ''
     ob = Order.objects.get(id=record)
     n = 'order'
+    fn = 'order'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_order'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     if ob.physical_person is None:
         client_link = reverse("legal_id", args=[ob.legal_entity.id])
         client = ob.legal_entity
@@ -92,14 +104,20 @@ def order_id(request, record):
 @permission_required('mainapp.view_legalentity', raise_exception=True)
 @login_required(login_url=login_view)
 def legal_id(request, record):
+    error = ''
     ob = LegalEntity.objects.get(id=record)
     n = 'legal'
+    fn = 'legalentity'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_legalentity'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # Название, Адрес, ИНН, КПП, Телефон, Контакт, Должность контакта, Скидки
         'content_view': [
@@ -136,14 +154,20 @@ def legal_id(request, record):
 @permission_required('mainapp.view_physicalperson', raise_exception=True)
 @login_required(login_url=login_view)
 def physic_id(request, record):
+    error = ''
     ob = PhysicalPerson.objects.get(id=record)
     n = 'physic'
+    fn = 'physicalperson'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_physicalperson'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # ФИО, Город, Адрес, Телефон, Дата рождения, Пол, Льготы
         'content_view': [
@@ -194,14 +218,20 @@ def physic_id(request, record):
 @permission_required('mainapp.view_doctor', raise_exception=True)
 @login_required(login_url=login_view)
 def doctor_id(request, record):
+    error = ''
     ob = Doctor.objects.get(id=record)
     n = 'doctor'
+    fn = 'doctor'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_doctor'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # ФИО, Должность, Специализация, Учреждение, Телефон, График работы
         'content_view': [
@@ -236,14 +266,20 @@ def doctor_id(request, record):
 @permission_required('mainapp.view_medicalfacility', raise_exception=True)
 @login_required(login_url=login_view)
 def facility_id(request, record):
+    error = ''
     ob = MedicalFacility.objects.get(id=record)
     n = 'facility'
+    fn = 'medicalfacility'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_medicalfacility'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # Название, Город, Адрес, Телефон, Почта, График работы, Профили
         'content_view': [
@@ -279,14 +315,20 @@ def facility_id(request, record):
 @permission_required('mainapp.view_receipt', raise_exception=True)
 @login_required(login_url=login_view)
 def receipt_id(request, record):
+    error = ''
     ob = Receipt.objects.get(id=record)
     n = 'receipt'
+    fn = 'receipt'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_receipt'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # Договор, Дата
         'content_view': [
@@ -317,14 +359,20 @@ def receipt_id(request, record):
 @permission_required('mainapp.view_certificate', raise_exception=True)
 @login_required(login_url=login_view)
 def certificate_id(request, record):
+    error = ''
     ob = Certificate.objects.get(id=record)
     n = 'certificate'
+    fn = 'certificate'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_certificate'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # Скан, Номер, Препарат, Поставщик, Дата начала, Дата окончания, Орган
         'content_view': [
@@ -358,14 +406,20 @@ def certificate_id(request, record):
 @permission_required('mainapp.view_contract', raise_exception=True)
 @login_required(login_url=login_view)
 def contract_id(request, record):
+    error = ''
     ob = Contract.objects.get(id=record)
     n = 'contract'
+    fn = 'contract'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_contract'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # Скан, Номер, Поставщик, Дата начала, Дата окончания, Сроки поставки, Размеры партий,
         # Способ оплаты, Условия доставки, Возможность пролонгации, Прочие условия
@@ -420,14 +474,20 @@ def contract_id(request, record):
 @permission_required('mainapp.view_supplier', raise_exception=True)
 @login_required(login_url=login_view)
 def supplier_id(request, record):
+    error = ''
     ob = Supplier.objects.get(id=record)
     n = 'supplier'
+    fn = 'supplier'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_supplier'):
-        ob.delete()
-        return redirect(n+'_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # Наименование, Город, Адрес, Телефон, Почта, ИНН, КПП, ОГРН
         'content_view': [
@@ -479,14 +539,20 @@ def supplier_id(request, record):
 @permission_required('mainapp.view_medicinegroup', raise_exception=True)
 @login_required(login_url=login_view)
 def med_group_id(request, record):
+    error = ''
     ob = MedicineGroup.objects.get(id=record)
     n = 'med_group'
+    fn = 'medicinegroup'
     if request.method == 'POST' and check_user_rules(request.user, 'delete_medicinegroup'):
-        ob.delete()
-        return redirect(n + '_list')
+        try:
+            ob.delete()
+            return redirect(n + '_list')
+        except IntegrityError as e:
+            error = 'Существуют связанные записи: ' + ', '.join(
+                [str(x) for x in (e.protected_objects if e.protected_objects else [])])
 
-    default_context = get_default_context(n, user=request.user)
-    view_context = get_view_context(n, record, ob)
+    default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
+    view_context = get_view_context(n, record, ob, fn, request.user)
     custom_context = {
         # Название
         'content_view': [

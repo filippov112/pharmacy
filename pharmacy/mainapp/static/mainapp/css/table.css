@@ -43,6 +43,7 @@ table.myTable tbody td:has(a):hover {
     margin-right: 50px;
     color:white;
     font-size: 20px;
+    text-wrap:nowrap;
 }
 thead {
   position: sticky;

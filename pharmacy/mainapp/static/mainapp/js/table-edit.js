@@ -7,15 +7,16 @@ let list_tbody = Array.from(document.querySelectorAll('.table-wrap:has(tbody[nam
 function refrashNamesInputs() {
     list_tbody.forEach(tb => {
         let table_name = tb.getAttribute("name");
-        let table_fields_count = tb.getAttribute("fields").split(";").length;
+        let table_fields = tb.getAttribute("fields").split(";")
+        let tf_names = table_fields.map((x) => { return x.split(":")[0]} );
+        let t_count = tf_names.length;
 
         let list_inputs = Array.from(tb.getElementsByTagName("INPUT"));
         for(let i = 0; i < list_inputs.length; i++) {
-            list_inputs[i].setAttribute("name", table_name + "-" + String(parseInt( i / table_fields_count ))+"-"+String( i % table_fields_count ));
+            list_inputs[i].setAttribute("name", table_name + "-" +tf_names[i % t_count]+"-"+ String(parseInt(i / t_count))  );
         }
     })
 }
-
 
 
 // Список актуальных файловых записей, не подлежащих удалению при сохранении
@@ -75,18 +76,17 @@ Array.from(document.querySelectorAll(".table-title img")).forEach(add_button => 
     add_button.addEventListener('click', (e)=>{
         let tbody = e.target.parentElement.parentElement.getElementsByTagName("tbody")[0];
         let table_fields = tbody.getAttribute("fields").split(";");
-
         if (table_fields.length > 0) {
             tag_tr = document.createElement("tr");
 
             table_fields.forEach(field => {
                 let f_arr = field.split(":");
-                let f_name = f_arr[0];
-                
+                let f_type = f_arr[1];
+                let f_select = f_arr[2];
+
                 tag_td = document.createElement("td");
                 tag_input = document.createElement("input");
-
-                switch(f_name) {
+                switch(f_type) {
                     case 'text':
                         tag_input.setAttribute("type", "text");
                         tag_td.append(tag_input);
@@ -111,7 +111,6 @@ Array.from(document.querySelectorAll(".table-title img")).forEach(add_button => 
                         // </button>
                         tag_button = document.createElement("button");
                         tag_button.setAttribute("select", "");
-                        f_select = f_arr.length > 1 ? f_arr[1] : '';
                         tag_button.setAttribute("select-name", f_select);
 
                         tag_input.setAttribute("type", "number");

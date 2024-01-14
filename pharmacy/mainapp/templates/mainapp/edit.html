@@ -41,22 +41,18 @@
                             </label>
                             {% endif %}
 
-                            {% if input.type == 'string' %}
-                            <input type="text" name="{{ input.name }}" value="{{ input.value }}">
+                            {% if input.type == 'text' or input.type == 'number' or input.type == 'date' %}
+                            <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}"> 
+                            {% endif %}
+                            
+                            {% if input.type == 'checkbox' %}
+                            <input class="form-check-input" type="{{ input.type }}"  name="{{ input.name }}" value="{{ input.value }}">
                             {% endif %}
 
-                            {% if input.type == 'text' %}
+                            {% if input.type == 'textarea' %}
                             <textarea name="{{ input.name }}">
                                 {{ input.value }}
                             </textarea>
-                            {% endif %}
-
-                            {% if input.type == 'number' %}
-                            <input type="number" name="{{ input.name }}" value="{{ input.value }}">
-                            {% endif %}
-
-                            {% if input.type == 'date' %}
-                            <input type="date" name="{{ input.name }}" value="{{ input.value }}">
                             {% endif %}
 
                             {% if input.type == 'file' %}

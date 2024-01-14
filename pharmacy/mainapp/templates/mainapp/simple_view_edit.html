@@ -15,12 +15,16 @@
 
 {% block head %}
     {% if task == 'view' %}
+        {% if delete_rule %}
         <button id="delete-record">
             <img src="{% static 'mainapp/svg/delete.svg' %}">
         </button>
-        <a href="{% url edit_link %}" id="edit-record">
+        {% endif %}
+        {% if change_rule %}
+        <a href="{{ edit_link }}" id="edit-record">
             <img src="{% static 'mainapp/svg/edit.svg' %}">
         </a>
+        {% endif %}
     {% else %}
         <button id="save-record">
             <img src="{% static 'mainapp/svg/save.svg' %}">
@@ -30,96 +34,98 @@
 
 
 {% block body %}
-    {% if task != 'view' %}<form method="post" enctype="multipart/form-data">{% csrf_token %}{% endif %}
-        <div id="body-container">
-            <div id="right-block-head">
+    {% if task != 'view' %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+    {% endif %}
+
+            <div id="body-container">
+                <div id="right-block-head">
+                    {% if task == 'view' %}
+                        {{ title_view }}
+                    {% else %}
+                        Редактирование записи
+                    {% endif %}
+                </div>
                 {% if task == 'view' %}
-                    {{ title_view }}
+                    {% for field in content_view %}
+                        {% if field.type == 'image' %}
+                            <div class="record-image-block">
+                                <img src="{{ field.link }}">
+                            </div>
+                        {% endif %}
+
+                        {% if field.type == 'text' %}
+                            <div class="record-text-block">
+                                <div class="rtb-title">{{ field.title }}</div>
+                                <div class="rtb-body">{{ field.text }}</div>
+                            </div>
+                        {% endif %}
+
+                        {% if field.type == 'link' %}
+                            <div class="record-link-block">
+                                <div>{{ field.title }}:</div>
+                                <a href="{{ field.link }}">{{ field.text }}</a>
+                            </div>
+                        {% endif %}
+
+                        {% if field.type == 'file' %}
+                            <div class="record-link-block">
+                                <div>{{ field.title }}:</div>
+                                <a href="{{ field.link }}" download>{{ field.text }}</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 {% else %}
-                    Редактирование записи
+                    {% for input in input_fields %}
+                        <div class="edit-input-block">
+                            <div>{{ input.title }}</div>
+                            <div>
+                                {% if input.type == 'image' %}
+                                    <label>
+                                        <input image type="file" name="{{ input.name }}">
+                                        <img src="{{ input.url }}">
+                                    </label>
+                                {% endif %}
+
+                                {% if input.type == 'text' or input.type == 'number' or input.type == 'date' %}
+                                    <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}">
+                                    
+
+                                {% endif %}
+                                
+                                {% if input.type == 'checkbox' %}
+                                    <input class="form-check-input" type="{{ input.type }}"  name="{{ input.name }}" value="{{ input.value }}">
+                                {% endif %}
+
+                                {% if input.type == 'textarea' %}
+                                    <textarea name="{{ input.name }}">
+                                        {{ input.value }}
+                                    </textarea>
+                                {% endif %}
+
+                                {% if input.type == 'file' %}
+                                    <label>
+                                        <p>{{ input.text_value }}</p>
+                                        <input type="file" name="{{ input.name }}">
+                                    </label>
+                                {% endif %}
+
+                                {% if input.type == 'link' %}
+                                    <button select select-name="{{ input.select }}">
+                                        <input type="text" name="{{ input.name }}">
+                                        <p>{{ input.text_value }}</p>
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button id="save-record-button" type="submit"></button>
                 {% endif %}
             </div>
-            {% if task == 'view' %}
-                {% for field in content_view %}
-                    {% if field.type == 'image' %}
-                        <div class="record-image-block">
-                            <img src="{{ field.link }}">
-                        </div>
-                    {% endif %}
-
-                    {% if field.type == 'text' %}
-                        <div class="record-text-block">
-                            <div class="rtb-title">{{ field.title }}</div>
-                            <div class="rtb-body">{{ field.text }}</div>
-                        </div>
-                    {% endif %}
-
-                    {% if field.type == 'link' %}
-                        <div class="record-link-block">
-                            <div>{{ field.title }}:</div>
-                            <a href="{{ field.link }}">{{ field.text }}</a>
-                        </div>
-                    {% endif %}
-
-                    {% if field.type == 'file' %}
-                        <div class="record-link-block">
-                            <div>{{ field.title }}:</div>
-                            <a href="{{ field.link }}" download>{{ field.text }}</a>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                {% for input in input_fields %}
-                    <div class="edit-input-block">
-                        <div>{{ input.title }}</div>
-                        <div>
-                            {% if input.type == 'image' %}
-                                <label>
-                                    <input image type="file" name="{{ input.name }}">
-                                    <img src="{{ input.url }}">
-                                </label>
-                            {% endif %}
-
-                            {% if input.type == 'string' %}
-                                <input type="text" name="{{ input.name }}" value="{{ input.value }}">
-                            {% endif %}
-
-                            {% if input.type == 'text' %}
-                                <textarea name="{{ input.name }}">
-                                    {{ input.value }}
-                                </textarea>
-                            {% endif %}
-
-                            {% if input.type == 'number' %}
-                                <input type="number" name="{{ input.name }}" value="{{ input.value }}">
-                            {% endif %}
-
-                            {% if input.type == 'date' %}
-                                <input type="date" name="{{ input.name }}" value="{{ input.value }}">
-                            {% endif %}
-
-                            {% if input.type == 'file' %}
-                                <label>
-                                    <p>{{ input.text_value }}</p>
-                                    <input type="file" name="{{ input.name }}">
-                                </label>
-                            {% endif %}
-
-                            {% if input.type == 'link' %}
-                                <button select select-name="{{ input.select }}">
-                                    <input type="text" name="{{ input.name }}">
-                                    <p>{{ input.text_value }}</p>
-                                </button>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-                <button id="save-record-button" type="submit"></button>
-            {% endif %}
-        </div>
 
     {% if task != 'view' %}
-    </form>
+        </form>
 
         <!-- БЛОК ВЫБОРОК -->
 
@@ -156,24 +162,27 @@
             </table>
         </div>
         {% endfor %}
-
         <!-- КОНЕЦ БЛОКА ВЫБОРОК -->
+    
+    {% else %}
 
+        <div id="modal-delete">
+            <div>
+                <p>Подтвердите удаление</p>
+            </div> 
+            <form method="post">
+                {% csrf_token %}
+                <p id="delete-message"></p>
+                <div>
+                    <button class="my-button" type="submit">Да</button>
+                    <button class="my-button-red" id="cancel-delete">Нет</button>
+                </div>
+            </form>
+        </div>
+    
     {% endif %}
 
-    <div id="modal-delete">
-        <div>
-            <p>Подтвердите удаление</p>
-        </div> 
-        <form method="post">
-            <p id="delete-message"></p>
-<!--            <input type="number" id="delete-rec" name="delete-rec" value="10">-->
-            <div>
-                <button class="my-button" type="submit">Да</button>
-                <button class="my-button-red" id="cancel-delete">Нет</button>
-            </div>
-        </form>
-    </div>
+    
 {% endblock %}
 
 

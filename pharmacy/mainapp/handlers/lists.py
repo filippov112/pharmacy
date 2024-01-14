@@ -4,6 +4,7 @@ from .commons import *
 
 @login_required(login_url=login_view)
 def medicine_list(request):
+    error = ''
     o = Medicine
     n = 'medicine'
     elements = [
@@ -26,7 +27,7 @@ def medicine_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Каталог препаратов', error=error)
     list_context = get_list_context(n, elements, records, no_elem_table=True)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -45,6 +46,7 @@ def medicine_list(request):
 
 @login_required(login_url=login_view)
 def prescription_list(request):
+    error = ''
     o = Prescription
     n = 'prescription'
     elements = [
@@ -68,7 +70,7 @@ def prescription_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Список рецептов', error=error)
     list_context    = get_list_context(n, elements, records)
     custom_context  = {
         'add_record': reverse(n+'_new', args=['new']),
@@ -80,6 +82,7 @@ def prescription_list(request):
 
 @login_required(login_url=login_view)
 def order_list(request):
+    error = ''
     o = Order
     n = 'order'
     elements = [
@@ -103,7 +106,7 @@ def order_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Список заказов', error=error)
     list_context = get_list_context(n, elements, records, no_elem_table=True)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -128,6 +131,7 @@ def order_list(request):
 
 @login_required(login_url=login_view)
 def legal_list(request):
+    error = ''
     o = LegalEntity
     n = 'legal'
     elements = [
@@ -150,7 +154,7 @@ def legal_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Клиенты - Юридические лица', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -163,6 +167,7 @@ def legal_list(request):
 
 @login_required(login_url=login_view)
 def physic_list(request):
+    error = ''
     o = PhysicalPerson
     n = 'physic'
     elements = [
@@ -187,7 +192,7 @@ def physic_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Клиенты - Физические лица', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -200,6 +205,7 @@ def physic_list(request):
 
 @login_required(login_url=login_view)
 def doctor_list(request):
+    error = ''
     o = Doctor
     n = 'doctor'
     elements = [
@@ -224,7 +230,7 @@ def doctor_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Реестр врачей', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -237,6 +243,7 @@ def doctor_list(request):
 
 @login_required(login_url=login_view)
 def facility_list(request):
+    error = ''
     o = MedicalFacility
     n = 'facility'
     elements = [
@@ -258,7 +265,7 @@ def facility_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Реестр учреждений', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -271,6 +278,7 @@ def facility_list(request):
 
 @login_required(login_url=login_view)
 def med_group_list(request):
+    error = ''
     o = MedicineGroup
     n = 'med_group'
     elements = [
@@ -290,7 +298,7 @@ def med_group_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Группы препаратов', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -303,6 +311,7 @@ def med_group_list(request):
 
 @login_required(login_url=login_view)
 def receipt_list(request):
+    error = ''
     o = Receipt
     n = 'receipt'
     elements = [
@@ -323,7 +332,7 @@ def receipt_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Список поставок', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -336,6 +345,7 @@ def receipt_list(request):
 
 @login_required(login_url=login_view)
 def certificate_list(request):
+    error = ''
     o = Certificate
     n = 'certificate'
     elements = [
@@ -358,7 +368,7 @@ def certificate_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Список сертификатов', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -371,6 +381,7 @@ def certificate_list(request):
 
 @login_required(login_url=login_view)
 def contract_list(request):
+    error = ''
     o = Contract
     n = 'contract'
     elements = [
@@ -392,7 +403,7 @@ def contract_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Список договоров поставок', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
@@ -405,6 +416,7 @@ def contract_list(request):
 
 @login_required(login_url=login_view)
 def supplier_list(request):
+    error = ''
     o = Supplier
     n = 'supplier'
     elements = [
@@ -426,7 +438,7 @@ def supplier_list(request):
     else:
         records = o.objects.all()
 
-    default_context = get_default_context(n, user=request.user)
+    default_context = get_default_context(n, user=request.user, title='Реестр поставщиков', error=error)
     list_context = get_list_context(n, elements, records)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),

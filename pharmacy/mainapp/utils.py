@@ -1,13 +1,10 @@
 from django.contrib.auth.models import Group
 from django.urls import reverse
-
-
-
 from datetime import datetime
 from django.core.files.storage import FileSystemStorage
-
 from .models import Medicine, Prescription, Order, LegalEntity, PhysicalPerson, Doctor, MedicalFacility, \
-    MedicineGroup, Receipt, Certificate, Contract, Supplier, PrescComposition, Profile
+    MedicineGroup, Receipt, Certificate, Contract, Supplier, PrescComposition, Profile, CertificateAttachment, \
+    ContractMedicine, ReceiptItem, OrderComposition
 
 
 def get_gender(b):
@@ -201,11 +198,13 @@ def get_bread_crumbs(_task):
 
 
 # Общий контекст
-def get_default_context(_task='', user=None):
+def get_default_context(_task='', user=None, title='', error=''):
     rez = {
+        'title': title,
         'sidebar': _task != 'login',
         'header': _task != 'login' and _task != 'index',
         'task': _task,
+        'error': error,
     }
     if user is not None:
         try:
@@ -263,9 +262,104 @@ def get_list_context(_name, _elements, _records, no_elem_table=False):
 
 
 # Контекст представлений
-def get_view_context(_name, _record, _ob):
+def get_view_context(_name, _record, _ob, _fn, _usr):
     ret = {}
     ret['edit_link'] = reverse(_name+'_edit', args=[_record])
     ret['title_view'] = str(_ob)
     ret['bread_crumbs'] = get_bread_crumbs(_name)
+    rules = get_user_permissions(_usr)
+    ret['delete_rule'] = 'delete_'+_fn in rules or _usr.is_superuser
+    ret['change_rule'] = 'change_'+_fn in rules or _usr.is_superuser
     return ret
+
+
+def get_edit_context(_name, _ob):
+    ret = {}
+    ret['bread_crumbs'] = get_bread_crumbs(_name)
+    ret['title_view'] = str(_ob)
+    return ret
+
+
+def get_object(n):
+    match n:
+        case 'CertificateAttachment':
+            return { 'obj':CertificateAttachment, 'fk':'certificate' }
+        case 'ContractMedicine':
+            return { 'obj':ContractMedicine, 'fk':'contract' }
+        case 'ReceiptItem':
+            return { 'obj':ReceiptItem, 'fk':'receipt' }
+        case 'OrderComposition':
+            return { 'obj':OrderComposition, 'fk':'order' }
+        case 'PrescComposition':
+            return { 'obj':PrescComposition, 'fk':'prescription' }
+    return {}
+
+def replace_null(d, key, select, o, field):
+    val = d[key]
+    field_type = o._meta.get_field(field).get_internal_type()
+    match field_type:
+        case '':
+            return ''
+        case '':
+            return ''
+        case '':
+            return ''
+        case '':
+            return ''
+        case '':
+            return ''
+        case '':
+            return ''
+        case '':
+            return ''
+    return val
+
+
+def save_record(record, o, dic, side_table_names={}):
+    # side_table_names = {'name': 'structure',}
+    ls_tables = {}
+    obj_record = {}
+    # Переберем запрос
+    for key in dic.keys():
+        str_key = key.split("-")
+        table_name = str_key[0]
+        # Найдем всё что связано со сторонними таблицами
+        if len(str_key) == 3 and table_name in side_table_names.keys():
+            field_name = str_key[1]
+            table_select = dict(map(lambda x: (x.split(":")[1], x.split(":")[2]), side_table_names[table_name].split(';')))[field_name]
+            field_n = str_key[2]
+            field_val = replace_null(dic, key, table_select, o, field_name)
+
+            if table_name not in ls_tables.keys():
+                ls_tables[table_name] = {}
+            if field_n not in ls_tables[table_name].keys():
+                ls_tables[table_name][field_n] = {}
+            ls_tables[table_name][field_n][field_name] = field_val
+        # Если это поле записи - внесем изменения
+        if len(str_key) == 2 and str_key[0] == 'i':
+            field_name = str_key[1]
+            table_select = \
+            dict(map(lambda x: (x.split(":")[1], x.split(":")[2]), side_table_names[table_name].split(';')))[field_name]
+            field_val = replace_null(dic, key, table_select, o, field_name)
+            obj_record[field_name] = field_val
+
+    # Сохраним запись после изменения
+    if record != 'new':
+        ob = o(id=record, **obj_record)
+    else:
+        ob = o(**obj_record)
+    ob.save()
+
+    # Почистим записи сторонних таблиц, прежде чем добавлять измененные (кроме файлов для сертификатов)
+    for table_name in side_table_names.keys():
+        o = get_object(table_name)
+        dic = {o['fk']:ob.id}
+        o['obj'].objects.filter(**dic).delete()
+    # Пробросим новые сторонние записи
+    for table_name in ls_tables.keys():
+        o = get_object(table_name)
+        for rec in ls_tables[table_name].keys():
+            ls_tables[table_name][rec][o['fk']] = ob.id
+            o['obj'].objects.create(**ls_tables[table_name][rec])
+
+    return ob.id
