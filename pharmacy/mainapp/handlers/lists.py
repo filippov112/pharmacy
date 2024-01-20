@@ -1,29 +1,28 @@
 from .commons import *
 
 
-
+@permission_required('mainapp.view_medicine', raise_exception=True)
 @login_required(login_url=login_view)
 def medicine_list(request):
     error = ''
     o = Medicine
     n = 'medicine'
+    fn = 'medicine'
     elements = [
         {'field': 'article'             , 'title': 'Артикул'                , 'type': 'text'},
         {'field': 'name'                , 'title': 'Наименование'           , 'type': 'text'},
-        {'field': 'group.group_name'    , 'title': 'Группа препаратов'      , 'type': 'link', 'select': 's-med-group'},
-        {'field': 'pre_required'        , 'title': 'Необходимость рецепта'  , 'type': 'checkbox'},
+        {'field': 'group'               , 'title': 'Группа препаратов'      , 'type': 'link'    , 'select': 's-med-group'},
     ]
-    # Артикул, Наименование, Фарм.группа, Требует рецепта
+    # Артикул, Наименование, Фарм.группа
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-
-        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_medicine'):
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_'+fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id=any(dl)).delete()
+            o.objects.filter(id__in=dl).delete()
             records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -36,7 +35,7 @@ def medicine_list(request):
             {
                 'link': reverse('medicine_id', args=[x.id]),
                 'id': x.id,
-                'fields': [x.article, x.name, str(x.group), required_presc(x.pre_required)]
+                'fields': [x.article, x.name, str(x.group)]
             }
             for x in records
         ],
@@ -44,11 +43,13 @@ def medicine_list(request):
     return render(request, 'mainapp/list.html', default_context | list_context | custom_context)
 
 
+@permission_required('mainapp.view_prescription', raise_exception=True)
 @login_required(login_url=login_view)
 def prescription_list(request):
     error = ''
     o = Prescription
     n = 'prescription'
+    fn = n
     elements = [
         {'field': 'number'              , 'title': 'Номер'          , 'type': 'text'},
         {'field': 'physical_person'     , 'title': 'Клиент'         , 'type': 'link'    , 'select': 's-physic'},
@@ -59,14 +60,13 @@ def prescription_list(request):
     # Номер, Клиент, Лекарство, Врач, Статус
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -79,12 +79,13 @@ def prescription_list(request):
 
 
 
-
+@permission_required('mainapp.view_order', raise_exception=True)
 @login_required(login_url=login_view)
 def order_list(request):
     error = ''
     o = Order
     n = 'order'
+    fn = n
     elements = [
         {'field': 'number'          , 'title': 'Номер заказа'   , 'type': 'number'  },
         {'field': 'date'            , 'title': 'Дата заказа'    , 'type': 'date'    },
@@ -95,14 +96,13 @@ def order_list(request):
     # Номер, Дата, Клиент физ., Клиент юр., Продавец
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -128,12 +128,13 @@ def order_list(request):
     return render(request, 'mainapp/list.html', default_context | list_context | custom_context)
 
 
-
+@permission_required('mainapp.view_legalentity', raise_exception=True)
 @login_required(login_url=login_view)
 def legal_list(request):
     error = ''
     o = LegalEntity
     n = 'legal'
+    fn = 'legalentity'
     elements = [
         {'field': 'name'        , 'title': 'Название'   , 'type': 'text', },
         {'field': 'address'     , 'title': 'Адрес'      , 'type': 'text', },
@@ -143,14 +144,13 @@ def legal_list(request):
     # Название, Адрес, ИНН, КПП
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -164,12 +164,13 @@ def legal_list(request):
 
 
 
-
+@permission_required('mainapp.view_physicalperson', raise_exception=True)
 @login_required(login_url=login_view)
 def physic_list(request):
     error = ''
     o = PhysicalPerson
     n = 'physic'
+    fn = 'physicalperson'
     elements = [
         {'field': 'last_name'   , 'title': 'Фамилия'        , 'type': 'text',},
         {'field': 'first_name'  , 'title': 'Имя'            , 'type': 'text',},
@@ -181,14 +182,13 @@ def physic_list(request):
     # ФИО, Город, Адрес, Дата рождения
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -202,12 +202,13 @@ def physic_list(request):
 
 
 
-
+@permission_required('mainapp.view_doctor', raise_exception=True)
 @login_required(login_url=login_view)
 def doctor_list(request):
     error = ''
     o = Doctor
     n = 'doctor'
+    fn = n
     elements = [
         {'field': 'last_name'       , 'title': 'Фамилия'        , 'type': 'text'    },
         {'field': 'first_name'      , 'title': 'Имя'            , 'type': 'text'    },
@@ -219,14 +220,13 @@ def doctor_list(request):
     # ФИО, Учреждение, Специализация, Должность
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -240,12 +240,13 @@ def doctor_list(request):
 
 
 
-
+@permission_required('mainapp.view_medicalfacility', raise_exception=True)
 @login_required(login_url=login_view)
 def facility_list(request):
     error = ''
     o = MedicalFacility
     n = 'facility'
+    fn = 'medicalfacility'
     elements = [
         {'field': 'name'        , 'title': 'Название учреждения', 'type': 'text'    },
         {'field': 'city'        , 'title': 'Город'              , 'type': 'text'    },
@@ -254,14 +255,13 @@ def facility_list(request):
     # Название, Город, Адрес
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -275,26 +275,26 @@ def facility_list(request):
 
 
 
-
+@permission_required('mainapp.view_medicinegroup', raise_exception=True)
 @login_required(login_url=login_view)
 def med_group_list(request):
     error = ''
     o = MedicineGroup
     n = 'med_group'
+    fn = 'medicinegroup'
     elements = [
         {'field': 'group_name', 'title': 'Наименование группы', 'type': 'text'  },
     ]
     # Наименование
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -308,12 +308,13 @@ def med_group_list(request):
 
 
 
-
+@permission_required('mainapp.view_receipt', raise_exception=True)
 @login_required(login_url=login_view)
 def receipt_list(request):
     error = ''
     o = Receipt
     n = 'receipt'
+    fn = n
     elements = [
         {'field': 'contract', 'title': 'Договор'        , 'type': 'link'   , 'select': 's-contract'},
         {'field': 'date'    , 'title': 'Дата поставки'  , 'type': 'date'  },
@@ -321,14 +322,13 @@ def receipt_list(request):
     # Договор, дата
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -342,12 +342,13 @@ def receipt_list(request):
 
 
 
-
+@permission_required('mainapp.view_certificate', raise_exception=True)
 @login_required(login_url=login_view)
 def certificate_list(request):
     error = ''
     o = Certificate
     n = 'certificate'
+    fn = n
     elements = [
         {'field': 'number'      , 'title': 'Номер'      , 'type': 'text'    },
         {'field': 'medicine'    , 'title': 'Препарат'   , 'type': 'link'    , 'select': 's-medicine'},
@@ -357,14 +358,13 @@ def certificate_list(request):
     # Номер, Лекарство, Поставщик, Дата начала
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -378,12 +378,13 @@ def certificate_list(request):
 
 
 
-
+@permission_required('mainapp.view_contract', raise_exception=True)
 @login_required(login_url=login_view)
 def contract_list(request):
     error = ''
     o = Contract
     n = 'contract'
+    fn = n
     elements = [
         {'field': 'number'      , 'title': 'Номер'      , 'type': 'number'  },
         {'field': 'supplier'    , 'title': 'Поставщик'  , 'type': 'link'    , 'select':'s-supplier' },
@@ -392,14 +393,13 @@ def contract_list(request):
     # Номер, Поставщик, Дата начала
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
@@ -413,12 +413,13 @@ def contract_list(request):
 
 
 
-
+@permission_required('mainapp.view_supplier', raise_exception=True)
 @login_required(login_url=login_view)
 def supplier_list(request):
     error = ''
     o = Supplier
     n = 'supplier'
+    fn = n
     elements = [
         {'field': 'name'    , 'title': 'Наименование'   , 'type': 'text'    },
         {'field': 'city'    , 'title': 'Город'          , 'type': 'text'    },
@@ -427,14 +428,13 @@ def supplier_list(request):
     # Наименование, Город, Адрес
     records = []
     if request.method == "POST":
-        form_name = request.POST.get('form_name')
-        if form_name == "filters":
-            pass
-            # records = Medicine.objects.filter()
-            # ...
-            # records = records.order_by(*request.POST.parameter_sorting.split(","))
-        if form_name == "table_delete":
-            pass
+        if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
+            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+            o.objects.filter(id__in=dl).delete()
+            records = o.objects.all()
+
+        if 'delete-list' not in request.POST:
+            records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 

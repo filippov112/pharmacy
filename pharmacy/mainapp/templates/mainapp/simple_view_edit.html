@@ -41,15 +41,11 @@
 
             <div id="body-container">
                 <div id="right-block-head">
-                    {% if task == 'view' %}
-                        {{ title_view }}
-                    {% else %}
-                        Редактирование записи
-                    {% endif %}
+                    {{ title_view }}
                 </div>
                 {% if task == 'view' %}
                     {% for field in content_view %}
-                        {% if field.type == 'image' %}
+                        {% if field.type == 'image' and field.link != '' %}
                             <div class="record-image-block">
                                 <img src="{{ field.link }}">
                             </div>
@@ -65,7 +61,7 @@
                         {% if field.type == 'link' %}
                             <div class="record-link-block">
                                 <div>{{ field.title }}:</div>
-                                <a href="{{ field.link }}">{{ field.text }}</a>
+                                {% if field.text != '' %}<a href="{{ field.link }}">{{ field.text }}</a>{% endif %}
                             </div>
                         {% endif %}
 
@@ -89,19 +85,11 @@
                                 {% endif %}
 
                                 {% if input.type == 'text' or input.type == 'number' or input.type == 'date' %}
-                                    <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}">
-                                    
-
-                                {% endif %}
-                                
-                                {% if input.type == 'checkbox' %}
-                                    <input class="form-check-input" type="{{ input.type }}"  name="{{ input.name }}" value="{{ input.value }}">
+                                    <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}">                                  
                                 {% endif %}
 
                                 {% if input.type == 'textarea' %}
-                                    <textarea name="{{ input.name }}">
-                                        {{ input.value }}
-                                    </textarea>
+                                    <textarea name="{{ input.name }}">{{ input.value }}</textarea>
                                 {% endif %}
 
                                 {% if input.type == 'file' %}
@@ -113,7 +101,7 @@
 
                                 {% if input.type == 'link' %}
                                     <button select select-name="{{ input.select }}">
-                                        <input type="text" name="{{ input.name }}">
+                                        <input type="text" name="{{ input.name }}" value="{{ input.value }}">
                                         <p>{{ input.text_value }}</p>
                                     </button>
                                 {% endif %}

@@ -1,14 +1,14 @@
+from _decimal import Decimal
+
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from datetime import datetime
 from django.core.files.storage import FileSystemStorage
+import django.db.models.fields.files as dj_files
+from django.db import models
 from .models import Medicine, Prescription, Order, LegalEntity, PhysicalPerson, Doctor, MedicalFacility, \
     MedicineGroup, Receipt, Certificate, Contract, Supplier, PrescComposition, Profile, CertificateAttachment, \
     ContractMedicine, ReceiptItem, OrderComposition
-
-
-def get_gender(b):
-    return "Жен." if b else "Муж."
 
 
 def get_link(url_name, field):
@@ -42,14 +42,6 @@ def get_user_permissions(usr):
         for p in permissions:
             perms.add(p.codename)
     return perms
-
-
-# Логическое поле "Требует рецепта" для модели лекарства
-def required_presc(v):
-    if v:
-        return "Требует"
-    else:
-        return "Не требует"
 
 
 # Список выборок
@@ -273,10 +265,10 @@ def get_view_context(_name, _record, _ob, _fn, _usr):
     return ret
 
 
-def get_edit_context(_name, _ob):
+def get_edit_context(task, _name, _ob):
     ret = {}
     ret['bread_crumbs'] = get_bread_crumbs(_name)
-    ret['title_view'] = str(_ob)
+    ret['title_view'] = 'Редактирование: '+str(_ob) if task != 'new' else 'Новая запись'
     return ret
 
 
@@ -294,72 +286,154 @@ def get_object(n):
             return { 'obj':PrescComposition, 'fk':'prescription' }
     return {}
 
-def replace_null(d, key, select, o, field):
-    val = d[key]
-    field_type = o._meta.get_field(field).get_internal_type()
+def replace_null(o, field, val):
+    f = o._meta.get_field(field)
+    field_type = f.get_internal_type()
     match field_type:
-        case '':
-            return ''
-        case '':
-            return ''
-        case '':
-            return ''
-        case '':
-            return ''
-        case '':
-            return ''
-        case '':
-            return ''
-        case '':
-            return ''
+        case 'FileField'|'ImageField':
+            return None
+        case 'ForeignKey'|'OneToOneField':
+            rem_m = f.remote_field.model
+            return rem_m.objects.get(id=val) if val else None
     return val
 
+def s_file(ob, field, FILES, key):
+    file = getattr(FILES, key, None)
+    if file:
+        getattr(ob, field).save(file.name, file)
+    return ob
 
-def save_record(record, o, dic, side_table_names={}):
+
+def default_val(o, field, val):
+    f = o._meta.get_field(field).get_internal_type()
+    match f:
+        case 'ForeignKey'|'OneToOneField':
+            return val if val else ''
+        case 'FileField'|'ImageField':
+            return val.url if val else ''
+        case 'DateField':
+            return str(val)
+    return val
+
+def save_record(record, o, request, side_table_names={}):
     # side_table_names = {'name': 'structure',}
+    dic = request.POST
+    FILES = getattr(request, 'FILES', None)
+
     ls_tables = {}
+    ob = {}
     obj_record = {}
-    # Переберем запрос
+
+    if record != 'new':
+        ob = o.objects.get(id=record)
+
     for key in dic.keys():
         str_key = key.split("-")
         table_name = str_key[0]
+
         # Найдем всё что связано со сторонними таблицами
         if len(str_key) == 3 and table_name in side_table_names.keys():
             field_name = str_key[1]
-            table_select = dict(map(lambda x: (x.split(":")[1], x.split(":")[2]), side_table_names[table_name].split(';')))[field_name]
             field_n = str_key[2]
-            field_val = replace_null(dic, key, table_select, o, field_name)
+            field_val = dic[key]
 
             if table_name not in ls_tables.keys():
                 ls_tables[table_name] = {}
             if field_n not in ls_tables[table_name].keys():
                 ls_tables[table_name][field_n] = {}
             ls_tables[table_name][field_n][field_name] = field_val
+
         # Если это поле записи - внесем изменения
         if len(str_key) == 2 and str_key[0] == 'i':
             field_name = str_key[1]
-            table_select = \
-            dict(map(lambda x: (x.split(":")[1], x.split(":")[2]), side_table_names[table_name].split(';')))[field_name]
-            field_val = replace_null(dic, key, table_select, o, field_name)
-            obj_record[field_name] = field_val
+            field_val = replace_null(o, field_name, dic[key])
+            if field_val:
+                if record != 'new':
+                    setattr(ob, field_name, field_val)
+                else:
+                    obj_record[field_name] = field_val
 
     # Сохраним запись после изменения
-    if record != 'new':
-        ob = o(id=record, **obj_record)
-    else:
+    if record == 'new':
         ob = o(**obj_record)
+
+    mFiles = {}
+    if FILES:
+        for key in FILES.keys():
+            str_key = key.split("-")
+            table_name = str_key[0]
+
+            # Найдем всё что связано со сторонними таблицами
+            if len(str_key) == 3 and table_name in side_table_names.keys():
+                field_name = str_key[1]
+                field_n = str_key[2]
+                f = FILES[key]
+
+                if table_name not in mFiles.keys():
+                    mFiles[table_name] = {}
+                if field_n not in mFiles[table_name].keys():
+                    mFiles[table_name][field_n] = {}
+                mFiles[table_name][field_n][field_name] = f
+
+            if len(str_key) == 2 and str_key[0] == 'i':
+                field_name = str_key[1]
+                file = FILES[key]
+                if file:
+                    getattr(ob, field_name).save(file.name, file, save=True)
     ob.save()
 
     # Почистим записи сторонних таблиц, прежде чем добавлять измененные (кроме файлов для сертификатов)
     for table_name in side_table_names.keys():
         o = get_object(table_name)
-        dic = {o['fk']:ob.id}
-        o['obj'].objects.filter(**dic).delete()
+        rec = {o['fk']:ob.id}
+        o['obj'].objects.filter(**rec).delete()
+
     # Пробросим новые сторонние записи
     for table_name in ls_tables.keys():
         o = get_object(table_name)
         for rec in ls_tables[table_name].keys():
-            ls_tables[table_name][rec][o['fk']] = ob.id
-            o['obj'].objects.create(**ls_tables[table_name][rec])
+            r_dic = {}
+            for f in ls_tables[table_name][rec].keys():
+                v = replace_null(o['obj'], f, ls_tables[table_name][rec][f])
+                if v:
+                    r_dic[f] = v
+            r_dic[o['fk']] = ob.id
+            obj = o['obj'].objects.create(**r_dic)
+
+            if getattr(mFiles, table_name, None):
+                if getattr(mFiles[table_name], rec, None):
+                    for f in mFiles[table_name][rec].keys():
+                        file = mFiles[table_name][rec][f]
+                        if file:
+                            getattr(obj, f).save(file.name, file, save=True)
 
     return ob.id
+
+
+def get_filtered_records(o, dic):
+    mF = {}
+    for f in dic.keys():
+        str_keys = f.split('-')
+        if str_keys[0] == 'f':
+            key = str_keys[1]
+            val = dic[f]
+            field_type = o._meta.get_field(key).get_internal_type()
+            if val:
+                match(field_type):
+                    case 'DateField':
+                        key += '__gte' if str_keys[2] == 'dn' else '__lte'
+                    case 'CharField'|'TextField':
+                        key += '__icontains'
+                    case 'ForeignKey':
+                        key += '__in'
+                        val = [int(x) for x in val.split(',')]
+                mF[key] = val
+
+    objs = o.objects.filter(**mF) if len(mF.keys()) > 0 else o.objects.all()
+
+    ps = dic['parameter_sorting']
+    if ps != '':
+        ps = ps.split(',')
+        objs = objs.order_by(*ps)
+
+    return objs

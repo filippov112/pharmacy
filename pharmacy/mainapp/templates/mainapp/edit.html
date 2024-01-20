@@ -28,7 +28,7 @@
             
             <div id="right-block">
                 <div id="right-block-head">
-                    Редактирование записи
+                    {{ title_view }}
                 </div>
                 {% for input in input_fields %}
                     <div class="edit-input-block">
@@ -44,15 +44,9 @@
                             {% if input.type == 'text' or input.type == 'number' or input.type == 'date' %}
                             <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}"> 
                             {% endif %}
-                            
-                            {% if input.type == 'checkbox' %}
-                            <input class="form-check-input" type="{{ input.type }}"  name="{{ input.name }}" value="{{ input.value }}">
-                            {% endif %}
 
                             {% if input.type == 'textarea' %}
-                            <textarea name="{{ input.name }}">
-                                {{ input.value }}
-                            </textarea>
+                            <textarea name="{{ input.name }}">{{ input.value }}</textarea>
                             {% endif %}
 
                             {% if input.type == 'file' %}
@@ -64,7 +58,7 @@
 
                             {% if input.type == 'link' %}
                             <button select select-name="{{ input.select }}">
-                                <input type="text" name="{{ input.name }}">
+                                <input type="text" name="{{ input.name }}" value="{{ input.value }}">
                                 <p>{{ input.text_value }}</p>
                             </button>
                             {% endif %}
@@ -99,23 +93,23 @@
                                 {% for f in record %}
                                 <td>
                                     {% if f.type == 'text' %}
-                                        <input type="text" name="{{ table.name }}-{{ record.id }}-{{ f.id }}">
+                                        <input type="text" value="{{ f.value }}">
                                     {% endif %}
 
                                     {% if f.type == 'number' %}
-                                        <input type="number" name="{{ table.name }}-{{ record.id }}-{{ f.id }}">
+                                        <input type="number" value="{{ f.value }}">
                                     {% endif %}
 
                                     {% if f.type == 'file' %}
                                         <label>
                                             <p>{{ f.text }}</p>
-                                            <input load="{{ record.pk }}" type="file" name="{{ table.name }}-{{ record.id }}-{{ f.id }}">
+                                            <input load="{{ record.pk }}" type="file">
                                         </label>
                                     {% endif %}
 
                                     {% if f.type == 'link' %}
                                         <button select select-name="{{ f.select }}">
-                                            <input type="text" name="{{ table.name }}-{{ record.id }}-{{ f.id }}">
+                                            <input type="text"  value="{{ f.value }}">
                                             <p>{{ f.text }}</p>
                                         </button>
                                     {% endif %}

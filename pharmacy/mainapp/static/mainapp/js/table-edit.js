@@ -18,6 +18,7 @@ function refrashNamesInputs() {
     })
 }
 
+refrashNamesInputs()
 
 // Список актуальных файловых записей, не подлежащих удалению при сохранении
 let FSR = document.getElementById("files-side-records");

@@ -10,8 +10,8 @@ from ..forms import CustomAuthenticationForm
 from ..models import Medicine, Prescription, Order, LegalEntity, PhysicalPerson, Doctor, MedicalFacility, \
     MedicineGroup, Receipt, Certificate, Contract, Supplier, PrescComposition, OrderComposition, ReceiptItem,\
     CertificateAttachment, ContractMedicine
-from ..utils import get_default_context, required_presc, get_view_context, get_user_permissions, check_user_rules, \
-    get_list_context, get_FIO, get_gender, get_link, get_edit_context, save_record
+from ..utils import get_default_context, get_view_context, get_user_permissions, check_user_rules, \
+    get_list_context, get_FIO, get_link, get_edit_context, save_record, default_val, get_filtered_records
 from pharmacy.settings import STATIC_URL
 
 

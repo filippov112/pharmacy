@@ -30,7 +30,7 @@
                 {{ title_view }}
             </div>
             {% for field in content_view %}
-                {% if field.type == 'image' %}
+                {% if field.type == 'image' and field.link != '' %}
                 <div class="record-image-block">
                     <img src="{{ field.link }}">
                 </div>
@@ -46,7 +46,7 @@
                 {% if field.type == 'link' %}
                 <div class="record-link-block">
                     <div>{{ field.title }}:</div>
-                    <a href="{{ field.link }}">{{ field.text }}</a>
+                    {% if field.text != '' %}<a href="{{ field.link }}">{{ field.text }}</a>{% endif %}
                 </div>
                 {% endif %}
 
