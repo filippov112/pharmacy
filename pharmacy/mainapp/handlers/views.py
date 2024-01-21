@@ -69,10 +69,10 @@ def order_id(request, record):
     default_context = get_default_context(n, user=request.user, title=str(ob), error=error)
     view_context = get_view_context(n, record, ob, fn, request.user)
     if ob.physical_person is None:
-        client_link = reverse("legal_id", args=[ob.legal_entity.id])
+        client_link = reverse("legal_id", args=[ob.legal_entity.id]) if ob.legal_entity else ''
         client = default_val(o, 'legal_entity', ob.legal_entity)
     else:
-        client_link = reverse("physic_id", args=[ob.physical_person.id])
+        client_link = reverse("physic_id", args=[ob.physical_person.id]) if ob.physical_person else ''
         client = default_val(o, 'physical_person', ob.physical_person)
     custom_context = {
         # Номер, Дата, Физ.лицо, Юр.Лицо, Продавец
@@ -89,7 +89,7 @@ def order_id(request, record):
                 'head': ['Препарат', 'Цена за единицу', 'Кол-во товара'],
                 'records': [
                     {
-                        'link': reverse('medicine_id', args=[x.medicine.id]),
+                        'link': reverse('medicine_id', args=[x.medicine.id]) if x.medicine else '',
                         'fields': [
                             {'type': 'text', 'text': str(x.medicine), 'link': ''},
                             {'type': 'text', 'text': str(x.price) + " руб.", 'link': ''},
@@ -353,7 +353,7 @@ def receipt_id(request, record):
                 'head': ['Препарат', 'Цена за единицу', 'Кол-во товара'],
                 'records': [
                     {
-                        'link': reverse('medicine_id', args=[x.medicine.id]),
+                        'link': reverse('medicine_id', args=[x.medicine.id]) if x.medicine else '',
                         'fields': [
                             {'type': 'text', 'text': str(x.medicine), 'link': ''},
                             {'type': 'text', 'text': str(x.quantity) + " руб.", 'link': ''},
@@ -458,7 +458,7 @@ def contract_id(request, record):
                 'head': ['Препарат', 'Цены', 'Скидки'],
                 'records': [
                     {
-                        'link': reverse('medicine_id', args=[x.medicine.id]),
+                        'link': reverse('medicine_id', args=[x.medicine.id]) if x.medicine else '',
                         'fields': [
                             {'type': 'text', 'text': str(x.medicine), 'link': ''},
                             {'type': 'text', 'text': x.prices, 'link': ''},

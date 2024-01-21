@@ -21,7 +21,7 @@ function refrashNamesInputs() {
 refrashNamesInputs()
 
 // Список актуальных файловых записей, не подлежащих удалению при сохранении
-let FSR = document.getElementById("files-side-records");
+let FSR = document.getElementById("fsr");
 // Удаление элемента из списка по совпадению
 function removeFirstElement(array, element) {
   var index = array.indexOf(element);
@@ -77,6 +77,7 @@ Array.from(document.querySelectorAll(".table-title img")).forEach(add_button => 
     add_button.addEventListener('click', (e)=>{
         let tbody = e.target.parentElement.parentElement.getElementsByTagName("tbody")[0];
         let table_fields = tbody.getAttribute("fields").split(";");
+        let svg_url = tbody.getAttribute("svg_url");
         if (table_fields.length > 0) {
             tag_tr = document.createElement("tr");
 
@@ -130,7 +131,7 @@ Array.from(document.querySelectorAll(".table-title img")).forEach(add_button => 
             tag_td = document.createElement("td");
             tag_img = document.createElement("img");
             tag_img.className = "table-edit-delete";
-            tag_img.setAttribute("src", "svg/delete.svg");
+            tag_img.setAttribute("src", svg_url);
             tag_td.append(tag_img);
             tag_tr.append(tag_td);
 

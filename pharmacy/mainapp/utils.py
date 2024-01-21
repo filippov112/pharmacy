@@ -319,7 +319,7 @@ def default_val(o, field, val, is_link=False):
             return str(val)
     return val
 
-def save_record(record, o, request, side_table_names={}):
+def save_record(record, o, request, side_table_names={}, fsr=[]):
     # side_table_names = {'name': 'structure',}
     dic = request.POST
     FILES = getattr(request, 'FILES', None)
@@ -390,7 +390,10 @@ def save_record(record, o, request, side_table_names={}):
     for table_name in side_table_names.keys():
         o = get_object(table_name)
         rec = {o['fk']:ob.id}
-        o['obj'].objects.filter(**rec).delete()
+        objs_delete = o['obj'].objects.filter(**rec)
+        if len(fsr) > 0:
+            objs_delete = objs_delete.exclude(id__in=fsr)
+        objs_delete.delete()
 
     # Пробросим новые сторонние записи
     for table_name in ls_tables.keys():
@@ -401,7 +404,7 @@ def save_record(record, o, request, side_table_names={}):
                 v = replace_null(o['obj'], f, ls_tables[table_name][rec][f])
                 if v:
                     r_dic[f] = v
-            r_dic[o['fk']] = ob.id
+            r_dic[o['fk']] = ob
             obj = o['obj'].objects.create(**r_dic)
 
             if getattr(mFiles, table_name, None):

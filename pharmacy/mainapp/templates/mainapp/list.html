@@ -78,16 +78,7 @@
                                     <input type="text" name="{{ name }}">
                                     <p></p>
                                 </button>
-                            {% endif %}
-
-                            {% if f.type == 'checkbox' %}
-                                <label>
-                                    <input class="form-check-input" type="checkbox" name="{{ name }}">
-                                    <div class="filter-label">{{ f.title }}</div>
-                                </label>
-                            {% endif %}
-
-                            {% if f.type != 'checkbox' and f.type != 'link' %}
+                            {% else %}
                                 <input type="{{ f.type }}" name="{{ name }}">
                             {% endif %}
 

@@ -23,7 +23,7 @@
 {% block body %}
     <form method="post">
         {% csrf_token %}
-        <input type="text" name="files-side-records" id="files-side-records">
+        <input type="text" name="fsr" id="fsr">
         <div id="body-container">
             
             <div id="right-block">
@@ -87,17 +87,13 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody name="{{ table.name }}" fields="{{ table.structure_fields }}">
+                        <tbody name="{{ table.name }}" fields="{{ table.structure_fields }}" svg_url="{% static 'mainapp/svg/delete.svg' %}">
                             {% for record in table.records %}
                             <tr>
-                                {% for f in record %}
+                                {% for f in record.fields %}
                                 <td>
-                                    {% if f.type == 'text' %}
-                                        <input type="text" value="{{ f.value }}" maxlength="{{ f.maxlength }}">
-                                    {% endif %}
-
-                                    {% if f.type == 'number' %}
-                                        <input type="number" value="{{ f.value }}" maxlength="{{ f.maxlength }}">
+                                    {% if f.type == 'text' or f.type == 'number' %}
+                                        <input type="{{ f.type }}" value="{{ f.value }}" maxlength="{{ f.maxlength }}">
                                     {% endif %}
 
                                     {% if f.type == 'file' %}
