@@ -85,11 +85,11 @@
                                 {% endif %}
 
                                 {% if input.type == 'text' or input.type == 'number' or input.type == 'date' %}
-                                    <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}">                                  
+                                    <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}" maxlength="{{ input.maxlength }}">                                  
                                 {% endif %}
 
                                 {% if input.type == 'textarea' %}
-                                    <textarea name="{{ input.name }}">{{ input.value }}</textarea>
+                                    <textarea name="{{ input.name }}" maxlength="{{ input.maxlength }}">{{ input.value }}</textarea>
                                 {% endif %}
 
                                 {% if input.type == 'file' %}

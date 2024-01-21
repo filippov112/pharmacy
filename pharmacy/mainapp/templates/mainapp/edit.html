@@ -42,11 +42,11 @@
                             {% endif %}
 
                             {% if input.type == 'text' or input.type == 'number' or input.type == 'date' %}
-                            <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}"> 
+                            <input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}" maxlength="{{ input.maxlength }}"> 
                             {% endif %}
 
                             {% if input.type == 'textarea' %}
-                            <textarea name="{{ input.name }}">{{ input.value }}</textarea>
+                            <textarea name="{{ input.name }}" maxlength="{{ input.maxlength }}">{{ input.value }}</textarea>
                             {% endif %}
 
                             {% if input.type == 'file' %}
@@ -93,11 +93,11 @@
                                 {% for f in record %}
                                 <td>
                                     {% if f.type == 'text' %}
-                                        <input type="text" value="{{ f.value }}">
+                                        <input type="text" value="{{ f.value }}" maxlength="{{ f.maxlength }}">
                                     {% endif %}
 
                                     {% if f.type == 'number' %}
-                                        <input type="number" value="{{ f.value }}">
+                                        <input type="number" value="{{ f.value }}" maxlength="{{ f.maxlength }}">
                                     {% endif %}
 
                                     {% if f.type == 'file' %}

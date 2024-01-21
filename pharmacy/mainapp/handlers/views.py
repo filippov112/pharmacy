@@ -22,7 +22,7 @@ def prescription_id(request, record):
     custom_context = {
         # Скан, Номер, Физ.лицо, Врач, Дата рецепта, Дата обращения, Статус
         'content_view': [
-            {'type': 'image', 'link': ob.document_scan.url if ob.document_scan else '', 'title': '', 'text': ''},
+            {'type': 'file', 'link': default_val(o, 'document_scan', ob.document_scan, True), 'title': 'Скан документа', 'text': default_val(o, 'document_scan', ob.document_scan)},
             {'type': 'text', 'link': '', 'title': 'Номер', 'text': ob.number},
             {'type': 'text', 'link': '', 'title': 'Клиент', 'text': ob.physical_person},
             {'type': 'link', 'link': get_link('doctor_id', ob.doctor), 'title': 'Врач', 'text': default_val(o, 'doctor', ob.doctor)},
@@ -318,6 +318,7 @@ def facility_id(request, record):
             },
         ]
     }
+
     return render(request, 'mainapp/view.html', default_context | view_context | custom_context)
 
 
@@ -388,7 +389,7 @@ def certificate_id(request, record):
     custom_context = {
         # Скан, Номер, Препарат, Поставщик, Дата начала, Дата окончания, Орган
         'content_view': [
-            {'type': 'image', 'link': ob.document_scan.url if ob.document_scan else '', 'title': '', 'text': ''},
+            {'type': 'file', 'link': default_val(o, 'document_scan', ob.document_scan, True), 'title': 'Скан документа', 'text': default_val(o, 'document_scan', ob.document_scan)},
             {'type': 'text', 'link': '', 'title': 'Номер', 'text': ob.number},
             {'type': 'link', 'link': get_link('medicine_id', ob.medicine), 'title': 'Препарат', 'text': default_val(o, 'medicine', ob.medicine)},
             {'type': 'link', 'link': get_link('supplier_id', ob.supplier), 'title': 'Поставщик', 'text': default_val(o, 'supplier', ob.supplier)},
@@ -405,7 +406,7 @@ def certificate_id(request, record):
                     {
                         'link': '',
                         'fields': [
-                            {'type': 'file', 'text': x.document_scan.name.split('/')[-1], 'link': x.document_scan.url if x.document_scan else ''},
+                            {'type': 'file', 'text': default_val(x, 'document_scan', x.document_scan), 'link': default_val(x, 'document_scan', x.document_scan, True) },
                         ]
                     }
                     for x in CertificateAttachment.objects.filter(certificate=record)  # названия сторонних моделей
@@ -438,7 +439,7 @@ def contract_id(request, record):
         # Скан, Номер, Поставщик, Дата начала, Дата окончания, Сроки поставки, Размеры партий,
         # Способ оплаты, Условия доставки, Возможность пролонгации, Прочие условия
         'content_view': [
-            {'type': 'image', 'link': ob.document_scan.url if ob.document_scan else '', 'title': '', 'text': ''},
+            {'type': 'file', 'link': default_val(o, 'document_scan', ob.document_scan, True), 'title': 'Скан документа', 'text': default_val(o, 'document_scan', ob.document_scan)},
             {'type': 'text', 'link': '', 'title': 'Номер договора', 'text': ob.number},
             {'type': 'link', 'link': get_link('supplier_id', ob.supplier), 'title': 'Поставщик', 'text': default_val(o, 'supplier', ob.supplier)},
             {'type': 'text', 'link': '', 'title': 'Дата начала действия', 'text': ob.start_date},

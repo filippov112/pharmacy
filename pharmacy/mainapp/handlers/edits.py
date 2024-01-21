@@ -56,43 +56,39 @@ def certificate_edit(request, record):
             # file                          - name, text_value
             # link                          - name, text_value, select
             # text, number, date, textarea  - name, value
-            {'type': 'image', 'url': default_val(o, 'photo', ob.photo), 'name': 'i-photo', 'title': 'Изображение',
-             'value': '', 'text_value': '',
+            {'type': 'link', 'url': '', 'name': 'i-medicine', 'title': 'Препарат', 'value': '',
+             'text_value': default_val(o, 'medicine', ob.medicine),
+             'select': 's-medicine'},
+            {'type': 'link', 'url': '', 'name': 'i-supplier', 'title': 'Поставщик', 'value': '',
+             'text_value': default_val(o, 'supplier', ob.supplier),
+             'select': 's-supplier'},
+            {'type': 'file', 'url': '', 'name': 'i-document_scan', 'title': 'Скан документа',
+             'value': '', 'text_value': default_val(o, 'document_scan', ob.document_scan),
              'select': ''},
-            {'type': 'text', 'url': '', 'name': 'i-article', 'title': 'Артикул',
-             'value': default_val(o, 'article', ob.article), 'text_value': '',
+            {'type': 'text', 'url': '', 'name': 'i-number', 'title': 'Номер',
+             'value': default_val(o, 'number', ob.number), 'text_value': '',
              'select': ''},
-            {'type': 'text', 'url': '', 'name': 'i-name', 'title': 'Наименование',
-             'value': default_val(o, 'name', ob.name), 'text_value': '',
+            {'type': 'date', 'url': '', 'name': 'i-start_date', 'title': 'Дата начала действия',
+             'value': default_val(o, 'start_date', ob.start_date), 'text_value': '',
              'select': ''},
-            {'type': 'link', 'url': '', 'name': 'i-group', 'title': 'Лекарственная группа', 'value': '',
-             'text_value': default_val(o, 'group', ob.group),
-             'select': 's-med_group'},
-            {'type': 'date', 'url': '', 'name': 'i-expiration_date', 'title': 'Годен до',
-             'value': default_val(o, 'expiration_date', ob.expiration_date), 'text_value': '',
+            {'type': 'date', 'url': '', 'name': 'i-end_date', 'title': 'Дата окончания действия',
+             'value': default_val(o, 'end_date', ob.end_date), 'text_value': '',
              'select': ''},
-            {'type': 'textarea', 'url': '', 'name': 'i-storage_conditions', 'title': 'Условия хранения',
-             'value': default_val(o, 'storage_conditions', ob.storage_conditions), 'text_value': '',
-             'select': ''},
-            {'type': 'textarea', 'url': '', 'name': 'i-interactions', 'title': 'Взаимодействие с другими лекарствами',
-             'value': default_val(o, 'interactions', ob.interactions), 'text_value': '',
-             'select': ''},
-            {'type': 'textarea', 'url': '', 'name': 'i-limitations', 'title': 'Ограничения к применению',
-             'value': default_val(o, 'limitations', ob.limitations), 'text_value': '',
-             'select': ''},
-            {'type': 'textarea', 'url': '', 'name': 'i-side_effects', 'title': 'Побочные эффекты',
-             'value': default_val(o, 'side_effects', ob.side_effects), 'text_value': '',
-             'select': ''},
-            {'type': 'textarea', 'url': '', 'name': 'i-usage_instruction', 'title': 'Инструкция к применению',
-             'value': default_val(o, 'usage_instruction', ob.usage_instruction), 'text_value': '',
+            {'type': 'textarea', 'url': '', 'name': 'i-certifying_authority', 'title': 'Сертифицирующий орган',
+             'value': default_val(o, 'certifying_authority', ob.certifying_authority), 'text_value': '',
              'select': ''},
         ],
 
         'list_selects': [
             {
-                'name': 's-med_group',
-                'title': 'Лекарственные группы',
-                'records': [{'pk': x.id, 'text': str(x)} for x in MedicineGroup.objects.all()]
+                'name': 's-medicine',
+                'title': 'Каталог препаратов',
+                'records': [{'pk': x.id, 'text': str(x)} for x in Medicine.objects.all()]
+            },
+            {
+                'name': 's-supplier',
+                'title': 'Реестр поставщиков',
+                'records': [{'pk': x.id, 'text': str(x)} for x in Supplier.objects.all()]
             },
         ]
     }

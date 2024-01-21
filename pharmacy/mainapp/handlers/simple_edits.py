@@ -1,3 +1,5 @@
+from django.db import DataError
+
 from .commons import *
 
 @permission_required('mainapp.change_medicine', raise_exception=True)
@@ -7,13 +9,16 @@ def medicine_edit(request, record):
     o = Medicine
     n = 'medicine'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request)
-        return redirect(reverse(n+"_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request)
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except DataError as e:
+            error = str(e)
+
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: '+str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -58,6 +63,12 @@ def medicine_edit(request, record):
             },
         ]
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+        'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
+
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
@@ -70,13 +81,16 @@ def legal_edit(request, record):
     o = LegalEntity
     n = 'legal'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request)
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request)
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except DataError as e:
+            error = str(e)
+
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -112,13 +126,18 @@ def legal_edit(request, record):
             {'type': 'text', 'url': '', 'name': 'i-contact_person_position', 'title': 'Должность контактного лица',
              'value': default_val(o, 'contact_person_position', ob.contact_person_position), 'text_value': '',
              'select': ''},
-            {'type': 'textarea', 'url': '', 'name': 'i-discounts', 'title': 'Инструкция к применению',
+            {'type': 'textarea', 'url': '', 'name': 'i-discounts', 'title': 'Предоставляемые скидки',
              'value': default_val(o, 'discounts', ob.discounts), 'text_value': '',
              'select': ''},
         ],
 
         'list_selects': []
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+        'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
@@ -131,13 +150,16 @@ def physic_edit(request, record):
     o = PhysicalPerson
     n = 'physic'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request)
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request)
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except DataError as e:
+            error = str(e)
+
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -180,6 +202,11 @@ def physic_edit(request, record):
 
         'list_selects': []
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+        'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
@@ -192,13 +219,16 @@ def doctor_edit(request, record):
     o = Doctor
     n = 'doctor'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request)
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request)
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except DataError as e:
+            error = str(e)
+
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -247,6 +277,11 @@ def doctor_edit(request, record):
             },
         ]
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+        'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
@@ -259,13 +294,16 @@ def facility_edit(request, record):
     o = MedicalFacility
     n = 'facility'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request)
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request)
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except DataError as e:
+            error = str(e)
+
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -305,6 +343,12 @@ def facility_edit(request, record):
 
         'list_selects': []
     }
+
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length } if x['type'] in ('text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
+
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
@@ -317,13 +361,16 @@ def supplier_edit(request, record):
     o = Supplier
     n = 'supplier'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request)
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request)
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except DataError as e:
+            error = str(e)
+
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -366,6 +413,11 @@ def supplier_edit(request, record):
 
         'list_selects': []
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+        'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
@@ -378,13 +430,16 @@ def med_group_edit(request, record):
     o = MedicineGroup
     n = 'med_group'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request)
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request)
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except DataError as e:
+            error = str(e)
+
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -406,6 +461,11 @@ def med_group_edit(request, record):
 
         'list_selects': []
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+        'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)

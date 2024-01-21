@@ -304,13 +304,17 @@ def s_file(ob, field, FILES, key):
     return ob
 
 
-def default_val(o, field, val):
+def default_val(o, field, val, is_link=False):
     f = o._meta.get_field(field).get_internal_type()
     match f:
         case 'ForeignKey'|'OneToOneField':
             return val if val else ''
-        case 'FileField'|'ImageField':
+        case 'ImageField':
             return val.url if val else ''
+        case 'FileField':
+            if is_link:
+                return val.url if val else ''
+            return val.name.split('/')[-1] if val else ''
         case 'DateField':
             return str(val)
     return val
