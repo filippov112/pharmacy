@@ -368,9 +368,9 @@ def certificate_edit(request, record):
                         'fields': [
                             {
                                 'type': 'file',
-                                'value': '',
+                                'value': default_val(CertificateAttachment, 'document_scan', x.document_scan, True),
                                 'maxlength': '',
-                                'text': x.document_scan.name.split('/')[0] if x.document_scan else '',
+                                'text': default_val(CertificateAttachment, 'document_scan', x.document_scan),
                                 'select': '',
                             },
                         ]

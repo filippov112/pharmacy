@@ -21,7 +21,7 @@
 
 
 {% block body %}
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="text" name="fsr" id="fsr">
         <div id="body-container">

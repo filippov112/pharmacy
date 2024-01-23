@@ -1,6 +1,7 @@
 from _decimal import Decimal
 
 from django.contrib.auth.models import Group
+from django.db.models import ManyToOneRel, ManyToManyRel
 from django.urls import reverse
 from datetime import datetime
 from django.core.files.storage import FileSystemStorage
@@ -383,7 +384,10 @@ def save_record(record, o, request, side_table_names={}, fsr=[]):
                 field_name = str_key[1]
                 file = FILES[key]
                 if file:
-                    getattr(ob, field_name).save(file.name, file, save=True)
+                    field = getattr(ob, field_name)
+                    if field:
+                        field.delete(False)
+                    field.save(file.name, file, save=True)
     ob.save()
 
     # Почистим записи сторонних таблиц, прежде чем добавлять измененные (кроме файлов для сертификатов)
@@ -393,26 +397,40 @@ def save_record(record, o, request, side_table_names={}, fsr=[]):
         objs_delete = o['obj'].objects.filter(**rec)
         if len(fsr) > 0:
             objs_delete = objs_delete.exclude(id__in=fsr)
+        field_names = [
+            field.name for field in o['obj']._meta.get_fields()
+            if not (field.auto_created and isinstance(field, (ManyToOneRel, ManyToManyRel)))
+        ]
+        for obj in objs_delete:
+            for f in field_names:
+                if o['obj']._meta.get_field(f).get_internal_type() in ('ImageField', 'FileField'):
+                    field = getattr(obj, f)
+                    if field:
+                        field.delete(False)
         objs_delete.delete()
 
     # Пробросим новые сторонние записи
     for table_name in ls_tables.keys():
         o = get_object(table_name)
         for rec in ls_tables[table_name].keys():
-            r_dic = {}
+            r_dic = { o['fk']:ob, }
             for f in ls_tables[table_name][rec].keys():
                 v = replace_null(o['obj'], f, ls_tables[table_name][rec][f])
                 if v:
                     r_dic[f] = v
-            r_dic[o['fk']] = ob
-            obj = o['obj'].objects.create(**r_dic)
+            if len(r_dic.keys()) > 1:
+                o['obj'].objects.create(**r_dic)
 
-            if getattr(mFiles, table_name, None):
-                if getattr(mFiles[table_name], rec, None):
-                    for f in mFiles[table_name][rec].keys():
-                        file = mFiles[table_name][rec][f]
-                        if file:
-                            getattr(obj, f).save(file.name, file, save=True)
+    # Сохраним файлы сертификатов
+    for table_name in mFiles.keys():
+        o = get_object(table_name)
+        for rec in mFiles[table_name].keys():
+            for f in mFiles[table_name][rec].keys():
+                file = mFiles[table_name][rec][f]
+                if file:
+                    r_dic = {o['fk']: ob, }
+                    obj = o['obj'].objects.create(**r_dic)
+                    getattr(obj, f).save(file.name, file, save=True)
 
     return ob.id
 
