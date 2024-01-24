@@ -26,7 +26,7 @@ class Medicine(models.Model):
     id                  = models.AutoField(primary_key=True)
     name                = models.CharField(max_length=100, verbose_name='Наименование', default='')  # Наименование
     article             = models.CharField(max_length=100, verbose_name='Артикул', default='')  # Артикул
-    photo               = models.ImageField(verbose_name='Фото', upload_to='photos/medicine/', blank=True, null=True)  # Фото
+    photo               = models.ImageField(verbose_name='Фото', upload_to='photos/medicine/%Y/%m/%d/', blank=True, null=True)  # Фото
     group               = models.ForeignKey(MedicineGroup, on_delete=models.SET_NULL, verbose_name='Группа', blank=True, null=True)  # Группа
     expiration_date     = models.DateField(verbose_name='Срок годности', auto_now_add=True)  # Срок годности
     storage_conditions  = models.TextField(blank=True, verbose_name='Условия хранения', default='')  # Условия хранения
@@ -78,7 +78,7 @@ class Supplier(models.Model):
 
 class Contract(models.Model):
     id                      = models.AutoField(primary_key=True)
-    document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/contract/')  # Скан документа
+    document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/contract/%Y/%m/%d/')  # Скан документа
     supplier                = models.ForeignKey(Supplier, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Поставщик')  # Ссылка на модель "Поставщик"
     number                  = models.IntegerField(blank=True, default=0, verbose_name='Номер')  # Номер договора
     start_date              = models.DateField(blank=True, verbose_name='Дата начала', auto_now_add=True)  # Дата начала
@@ -128,7 +128,7 @@ class Certificate(models.Model):
     id                      = models.AutoField(primary_key=True)
     medicine                = models.ForeignKey(Medicine, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Препарат')  # Ссылка на модель "Лекарство"
     supplier                = models.ForeignKey(Supplier, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Поставщик')  # Ссылка на модель "Поставщик"
-    document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/certificate/')  # Скан документа
+    document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/certificate/%Y/%m/%d/')  # Скан документа
     number                  = models.CharField(blank=True, max_length=100, verbose_name='Номер', default='')  # Номер
     start_date              = models.DateField(blank=True,  verbose_name='Дата начала', auto_now_add=True)  # Дата начала
     end_date                = models.DateField(blank=True,  verbose_name='Дата окончания', auto_now_add=True)  # Дата окончания
@@ -152,7 +152,7 @@ class Certificate(models.Model):
 class CertificateAttachment(models.Model):
     id                  = models.AutoField(primary_key=True)
     certificate         = models.ForeignKey(Certificate, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Сертификат')  # Ссылка на модель "Сертификат"
-    document_scan       = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/certificate_attachment/')  # Скан документа
+    document_scan       = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/certificate_attachment/%Y/%m/%d/')  # Скан документа
 
     Index(fields=['id', 'certificate'])
 
@@ -335,7 +335,7 @@ class LegalEntity(models.Model):
 class Profile(models.Model):
     id              = models.AutoField(primary_key=True)
     user            = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')  # Пользователь
-    photo           = models.ImageField(blank=True, null=True, verbose_name='Фото', upload_to='photos/profile/', default='')  # Фото
+    photo           = models.ImageField(blank=True, null=True, verbose_name='Фото', upload_to='photos/profile/%Y/%m/%d/', default='')  # Фото
     middle_name     = models.CharField(blank=True, default='', max_length=50, verbose_name='Отчество')  # Отчество
     position        = models.CharField(blank=True, default='', max_length=100, verbose_name='Должность')  # Должность
     address         = models.CharField(blank=True, default='', max_length=255, verbose_name='Адрес')  # Адрес
@@ -376,14 +376,6 @@ class Order(models.Model):
 
     Index(fields=['number', 'date', 'physical_person', 'legal_entity', 'seller', ])
 
-    def clean(self):
-        if self.physical_person is None and self.legal_entity is None:
-            raise ValidationError('Необходимо заполнить либо поле "Физическое лицо", либо "Юридическое лицо"')
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super(Order, self).save(*args, **kwargs)
-
     def __str__(self):
         return f"Заказ №{self.number}"  # Отображение названия юридического лица в админке
 
@@ -418,7 +410,7 @@ class OrderComposition(models.Model):
 
 class Prescription(models.Model):
     id                      = models.AutoField(primary_key=True)
-    document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/prescription/')  # Скан документа
+    document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/prescription/%Y/%m/%d/')  # Скан документа
     physical_person         = models.ForeignKey(PhysicalPerson, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Физическое лицо')  # Физическое лицо
     doctor                  = models.ForeignKey(Doctor, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Врач')  # Врач
     prescription_date       = models.DateField(blank=True, auto_now_add=True, verbose_name='Дата рецепта')  # Дата выписки рецепта

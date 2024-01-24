@@ -10,13 +10,15 @@ def prescription_edit(request, record):
     side_table = 'PrescComposition'
     side_table_struct = 'medicine:link:s-medicine;dosage:text:'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request, { side_table: side_table_struct })
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request, { side_table: side_table_struct })
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except (DataError, OverflowError) as e:
+            error = str(e)
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -96,6 +98,11 @@ def prescription_edit(request, record):
             },
         ]
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+            'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/edit.html', default_context | view_context | custom_context)
@@ -110,13 +117,15 @@ def order_edit(request, record):
     side_table = 'OrderComposition'
     side_table_struct = 'medicine:link:s-medicine;price:number:;quantity:number:'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request, { side_table: side_table_struct })
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request, {side_table: side_table_struct})
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except (DataError, OverflowError) as e:
+            error = str(e)
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -202,6 +211,11 @@ def order_edit(request, record):
             },
         ]
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+            'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/edit.html', default_context | view_context | custom_context)
@@ -216,13 +230,15 @@ def receipt_edit(request, record):
     side_table = 'ReceiptItem'
     side_table_struct = 'medicine:link:s-medicine;quantity:number:;unit_price:number:'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request, { side_table: side_table_struct })
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request, {side_table: side_table_struct})
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except (DataError, OverflowError) as e:
+            error = str(e)
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -289,6 +305,11 @@ def receipt_edit(request, record):
             },
         ]
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+            'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/edit.html', default_context | view_context | custom_context)
@@ -302,16 +323,16 @@ def certificate_edit(request, record):
     n = 'certificate'
     side_table = 'CertificateAttachment'
     side_table_struct = 'document_scan:file:'
-
     if request.method == 'POST':
-        fsr = [int(x) for x in request.POST['fsr'].split(',')] if request.POST['fsr'] != '' else []
-        id_rec = save_record(record, o, request, { side_table: side_table_struct }, fsr)
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request, { side_table: side_table_struct })
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except (DataError, OverflowError) as e:
+            error = str(e)
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -379,6 +400,11 @@ def certificate_edit(request, record):
             },
         ]
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+            'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/edit.html', default_context | view_context | custom_context)
@@ -393,13 +419,15 @@ def contract_edit(request, record):
     side_table = 'ContractMedicine'
     side_table_struct = 'medicine:link:s-medicine;prices:text:;discount_conditions:text:'
     if request.method == 'POST':
-        id_rec = save_record(record, o, request, { side_table: side_table_struct })
-        return redirect(reverse(n + "_id", args=[id_rec]))
+        try:
+            id_rec = save_record(record, o, request, {side_table: side_table_struct})
+            return redirect(reverse(n + "_id", args=[id_rec]))
+        except (DataError, OverflowError) as e:
+            error = str(e)
+    if record != 'new':
+        ob = o.objects.get(id=record)
     else:
-        if record != 'new':
-            ob = o.objects.get(id=record)
-        else:
-            ob = o.objects.create()
+        ob = o.objects.create()
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -493,6 +521,11 @@ def contract_edit(request, record):
             },
         ]
     }
+    custom_context['input_fields'] = [
+        {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length} if x['type'] in (
+            'text', 'number', 'textarea') else x
+        for x in custom_context['input_fields']
+    ]
     if record == 'new':
         ob.delete()
     return render(request, 'mainapp/edit.html', default_context | view_context | custom_context)

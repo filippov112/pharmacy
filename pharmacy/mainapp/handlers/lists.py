@@ -18,7 +18,9 @@ def medicine_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_'+fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -62,7 +64,9 @@ def prescription_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -98,7 +102,9 @@ def order_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -146,7 +152,9 @@ def legal_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -184,7 +192,9 @@ def physic_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -222,7 +232,9 @@ def doctor_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -257,7 +269,9 @@ def facility_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -290,7 +304,9 @@ def med_group_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -324,7 +340,9 @@ def receipt_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -360,7 +378,9 @@ def certificate_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -395,7 +415,9 @@ def contract_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:
@@ -430,7 +452,9 @@ def supplier_list(request):
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
             dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            o.objects.filter(id__in=dl).delete()
+            obj_list = o.objects.filter(id__in=dl)
+            clear_files(o, obj_list)
+            obj_list.delete()
             records = o.objects.all()
 
         if 'delete-list' not in request.POST:

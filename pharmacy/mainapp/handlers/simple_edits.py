@@ -1,5 +1,3 @@
-from django.db import DataError
-
 from .commons import *
 
 @permission_required('mainapp.change_medicine', raise_exception=True)
@@ -12,7 +10,7 @@ def medicine_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except DataError as e:
+        except (DataError, OverflowError) as e:
             error = str(e)
 
     if record != 'new':
@@ -84,7 +82,7 @@ def legal_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except DataError as e:
+        except (DataError, OverflowError) as e:
             error = str(e)
 
     if record != 'new':
@@ -153,7 +151,7 @@ def physic_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except DataError as e:
+        except (DataError, OverflowError) as e:
             error = str(e)
 
     if record != 'new':
@@ -222,7 +220,7 @@ def doctor_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except DataError as e:
+        except (DataError, OverflowError) as e:
             error = str(e)
 
     if record != 'new':
@@ -297,7 +295,7 @@ def facility_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except DataError as e:
+        except (DataError, OverflowError) as e:
             error = str(e)
 
     if record != 'new':
@@ -364,7 +362,7 @@ def supplier_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except DataError as e:
+        except (DataError, OverflowError) as e:
             error = str(e)
 
     if record != 'new':
@@ -433,7 +431,7 @@ def med_group_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except DataError as e:
+        except (DataError, OverflowError) as e:
             error = str(e)
 
     if record != 'new':

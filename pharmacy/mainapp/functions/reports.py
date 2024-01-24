@@ -1,6 +1,7 @@
-from django.conf import settings
-from django.template.loader import get_template
 import pdfkit
+from django.template.loader import get_template
+
+from pharmacy import settings
 
 
 # def get_report(dic):
