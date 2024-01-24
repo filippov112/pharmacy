@@ -5,45 +5,32 @@
     <link type="text/css" href="{% static 'mainapp/css/select.css' %}" rel="stylesheet" />
     <link type="text/css" href="{% static 'mainapp/css/table.css' %}" rel="stylesheet" />
     <link type="text/css" href="{% static 'mainapp/css/view_simple.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'mainapp/css/view.css' %}" rel="stylesheet" />
     <link type="text/css" href="{% static 'mainapp/css/reports.css' %}" rel="stylesheet" />
 {% endblock %}
 
 
 
 {% block body %}
-    <div id="header">
-        <button id="show-sidebar">
-            <img src="{% static 'mainapp/svg/menu.svg' %}">
-        </button>
-        <div id="header-title">
-            {% for l in bread_crumbs %}
-            <a href="{% url l.link %}">{{ l.title }}</a>
-            <img src="{% static 'mainapp/svg/right.svg' %}">
-            {% endfor %}
-            <p>{{ title_view }}</p>
-        </div>
-    </div>
-
     <div id="body-container">
         <div id="right-block-head">
-            Список отчетов
+            Отчетные формы
         </div>
 
         {% for r in reports %}
             <div class="report">
-                <form action="{% url 'report_print' report_name=r.report_name %}" method="post">
+                <form action="{% url 'report_print' report=r.report %}" method="post">
                     {% csrf_token %}
-                    <input name="report" type="number" style="display:none" value="{{ r.report }}">
                     <div class="report-title">{{ r.title }}</div>
                     <div class="report-body">
                         <div class="r-r">
-                            {% if r.has_on_date_block %}
+                            {% if r.date_block %}
                                  <div class="r-c">
                                     <p>На дату</p>
                                     <input type="date" name="dat">
                                 </div>
                             {% endif %}
-                            {% if r.has_period_block %}
+                            {% if r.period_block %}
                                 <div class="r-c">
                                     <p>Начало периода</p>
                                     <input type="date" name="dn">
@@ -56,8 +43,8 @@
                             {% for l in r.links %}
                                 <div class="r-c">
                                     <p>{{ l.title }}</p>
-                                    <button select select-name="{{ l.table }}">
-                                        <input type="number" name="{{ l.name }}">
+                                    <button select select-name="{{ l.table }}" multi>
+                                        <input type="text" name="{{ l.name }}">
                                         <p></p>
                                     </button>
                                 </div>
@@ -77,11 +64,27 @@
         <div class="table-title">
             <h2>{{ select.title }}</h2>
             <input class="select-search">
+            <button class="confirm-select">Подтвердить</button>
         </div>
         <table class="myTable">
+            <thead>
+                <tr>
+                    <th class="delete-col my-button">
+                        <div>
+                            <input type="checkbox" class="multi-select-record form-check-input">
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
             <tbody>
                 {% for r in select.records %}
                 <tr record="{{ r.pk }}">
+                    <td class="delete-col my-button">
+                        <div>
+                            <input type="checkbox" class="multi-select-record form-check-input" value="{{ r.pk }}">
+                        </div>
+                    </td>
                     <td class="select-record">{{ r.text }}</td>
                 </tr>
                 {% endfor %}
@@ -96,5 +99,6 @@
 {% block scripts %}
     <script src="{% static 'mainapp/js/sidebar.js' %}"></script>
     <script src="{% static 'mainapp/js/overlay.js' %}"></script>
+
     <script src="{% static 'mainapp/js/select.js' %}"></script>
 {% endblock %}

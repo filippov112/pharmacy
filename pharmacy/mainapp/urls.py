@@ -4,7 +4,7 @@ from .views import index_view, login_view, error_access, reports_list, medicine_
     prescription_list, medicine_edit, supplier_edit, contract_edit, certificate_edit, receipt_edit, facility_edit, \
     doctor_edit, physic_edit, legal_edit, order_edit, prescription_edit, medicine_id, supplier_id, contract_id, \
     certificate_id, receipt_id, facility_id, doctor_id, physic_id, legal_id, order_id, prescription_id, med_group_id, \
-    med_group_edit
+    med_group_edit, report_print
 
 
 
@@ -63,7 +63,8 @@ urlpatterns = [
     path('supplier', supplier_list, name='supplier_list'),
     path('medicine', medicine_list, name='medicine_list'),
 
-    path('report', reports_list, name='report_list'),
+    path('report/<int:report>', report_print, name='report_print'),
+    path('reports', reports_list, name='report_list'),
     path('error_access/<int:exception>', error_access, name='err_access'),
     path('login', login_view, name='login'),
 ]

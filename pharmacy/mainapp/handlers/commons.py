@@ -15,40 +15,31 @@ from pharmacy.settings import STATIC_URL
 
 def login_view(request):
     error = ''
-    # Обрабатываем представление только для неавторизованных пользователей
-    if not request.user.is_authenticated:
-        load_view = False
-        # Отправка данных авторизации
-        if request.method == 'POST':
-            form = CustomAuthenticationForm(data=request.POST, remember=request.POST.get('remember'))
-            if form.is_valid():
-                user = form.get_user()
-                login(request, user)
-                if form.remember:
-                    request.session.set_expiry(
-                        2592000)  # устанавливаем срок действия сессии на 30 дней (в секундах)
-            # Отправленные данные некорректны
-            else:
-                load_view = True
-                error = 'Введенные данные некорректны!'
-        # Переход на страницу авторизации
-        else:
-            load_view = True
-            form = CustomAuthenticationForm()
-        if load_view:
-            context = get_default_context('login', title='Авторизация')
-            custom_context = {'form': form, 'error': error, }
-            return render(request, 'mainapp/login.html', context | custom_context)
+    if request.user.is_authenticated:
+        return redirect('index')
 
-    # Если пользователь уже авторизован, либо авторизация прошла без ошибок,
-    # перенаправляем на главную страницу
-    return redirect('index')
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(data=request.POST, remember=request.POST.get('remember'))
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if form.remember:
+                request.session.set_expiry(2592000)
+            return redirect('index')
+        else:
+            error = 'Введенные данные некорректны!'
+    else:
+        form = CustomAuthenticationForm()
+
+    context = get_default_context('login', title='Авторизация')
+    custom_context = {'form': form, 'error': error, }
+    return render(request, 'mainapp/login.html', context | custom_context)
 
 
 @login_required(login_url=login_view)
 def index_view(request):
     error = ''
-    context = get_default_context('index', user=request.user, title='Заглавная')
+    context = get_default_context('index', request.user, 'Заглавная', error)
     custom_context = {}
     return render(request, 'mainapp/index.html', context | custom_context)
 
@@ -56,13 +47,83 @@ def index_view(request):
 @login_required(login_url=login_view)
 def reports_list(request):
     error = ''
-    context = get_default_context('index', user=request.user, title='')
-    custom_context = {}
-    return render(request, 'mainapp/index.html', context | custom_context)
+    context = get_default_context('reports', request.user, 'Отчетные формы', error)
+    custom_context = {
+        'title_view': 'Отчетные формы',
+        'reports': [
+            {
+                'report': 0,
+                'title': 'Отчет по продажам за период',
+                'date_block': False,
+                'period_block': True,
+                'links': []
+            },
+            {
+                'report': 1,
+                'title': 'Отчет по доступным запасам лекарства',
+                'date_block': False,
+                'period_block': False,
+                'links': [
+                    {'title': 'Препарат', 'table': 's-medicine', 'name': 'medicine'},
+                ]
+            },
+            {
+                'report': 2,
+                'title': 'Отчет по списанию просроченных препаратов',
+                'date_block': True,
+                'period_block': False,
+                'links': []
+            },
+            {
+                'report': 3,
+                'title': 'Отчет по доходам и расходам',
+                'date_block': False,
+                'period_block': True,
+                'links': []
+            },
+            {
+                'report': 4,
+                'title': 'Отчет по заказам на препарат',
+                'date_block': False,
+                'period_block': True,
+                'links': [
+                    {'title': 'Препарат', 'table': 's-medicine', 'name': 'medicine'},
+                ]
+            },
+            {
+                'report': 5,
+                'title': 'Отчет по динамике средней цены на препарат',
+                'date_block': False,
+                'period_block': True,
+                'links': [
+                    {'title': 'Препарат', 'table': 's-medicine', 'name': 'medicine'},
+                ]
+            },
+            {
+                'report': 6,
+                'title': 'Отчет по датам последних поставок',
+                'date_block': True,
+                'period_block': False,
+                'links': []
+            },
+        ],
+    }
 
+    select_list = ['s-medicine',]
+    custom_context['list_selects'] = []
+    for s in select_list:
+        custom_context['list_selects'].append({
+            'name': s,
+            'title': get_title_select(s),
+            'records': [{'pk': x.id, 'text': str(x)} for x in get_obj_select(s).objects.all()]
+        })
+
+    return render(request, 'mainapp/reports.html', context | custom_context)
+
+def report_print(request, report):
+    pass
 
 def error_access(request, exception=0):
-    context = get_default_context('index', user=request.user)
     custom_context = {
         'fav': STATIC_URL + 'mainapp/other/favicon.jpg',
         'error': STATIC_URL + 'mainapp/css/error.css',
@@ -71,4 +132,4 @@ def error_access(request, exception=0):
         'smile': STATIC_URL + 'mainapp/svg/smile.svg',
         'bg': STATIC_URL + 'mainapp/other/bg.jpg',
     }
-    return render(request, '404.html', context | custom_context, status=404)
+    return render(request, '404.html', custom_context, status=404)

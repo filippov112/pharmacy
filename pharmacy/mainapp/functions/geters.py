@@ -77,8 +77,17 @@ def get_side_menu(usr=None, su_mod=False):
             perms = get_user_permissions(usr)
     else:
         perms = full_list
+
+    perms = ['reports'] + perms
     for p in perms:
         match p:
+            case 'reports':
+                tasks.append({
+                    'name': 'reports',
+                    'title': 'Отчетные формы',
+                    'url': reverse('report_list'),
+                    'static_path': 'mainapp/svg/reports.svg',
+                })
             case 'settings':
                 tasks.append({
                     'name': 'settings',

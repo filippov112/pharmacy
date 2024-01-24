@@ -19,10 +19,12 @@ from django.contrib.auth.views import LogoutView
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf.urls import (
-handler400, handler403, handler404, handler500
-)
+from django.conf.urls import handler400, handler403, handler404, handler500
+
+handler400 = 'mainapp.handlers.commons.error_access'
+handler403 = 'mainapp.handlers.commons.error_access'
 handler404 = 'mainapp.handlers.commons.error_access'
+handler500 = 'mainapp.handlers.commons.error_access'
 
 urlpatterns = [
     path("", include("mainapp.urls")),
