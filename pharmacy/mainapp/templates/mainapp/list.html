@@ -10,18 +10,28 @@
 
 
 {% block head %}
-<button id="delete-elements">
-    <img src="{% static 'mainapp/svg/basket.svg' %}">
-</button>
-<a href="{{ add_record }}" id="add-b">
-    <img src="{% static 'mainapp/svg/add.svg' %}">
-</a>
-<button id="sorting-b" onclick="show_sort()">
-    <img src="{% static 'mainapp/svg/sort.svg' %}">
-</button>
-<button id="filter-b">
-    <img src="{% static 'mainapp/svg/filter.svg' %}">
-</button>
+    {% if delete_rule %}
+    <button id="delete-elements">
+    {% else %}
+    <button style="display: none;" id="delete-elements">
+    {% endif %}        
+        <img src="{% static 'mainapp/svg/basket.svg' %}">
+    </button>
+
+    {% if add_rule %}
+    <a href="{{ add_record }}" id="add-b">
+    {% else %}
+    <a style="display: none;" href="{{ add_record }}" id="add-b">
+    {% endif %}        
+        <img src="{% static 'mainapp/svg/add.svg' %}">
+    </a>
+
+    <button id="sorting-b" onclick="show_sort()">
+        <img src="{% static 'mainapp/svg/sort.svg' %}">
+    </button>
+    <button id="filter-b">
+        <img src="{% static 'mainapp/svg/filter.svg' %}">
+    </button>
 {% endblock %}
 
 
@@ -32,7 +42,11 @@
                 <table class="myTable">
                     <thead>
                         <tr>
+                            {% if delete_rule %}
                             <th class="delete-col my-button">
+                            {% else %}  
+                            <th style="display: none;" class="delete-col my-button">
+                            {% endif %}  
                                 <div>
                                     <input type="checkbox" class="delete-record form-check-input">
                                 </div>
@@ -45,7 +59,11 @@
                     <tbody>
                         {% for e in elem_table %}
                         <tr link="{{ e.link }}">
+                            {% if delete_rule %}
                             <td class="delete-col my-button">
+                            {% else %}
+                            <td style="display: none;" class="delete-col my-button">   
+                            {% endif %} 
                                 <div>
                                     <input type="checkbox" class="delete-record form-check-input" value="{{ e.id }}">
                                 </div>

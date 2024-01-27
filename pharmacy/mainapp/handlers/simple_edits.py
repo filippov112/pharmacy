@@ -1,3 +1,5 @@
+
+
 from .commons import *
 
 @permission_required('mainapp.change_medicine', raise_exception=True)
@@ -10,13 +12,13 @@ def medicine_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except (DataError, OverflowError) as e:
+        except (DataError, OverflowError, ProtectedError, IntegrityError) as e:
             error = str(e)
 
     if record != 'new':
         ob = o.objects.get(id=record)
     else:
-        ob = o.objects.create()
+        ob = set_empty_object(o)
 
     title = 'Редактирование: '+str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -31,7 +33,7 @@ def medicine_edit(request, record):
             # file                          - name, text_value
             # link                          - name, text_value, select
             # text, number, date, textarea  - name, value
-            {'type': 'image', 'url': default_val(o, 'photo', ob.photo), 'name':'i-photo', 'title': 'Изображение', 'value': '', 'text_value':'',
+            {'type': 'image', 'url': default_val(o, 'photo', ob.photo, True), 'name':'i-photo', 'title': 'Изображение', 'value': '', 'text_value':'',
              'select':''},
             {'type': 'text', 'url': '', 'name': 'i-article', 'title': 'Артикул', 'value': default_val(o, 'article', ob.article), 'text_value': '',
              'select': ''},
@@ -39,7 +41,7 @@ def medicine_edit(request, record):
              'select': ''},
             {'type': 'link', 'url': '', 'name': 'i-group', 'title': 'Лекарственная группа', 'value': '', 'text_value': default_val(o, 'group', ob.group),
              'select': 's-med_group'},
-            {'type': 'date', 'url': '', 'name': 'i-expiration_date', 'title': 'Годен до', 'value': default_val(o, 'expiration_date', ob.expiration_date), 'text_value': '',
+            {'type': 'number', 'url': '', 'name': 'i-expiration_date', 'title': 'Срок годности (лет)', 'value': default_val(o, 'expiration_date', ob.expiration_date), 'text_value': '',
              'select': ''},
             {'type': 'textarea', 'url': '', 'name': 'i-storage_conditions', 'title': 'Условия хранения', 'value': default_val(o, 'storage_conditions', ob.storage_conditions), 'text_value': '',
              'select': ''},
@@ -66,9 +68,6 @@ def medicine_edit(request, record):
         'text', 'number', 'textarea') else x
         for x in custom_context['input_fields']
     ]
-
-    if record == 'new':
-        ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
 
 
@@ -82,13 +81,13 @@ def legal_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except (DataError, OverflowError) as e:
+        except (DataError, OverflowError, ProtectedError, IntegrityError) as e:
             error = str(e)
 
     if record != 'new':
         ob = o.objects.get(id=record)
     else:
-        ob = o.objects.create()
+        ob = set_empty_object(o)
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -136,8 +135,6 @@ def legal_edit(request, record):
         'text', 'number', 'textarea') else x
         for x in custom_context['input_fields']
     ]
-    if record == 'new':
-        ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
 
 
@@ -151,13 +148,13 @@ def physic_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except (DataError, OverflowError) as e:
+        except (DataError, OverflowError, ProtectedError, IntegrityError) as e:
             error = str(e)
 
     if record != 'new':
         ob = o.objects.get(id=record)
     else:
-        ob = o.objects.create()
+        ob = set_empty_object(o)
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -205,8 +202,6 @@ def physic_edit(request, record):
         'text', 'number', 'textarea') else x
         for x in custom_context['input_fields']
     ]
-    if record == 'new':
-        ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
 
 
@@ -220,13 +215,13 @@ def doctor_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except (DataError, OverflowError) as e:
+        except (DataError, OverflowError, ProtectedError, IntegrityError) as e:
             error = str(e)
 
     if record != 'new':
         ob = o.objects.get(id=record)
     else:
-        ob = o.objects.create()
+        ob = set_empty_object(o)
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -280,8 +275,6 @@ def doctor_edit(request, record):
         'text', 'number', 'textarea') else x
         for x in custom_context['input_fields']
     ]
-    if record == 'new':
-        ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
 
 
@@ -295,13 +288,13 @@ def facility_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except (DataError, OverflowError) as e:
+        except (DataError, OverflowError, ProtectedError, IntegrityError) as e:
             error = str(e)
 
     if record != 'new':
         ob = o.objects.get(id=record)
     else:
-        ob = o.objects.create()
+        ob = set_empty_object(o)
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -346,9 +339,6 @@ def facility_edit(request, record):
         {**x, 'maxlength': o._meta.get_field(x['name'][2:]).max_length } if x['type'] in ('text', 'number', 'textarea') else x
         for x in custom_context['input_fields']
     ]
-
-    if record == 'new':
-        ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
 
 
@@ -362,13 +352,13 @@ def supplier_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except (DataError, OverflowError) as e:
+        except (DataError, OverflowError, ProtectedError, IntegrityError) as e:
             error = str(e)
 
     if record != 'new':
         ob = o.objects.get(id=record)
     else:
-        ob = o.objects.create()
+        ob = set_empty_object(o)
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -416,8 +406,6 @@ def supplier_edit(request, record):
         'text', 'number', 'textarea') else x
         for x in custom_context['input_fields']
     ]
-    if record == 'new':
-        ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)
 
 
@@ -431,13 +419,13 @@ def med_group_edit(request, record):
         try:
             id_rec = save_record(record, o, request)
             return redirect(reverse(n + "_id", args=[id_rec]))
-        except (DataError, OverflowError) as e:
+        except (DataError, OverflowError, ProtectedError, IntegrityError) as e:
             error = str(e)
 
     if record != 'new':
         ob = o.objects.get(id=record)
     else:
-        ob = o.objects.create()
+        ob = set_empty_object(o)
 
     title = 'Редактирование: ' + str(ob) if record != 'new' else 'Новая запись'
     task = record
@@ -464,6 +452,4 @@ def med_group_edit(request, record):
         'text', 'number', 'textarea') else x
         for x in custom_context['input_fields']
     ]
-    if record == 'new':
-        ob.delete()
     return render(request, 'mainapp/simple_view_edit.html', default_context | view_context | custom_context)

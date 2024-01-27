@@ -28,11 +28,13 @@ def get_default_context(_task='', user=None, title='', error=''):
 
 
 # Контекст списков
-def get_list_context(_name, _elements, _records, no_elem_table=False):
+def get_list_context(_name, _elements, _records, _usr, _fn, no_elem_table=False):
     ret = {}
     ret['title_view'] = { x['name']: x['title'] for x in get_side_menu(su_mod=True)}[_name]
     ret['sorting_table'] = [{'name': e['field'], 'title': e['title']} for e in _elements]
-
+    rules = get_user_permissions(_usr)
+    ret['delete_rule']  = 'delete_' + _fn in rules or _usr.is_superuser
+    ret['add_rule']     = 'change_' + _fn in rules or _usr.is_superuser
     ret['list_selects'] = []
     for e in _elements:
         if e['type'] == 'link':

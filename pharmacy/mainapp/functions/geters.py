@@ -78,7 +78,7 @@ def get_side_menu(usr=None, su_mod=False):
     else:
         perms = full_list
 
-    perms = ['reports'] + perms
+    perms = ['reports'] + list(perms)
     for p in perms:
         match p:
             case 'reports':

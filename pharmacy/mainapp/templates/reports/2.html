@@ -1,20 +1,23 @@
 <html>
 <body>
-    <h2>Отчет по доступным запасам лекарства</h2>
+    <h2>Отчет по поставкам препарата</h2>
     <p>По препарату: {{ name }}</p>
+    <p>За период с {{ dn }} по {{ dk }}</p>
     <table>
         <tr>
             <th>Поставщик</th>
+            <th>Дата</th>
             <th>Кол-во</th>
-            <th>Цена</th>
-            <th>Годен до</th>
+            <th>На общую сумму</th>
         </tr>
+        {% for h in records %}
         <tr>
             <td>{{ h.supplier }}</td>
+            <td>{{ h.date }}</td>
             <td>{{ h.count }}</td>
             <td>{{ h.price }}</td>
-            <td>{{ h.used }}</td>
         </tr>
+        {% endfor %}
     </table>
 </body>
 </html>

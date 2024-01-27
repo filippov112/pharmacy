@@ -1,24 +1,40 @@
 <html>
 <body>
-    <h2>Отчет по списанию просроченных препаратов</h2>
-    <p>По состоянию на {{ date }}</p>
+    <h2>Отчет по доходам и расходам</h2>
+    <p>За период с {{ dn }} по {{ dk }}</p>
+    <br>
+    <p>Поставки</p>
     <table>
         <tr>
-            <th>Препарат</th>
-            <th>Поставщик</th>
-            <th>Кол-во</th>
-            <th>Цена</th>
-            <th>Дата партии</th>
-            <th>Срок истекает</th>
+            <th>Дата поставки</th>
+            <th>Номер</th>
+            <th>Издержки</th>
         </tr>
+        {% for h in receipts %}
         <tr>
-            <td>{{ h.medicine }}</td>
-            <td>{{ h.supplier }}</td>
-            <td>{{ h.count }}</td>
-            <td>{{ h.price }}</td>
-            <td>{{ h.date_begin }}</td>
-            <td>{{ h.date_end }}</td>
+            <td>{{ h.date }}</td>
+            <td>{{ h.number }}</td>
+            <td>{{ h.summ }}</td>
         </tr>
+        {% endfor %}
     </table>
+    <br>
+    <p>Заказы</p>
+    <table>
+        <tr>
+            <th>Дата заказа</th>
+            <th>Номер</th>
+            <th>Доход</th>
+        </tr>
+        {% for h in orders %}
+        <tr>
+            <td>{{ h.date }}</td>
+            <td>{{ h.number }}</td>
+            <td>{{ h.summ }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p>Сумма расходов за период: {{ summ_receipt }}р.</p>
+    <p>Сумма доходов за период: {{ summ_order }}р.</p>
 </body>
 </html>

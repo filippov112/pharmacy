@@ -25,13 +25,15 @@ def default_val(o, field, val, is_link=False):
                 return val.url if val else ''
             return val.name.split('/')[-1] if val else ''
         case 'DateField':
-            return str(val)
+            return str(val) if val else ''
         case 'IntegerField':
-            return int(val)
+            return int(val) if val else 0
         case 'DecimalField':
-            return Decimal(val)
+            return Decimal(val) if val else 0
         case 'FloatField':
-            return float(val)
+            return float(val) if val else 0
+        case 'TextField'|'CharField':
+            return val if val else ''
     return val
 
 

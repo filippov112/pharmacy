@@ -63,7 +63,7 @@ urlpatterns = [
     path('supplier', supplier_list, name='supplier_list'),
     path('medicine', medicine_list, name='medicine_list'),
 
-    path('report/<int:report>', report_print, name='report_print'),
+    path('report/<str:report>', report_print, name='report_print'),
     path('reports', reports_list, name='report_list'),
     path('error_access/<int:exception>', error_access, name='err_access'),
     path('login', login_view, name='login'),

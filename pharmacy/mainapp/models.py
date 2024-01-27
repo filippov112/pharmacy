@@ -5,6 +5,20 @@ from django.db.models import Index
 from django.urls import reverse
 
 
+class Logs(models.Model):
+    TableName       = models.CharField(blank=True, null=True, default='', max_length=200, verbose_name='Таблица')
+    EventDateTime   = models.DateTimeField(blank=True, null=True, verbose_name='Дата/Время события')
+    EventType       = models.CharField(blank=True, default='', null=True, max_length=100, verbose_name='Тип события')
+    RecordID        = models.IntegerField(blank=True, default=-1, null=True, verbose_name='Номер записи')
+    Details         = models.TextField(max_length=100000, default='', blank=True, null=True, verbose_name='Описание изменений')
+
+    class Meta:
+        verbose_name = 'Лог'
+        verbose_name_plural = 'Логи'
+        ordering = ['-EventDateTime']
+        db_table = 'Logs'
+
+
 class MedicineGroup(models.Model):
     id              = models.AutoField(primary_key=True)
     group_name      = models.CharField(blank=True, max_length=100, verbose_name='Название группы', default='')  # Название группы
@@ -28,7 +42,7 @@ class Medicine(models.Model):
     article             = models.CharField(max_length=100, verbose_name='Артикул', default='')  # Артикул
     photo               = models.ImageField(verbose_name='Фото', upload_to='photos/medicine/%Y/%m/%d/', blank=True, null=True)  # Фото
     group               = models.ForeignKey(MedicineGroup, on_delete=models.SET_NULL, verbose_name='Группа', blank=True, null=True)  # Группа
-    expiration_date     = models.DateField(verbose_name='Срок годности', auto_now_add=True)  # Срок годности
+    expiration_date     = models.IntegerField(verbose_name='Срок годности', blank=True, null=True, default=5)  # Срок годности
     storage_conditions  = models.TextField(blank=True, verbose_name='Условия хранения', default='')  # Условия хранения
     interactions        = models.TextField(blank=True, verbose_name='Взаимодействие', default='')  # Взаимодействие
     limitations         = models.TextField(blank=True, verbose_name='Ограничения', default='')  # Ограничения
@@ -79,10 +93,10 @@ class Supplier(models.Model):
 class Contract(models.Model):
     id                      = models.AutoField(primary_key=True)
     document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/contract/%Y/%m/%d/')  # Скан документа
-    supplier                = models.ForeignKey(Supplier, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Поставщик')  # Ссылка на модель "Поставщик"
-    number                  = models.IntegerField(blank=True, default=0, verbose_name='Номер')  # Номер договора
-    start_date              = models.DateField(blank=True, verbose_name='Дата начала', auto_now_add=True)  # Дата начала
-    end_date                = models.DateField(blank=True, verbose_name='Дата окончания', auto_now_add=True)  # Дата окончания
+    supplier                = models.ForeignKey(Supplier, on_delete=models.PROTECT, verbose_name='Поставщик')  # Ссылка на модель "Поставщик"
+    number                  = models.IntegerField(default=0, verbose_name='Номер', unique=True)  # Номер договора
+    start_date              = models.DateField(verbose_name='Дата начала', auto_now_add=True)  # Дата начала
+    end_date                = models.DateField(verbose_name='Дата окончания', auto_now_add=True)  # Дата окончания
     delivery_terms          = models.TextField(blank=True, verbose_name='Сроки поставки', default='')  # Сроки поставки
     batch_sizes             = models.TextField(blank=True, verbose_name='Размеры партий', default='')  # Размеры партий
     payment_method          = models.TextField(blank=True, verbose_name='Способ оплаты', default='')  # Способ оплаты
@@ -93,7 +107,7 @@ class Contract(models.Model):
     Index(fields=['number', 'supplier'])
 
     def __str__(self):
-        return f"Договор №{self.number}"  # Возвращает информацию о договоре в админке
+        return f"Договор №{str(self.number)}"  # Возвращает информацию о договоре в админке
 
     def get_absolute_url(self):
         return reverse('contract_list', args=[str(self.id)])
@@ -107,8 +121,8 @@ class Contract(models.Model):
 
 class ContractMedicine(models.Model):
     id                      = models.AutoField(primary_key=True)
-    contract                = models.ForeignKey(Contract, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Договор')  # Ссылка на модель "Договор"
-    medicine                = models.ForeignKey(Medicine, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Препарат')  # Ссылка на модель "Лекарство"
+    contract                = models.ForeignKey(Contract, on_delete=models.CASCADE, verbose_name='Договор')  # Ссылка на модель "Договор"
+    medicine                = models.ForeignKey(Medicine, on_delete=models.PROTECT, verbose_name='Препарат')  # Ссылка на модель "Лекарство"
     prices                  = models.TextField(blank=True, default='', verbose_name='Цены')  # Цены
     discount_conditions     = models.TextField(blank=True, default='', verbose_name='Условия скидок')  # Условия скидок
 
@@ -126,18 +140,18 @@ class ContractMedicine(models.Model):
 
 class Certificate(models.Model):
     id                      = models.AutoField(primary_key=True)
-    medicine                = models.ForeignKey(Medicine, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Препарат')  # Ссылка на модель "Лекарство"
-    supplier                = models.ForeignKey(Supplier, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Поставщик')  # Ссылка на модель "Поставщик"
+    medicine                = models.ForeignKey(Medicine, on_delete=models.CASCADE, verbose_name='Препарат')  # Ссылка на модель "Лекарство"
+    supplier                = models.ForeignKey(Supplier, on_delete=models.CASCADE, verbose_name='Поставщик')  # Ссылка на модель "Поставщик"
     document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/certificate/%Y/%m/%d/')  # Скан документа
-    number                  = models.CharField(blank=True, max_length=100, verbose_name='Номер', default='')  # Номер
-    start_date              = models.DateField(blank=True,  verbose_name='Дата начала', auto_now_add=True)  # Дата начала
-    end_date                = models.DateField(blank=True,  verbose_name='Дата окончания', auto_now_add=True)  # Дата окончания
+    number                  = models.IntegerField(verbose_name='Номер', default=0, unique=True)  # Номер
+    start_date              = models.DateField(verbose_name='Дата начала', auto_now_add=True)  # Дата начала
+    end_date                = models.DateField(verbose_name='Дата окончания', auto_now_add=True)  # Дата окончания
     certifying_authority    = models.TextField(blank=True, default='', verbose_name='Сертифицирующий орган')  # Сертифицирующий орган
 
     Index(fields=['id', 'medicine', 'supplier', 'number'])
 
     def __str__(self):
-        return f"Сертификат №{self.number}, препарат - {self.medicine}, поставщик - {self.supplier}"  # Возвращает информацию о сертификате в админке
+        return f"Сертификат №{str(self.number)}, препарат - {self.medicine}, поставщик - {self.supplier}"  # Возвращает информацию о сертификате в админке
 
     def get_absolute_url(self):
         return reverse('certificate_list', args=[str(self.id)])
@@ -151,8 +165,8 @@ class Certificate(models.Model):
 
 class CertificateAttachment(models.Model):
     id                  = models.AutoField(primary_key=True)
-    certificate         = models.ForeignKey(Certificate, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Сертификат')  # Ссылка на модель "Сертификат"
-    document_scan       = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/certificate_attachment/%Y/%m/%d/')  # Скан документа
+    certificate         = models.ForeignKey(Certificate, on_delete=models.CASCADE, verbose_name='Сертификат')  # Ссылка на модель "Сертификат"
+    document_scan       = models.FileField(verbose_name='Скан документа', upload_to='photos/certificate_attachment/%Y/%m/%d/')  # Скан документа
 
     Index(fields=['id', 'certificate'])
 
@@ -168,13 +182,14 @@ class CertificateAttachment(models.Model):
 
 class Receipt(models.Model):
     id          = models.AutoField(primary_key=True)
-    contract    = models.ForeignKey(Contract, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Договор')  # Ссылка на модель "Договор"
-    date        = models.DateField(blank=True, auto_now_add=True, verbose_name='Дата')  # Дата
+    contract    = models.ForeignKey(Contract, on_delete=models.PROTECT, verbose_name='Договор')  # Ссылка на модель "Договор"
+    date        = models.DateField(auto_now_add=True, verbose_name='Дата')  # Дата
+    number      = models.IntegerField(default=0, verbose_name='Номер', unique=True)  # Номер поставки
 
     Index(fields=['id', 'contract', 'date'])
 
     def __str__(self):
-        return f"Поставка от {self.date}, по договору {self.contract}"  # Возвращает информацию о поступлении в админке
+        return f"Поставка №{str(self.number)} от {self.date}, по договору {self.contract}"  # Возвращает информацию о поступлении в админке
 
     def get_absolute_url(self):
         return reverse('receipt_list', args=[str(self.id)])
@@ -188,10 +203,10 @@ class Receipt(models.Model):
 
 class ReceiptItem(models.Model):
     id              = models.AutoField(primary_key=True)
-    receipt         = models.ForeignKey(Receipt, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Поступление')  # Ссылка на модель "Поступление"
-    medicine        = models.ForeignKey(Medicine, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Препарат')  # Ссылка на модель "Лекарство"
-    quantity        = models.IntegerField(blank=True, default=0, verbose_name='Количество')  # Количество
-    unit_price      = models.DecimalField(blank=True, default=0, max_digits=10, decimal_places=2, verbose_name='Цена за единицу')  # Цена за единицу
+    receipt         = models.ForeignKey(Receipt, on_delete=models.CASCADE, verbose_name='Поступление')  # Ссылка на модель "Поступление"
+    medicine        = models.ForeignKey(Medicine, on_delete=models.PROTECT, verbose_name='Препарат')  # Ссылка на модель "Лекарство"
+    quantity        = models.IntegerField(default=0, verbose_name='Количество')  # Количество
+    unit_price      = models.DecimalField(default=0, max_digits=10, decimal_places=2, verbose_name='Цена за единицу')  # Цена за единицу
 
     Index(fields=['receipt', 'medicine'])
 
@@ -312,7 +327,7 @@ class LegalEntity(models.Model):
     inn                     = models.CharField(blank=True, default='', max_length=12, verbose_name='ИНН')  # ИНН
     kpp                     = models.CharField(blank=True, default='', max_length=9, verbose_name='КПП')  # КПП
     address                 = models.CharField(blank=True, default='', max_length=255, verbose_name='Адрес')  # Адрес
-    phone                   = models.CharField(blank=True, default='', max_length=15, verbose_name='Телефон')  # Телефон
+    phone                   = models.CharField(blank=True, default='', max_length=100, verbose_name='Телефон')  # Телефон
     contact_person          = models.CharField(blank=True, default='', max_length=100, verbose_name='Контактное лицо')  # Контактное лицо
     contact_person_position = models.CharField(blank=True, default='', max_length=100, verbose_name='Должность контактного лица')  # Должность контактного лица
     discounts               = models.TextField(blank=True, default='', verbose_name='Скидки')  # Скидки
@@ -369,15 +384,15 @@ class Order(models.Model):
     id                  = models.AutoField(primary_key=True)
     physical_person     = models.ForeignKey(PhysicalPerson, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Физическое лицо')  # Физическое лицо
     legal_entity        = models.ForeignKey(LegalEntity, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Юридическое лицо')  # Юридическое лицо
-    seller              = models.ForeignKey(Profile, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Продавец')  # Продавец
-    date                = models.DateField(blank=True, auto_now_add=True, verbose_name='Дата')  # Дата
-    number              = models.IntegerField(blank=True, default=0, verbose_name='Номер', unique=True)  # Номер заказа
+    seller              = models.ForeignKey(Profile, on_delete=models.PROTECT, verbose_name='Продавец')  # Продавец
+    date                = models.DateField(auto_now_add=True, verbose_name='Дата')  # Дата
+    number              = models.IntegerField(default=0, verbose_name='Номер', unique=True)  # Номер заказа
 
 
     Index(fields=['number', 'date', 'physical_person', 'legal_entity', 'seller', ])
 
     def __str__(self):
-        return f"Заказ №{self.number}"  # Отображение названия юридического лица в админке
+        return f"Заказ №{str(self.number)}"  # Отображение названия юридического лица в админке
 
     def get_absolute_url(self):
         return reverse('order_list', args=[str(self.id)])
@@ -391,10 +406,10 @@ class Order(models.Model):
 
 class OrderComposition(models.Model):
     id              = models.AutoField(primary_key=True)
-    order           = models.ForeignKey(Order, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Заказ')  # Заказ
-    medicine        = models.ForeignKey(Medicine, blank=True, null=True, on_delete=models.PROTECT, verbose_name='Препарат')  # Лекарство
-    price           = models.FloatField(blank=True, default=0, verbose_name='Цена')  # Цена
-    quantity        = models.IntegerField(blank=True, default=0, verbose_name='Количество')  # Количество
+    order           = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')  # Заказ
+    medicine        = models.ForeignKey(Medicine, on_delete=models.PROTECT, verbose_name='Препарат')  # Лекарство
+    price           = models.FloatField(default=0, verbose_name='Цена')  # Цена
+    quantity        = models.IntegerField(default=0, verbose_name='Количество')  # Количество
 
     Index(fields=['order', 'medicine'])
 
@@ -411,17 +426,17 @@ class OrderComposition(models.Model):
 class Prescription(models.Model):
     id                      = models.AutoField(primary_key=True)
     document_scan           = models.FileField(blank=True, null=True, verbose_name='Скан документа', upload_to='photos/prescription/%Y/%m/%d/')  # Скан документа
-    physical_person         = models.ForeignKey(PhysicalPerson, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Физическое лицо')  # Физическое лицо
-    doctor                  = models.ForeignKey(Doctor, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Врач')  # Врач
-    prescription_date       = models.DateField(blank=True, auto_now_add=True, verbose_name='Дата рецепта')  # Дата выписки рецепта
-    pharmacy_visit_date     = models.DateField(blank=True, auto_now_add=True, verbose_name='Дата обращения')  # Дата обращения в аптеку
-    number                  = models.CharField(blank=True, default='', max_length=100, verbose_name='Номер')  # Номер
+    physical_person         = models.ForeignKey(PhysicalPerson, on_delete=models.CASCADE, verbose_name='Физическое лицо')  # Физическое лицо
+    doctor                  = models.ForeignKey(Doctor, on_delete=models.CASCADE, verbose_name='Врач')  # Врач
+    prescription_date       = models.DateField(auto_now_add=True, verbose_name='Дата рецепта')  # Дата выписки рецепта
+    pharmacy_visit_date     = models.DateField(auto_now_add=True, verbose_name='Дата обращения')  # Дата обращения в аптеку
+    number                  = models.IntegerField(default=0, verbose_name='Номер', unique=True)  # Номер
     status                  = models.CharField(blank=True, default='', max_length=100, verbose_name='Статус')  # Статус
 
     Index(fields=['id', 'number', 'physical_person'])
 
     def __str__(self):
-        return f"Рецепт №{self.number} от {self.prescription_date}, Врач - {str(self.doctor)}"
+        return f"Рецепт №{str(self.number)} от {self.prescription_date}, Врач - {str(self.doctor)}"
 
     def get_absolute_url(self):
         return reverse('prescription_list', args=[str(self.id)])
@@ -435,8 +450,8 @@ class Prescription(models.Model):
 
 class PrescComposition(models.Model):
     id              = models.AutoField(primary_key=True)
-    prescription    = models.ForeignKey(Prescription, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Рецепт')  # Физическое лицо
-    medicine        = models.ForeignKey(Medicine, blank=True, null=True, on_delete=models.CASCADE, verbose_name='Препарат')  # Лекарство
+    prescription    = models.ForeignKey(Prescription, on_delete=models.CASCADE, verbose_name='Рецепт')  # Физическое лицо
+    medicine        = models.ForeignKey(Medicine, on_delete=models.CASCADE, verbose_name='Препарат')  # Лекарство
     dosage          = models.CharField(blank=True, default='', max_length=255, verbose_name='Дозировка')  # Дозировка
 
     Index(fields=['id', 'prescription'])

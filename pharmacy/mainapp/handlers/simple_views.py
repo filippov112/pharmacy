@@ -29,7 +29,7 @@ def medicine_id(request, record):
             {'type': 'text', 'link': '', 'title': 'Артикул', 'text': ob.article},
             {'type': 'text', 'link': '', 'title': 'Наименование', 'text': ob.name},
             {'type': 'link', 'link': get_link('med_group_id', ob.group), 'title': 'Лекарственная группа', 'text': default_val(o, 'group', ob.group)},
-            {'type': 'text', 'link': '', 'title': 'Годен до', 'text': ob.expiration_date},
+            {'type': 'text', 'link': '', 'title': 'Срок годности (лет)', 'text': ob.expiration_date},
             {'type': 'text', 'link': '', 'title': 'Условия хранения', 'text': ob.storage_conditions},
             {'type': 'text', 'link': '', 'title': 'Взаимодействие с другими лекарствами', 'text': ob.interactions},
             {'type': 'text', 'link': '', 'title': 'Ограничения', 'text': ob.limitations},

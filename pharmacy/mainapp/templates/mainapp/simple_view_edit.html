@@ -17,14 +17,19 @@
     {% if task == 'view' %}
         {% if delete_rule %}
         <button id="delete-record">
+        {% else %}
+        <button style="display: none;" id="delete-record">
+        {% endif %}
             <img src="{% static 'mainapp/svg/delete.svg' %}">
         </button>
-        {% endif %}
+        
         {% if change_rule %}
         <a href="{{ edit_link }}" id="edit-record">
+        {% else %}
+        <a style="display: none;" href="{{ edit_link }}" id="edit-record">
+        {% endif %}
             <img src="{% static 'mainapp/svg/edit.svg' %}">
         </a>
-        {% endif %}
     {% else %}
         <button id="save-record">
             <img src="{% static 'mainapp/svg/save.svg' %}">

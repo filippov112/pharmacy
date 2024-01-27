@@ -17,19 +17,21 @@ def medicine_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_'+fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Каталог препаратов', error=error)
-    list_context = get_list_context(n, elements, records, no_elem_table=True)
+    list_context = get_list_context(n, elements, records, request.user, fn, no_elem_table=True)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
         'desc_table': [x['title'] for x in elements],
@@ -53,7 +55,7 @@ def prescription_list(request):
     n = 'prescription'
     fn = n
     elements = [
-        {'field': 'number'              , 'title': 'Номер'          , 'type': 'text'},
+        {'field': 'number'              , 'title': 'Номер'          , 'type': 'number'},
         {'field': 'physical_person'     , 'title': 'Клиент'         , 'type': 'link'    , 'select': 's-physic'},
         {'field': 'prescription_date'   , 'title': 'Дата рецепта'   , 'type': 'date'},
         {'field': 'doctor'              , 'title': 'Врач'           , 'type': 'link'    , 'select': 's-doctor'},
@@ -63,19 +65,21 @@ def prescription_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Список рецептов', error=error)
-    list_context    = get_list_context(n, elements, records)
+    list_context    = get_list_context(n, elements, records, request.user, fn)
     custom_context  = {
         'add_record': reverse(n+'_new', args=['new']),
     }
@@ -101,19 +105,21 @@ def order_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Список заказов', error=error)
-    list_context = get_list_context(n, elements, records, no_elem_table=True)
+    list_context = get_list_context(n, elements, records, request.user, fn, no_elem_table=True)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
         'desc_table': ['Номер заказа', 'Дата заказа', 'Клиент', 'Продавец'],
@@ -151,19 +157,21 @@ def legal_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Клиенты - Юридические лица', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }
@@ -191,19 +199,21 @@ def physic_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Клиенты - Физические лица', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }
@@ -231,19 +241,21 @@ def doctor_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Реестр врачей', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }
@@ -268,19 +280,21 @@ def facility_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Реестр учреждений', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }
@@ -303,19 +317,21 @@ def med_group_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Группы препаратов', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }
@@ -334,24 +350,27 @@ def receipt_list(request):
     elements = [
         {'field': 'contract', 'title': 'Договор'        , 'type': 'link'   , 'select': 's-contract'},
         {'field': 'date'    , 'title': 'Дата поставки'  , 'type': 'date'  },
+        {'field': 'number'  , 'title': 'Номер'          , 'type': 'number'  },
     ]
     # Договор, дата
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Список поставок', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }
@@ -368,7 +387,7 @@ def certificate_list(request):
     n = 'certificate'
     fn = n
     elements = [
-        {'field': 'number'      , 'title': 'Номер'      , 'type': 'text'    },
+        {'field': 'number'      , 'title': 'Номер'      , 'type': 'number'    },
         {'field': 'medicine'    , 'title': 'Препарат'   , 'type': 'link'    , 'select': 's-medicine'},
         {'field': 'supplier'    , 'title': 'Поставщик'  , 'type': 'link'    , 'select': 's-supplier'},
         {'field': 'start_date'  , 'title': 'Дата начала', 'type': 'date'    },
@@ -377,19 +396,21 @@ def certificate_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Список сертификатов', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }
@@ -414,19 +435,21 @@ def contract_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Список договоров поставок', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }
@@ -451,19 +474,21 @@ def supplier_list(request):
     records = []
     if request.method == "POST":
         if 'delete-list' in request.POST and check_user_rules(request.user, 'delete_' + fn):
-            dl = [int(x) for x in request.POST.get('delete-list').split(',')]
-            obj_list = o.objects.filter(id__in=dl)
-            clear_files(o, obj_list)
-            obj_list.delete()
+            try:
+                dl = [int(x) for x in request.POST.get('delete-list').split(',')]
+                obj_list = o.objects.filter(id__in=dl)
+                clear_files(o, obj_list)
+                obj_list.delete()
+            except ProtectedError as e:
+                error = str(e)
             records = o.objects.all()
-
         if 'delete-list' not in request.POST:
             records = get_filtered_records(o, request.POST)
     else:
         records = o.objects.all()
 
     default_context = get_default_context(n, user=request.user, title='Реестр поставщиков', error=error)
-    list_context = get_list_context(n, elements, records)
+    list_context = get_list_context(n, elements, records, request.user, fn)
     custom_context = {
         'add_record': reverse(n + '_new', args=['new']),
     }

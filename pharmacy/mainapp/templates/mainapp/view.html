@@ -10,16 +10,21 @@
 
 
 {% block head %}
-{% if delete_rule %}
-<button id="delete-record">
-    <img src="{% static 'mainapp/svg/delete.svg' %}">
-</button>
-{% endif %}
-{% if change_rule %}
-<a href="{{ edit_link }}" id="edit-record">
-    <img src="{% static 'mainapp/svg/edit.svg' %}">
-</a>
-{% endif %}
+    {% if delete_rule %}
+    <button id="delete-record">
+    {% else %}
+    <button style="display: none;" id="delete-record">
+    {% endif %}
+        <img src="{% static 'mainapp/svg/delete.svg' %}">
+    </button>
+        
+    {% if change_rule %}
+    <a href="{{ edit_link }}" id="edit-record">
+    {% else %}
+    <a style="display: none;" href="{{ edit_link }}" id="edit-record">
+    {% endif %}
+        <img src="{% static 'mainapp/svg/edit.svg' %}">
+    </a>
 {% endblock %}
 
 

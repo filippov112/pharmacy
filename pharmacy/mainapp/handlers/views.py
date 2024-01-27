@@ -345,6 +345,7 @@ def receipt_id(request, record):
         'content_view': [
             {'type': 'link', 'link': get_link('contract_id', ob.contract), 'title': 'Договор', 'text': default_val(o, 'contract', ob.contract)},
             {'type': 'text', 'link': '', 'title': 'Дата поставки', 'text': ob.date},
+            {'type': 'text', 'link': '', 'title': 'Номер', 'text': ob.number},
         ],
         # Детализация поставки
         'side_tables': [

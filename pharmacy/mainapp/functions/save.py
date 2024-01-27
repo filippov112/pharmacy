@@ -19,6 +19,7 @@ def get_object(n):
             return { 'obj':PrescComposition, 'fk':'prescription' }
     return {}
 
+
 def clear_files(model, obj_list):
     field_names = [
         field.name for field in model._meta.get_fields()
@@ -30,6 +31,23 @@ def clear_files(model, obj_list):
                 field = getattr(obj, f)
                 if field:
                     field.delete(False)
+
+
+class MyClass:
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+def set_empty_object(model):
+    field_names = [
+        field.name for field in model._meta.get_fields()
+        if not (field.auto_created and isinstance(field, (ManyToOneRel, ManyToManyRel)))
+    ]
+    obj = {}
+    for name in field_names:
+        obj[name] = None
+    obj = MyClass(**obj)
+    return obj
 
 
 def save_record(record, o, request, side_table_names={}, fsr=[]):
@@ -72,7 +90,7 @@ def save_record(record, o, request, side_table_names={}, fsr=[]):
 
     # Сохраним запись после изменения
     if record == 'new':
-        ob = o(**obj_record)
+        ob = o.objects.create(**obj_record)
 
     mFiles = {}
     if FILES:
@@ -99,8 +117,7 @@ def save_record(record, o, request, side_table_names={}, fsr=[]):
                     field = getattr(ob, field_name)
                     if field:
                         field.delete(False)
-                    field.save(file.name, file, save=True)
-    ob.save()
+                    field.save(file.name, file)
 
     # Почистим записи сторонних таблиц, прежде чем добавлять измененные (кроме файлов для сертификатов)
     for table_name in side_table_names.keys():
@@ -133,6 +150,6 @@ def save_record(record, o, request, side_table_names={}, fsr=[]):
                 if file:
                     r_dic = {o['fk']: ob, }
                     obj = o['obj'].objects.create(**r_dic)
-                    getattr(obj, f).save(file.name, file, save=True)
+                    getattr(obj, f).save(file.name, file)
 
     return ob.id

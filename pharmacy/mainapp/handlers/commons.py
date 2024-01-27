@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.http import HttpResponseServerError
+from django.http import HttpResponseServerError, HttpResponse
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import login
 from django.db import DataError
@@ -11,7 +11,7 @@ from ..forms import CustomAuthenticationForm
 from ..models import *
 from ..functions.main import *
 from pharmacy.settings import STATIC_URL
-
+from django.db.models import ProtectedError
 
 def login_view(request):
     error = ''
@@ -52,64 +52,39 @@ def reports_list(request):
         'title_view': 'Отчетные формы',
         'reports': [
             {
-                'report': 0,
-                'title': 'Отчет по продажам за период',
-                'date_block': False,
+                'report': 'Отчет по заказам препарата.pdf',
+                'title': 'Отчет по заказам препарата',
                 'period_block': True,
-                'links': []
-            },
-            {
-                'report': 1,
-                'title': 'Отчет по доступным запасам лекарства',
-                'date_block': False,
-                'period_block': False,
                 'links': [
                     {'title': 'Препарат', 'table': 's-medicine', 'name': 'medicine'},
                 ]
             },
             {
-                'report': 2,
-                'title': 'Отчет по списанию просроченных препаратов',
-                'date_block': True,
-                'period_block': False,
-                'links': []
+                'report': 'Отчет по поставкам препарата.pdf',
+                'title': 'Отчет по поставкам препарата',
+                'period_block': True,
+                'links': [
+                    {'title': 'Препарат', 'table': 's-medicine', 'name': 'medicine'},
+                ]
             },
             {
-                'report': 3,
+                'report': 'Отчет по доходам и расходам.pdf',
                 'title': 'Отчет по доходам и расходам',
-                'date_block': False,
                 'period_block': True,
                 'links': []
             },
             {
-                'report': 4,
-                'title': 'Отчет по заказам на препарат',
-                'date_block': False,
+                'report': 'Отчет по сотрудникам.pdf',
+                'title': 'Отчет по сотрудникам',
                 'period_block': True,
                 'links': [
-                    {'title': 'Препарат', 'table': 's-medicine', 'name': 'medicine'},
+                    {'title': 'Сотрудник', 'table': 's-user', 'name': 'user'},
                 ]
-            },
-            {
-                'report': 5,
-                'title': 'Отчет по динамике средней цены на препарат',
-                'date_block': False,
-                'period_block': True,
-                'links': [
-                    {'title': 'Препарат', 'table': 's-medicine', 'name': 'medicine'},
-                ]
-            },
-            {
-                'report': 6,
-                'title': 'Отчет по датам последних поставок',
-                'date_block': True,
-                'period_block': False,
-                'links': []
             },
         ],
     }
 
-    select_list = ['s-medicine',]
+    select_list = ['s-medicine', 's-user']
     custom_context['list_selects'] = []
     for s in select_list:
         custom_context['list_selects'].append({
@@ -120,8 +95,132 @@ def reports_list(request):
 
     return render(request, 'mainapp/reports.html', context | custom_context)
 
+@login_required(login_url=login_view)
 def report_print(request, report):
-    pass
+    if request.method == "POST":
+        d = request.POST
+        context = {}
+        template = ''
+        f = {}
+
+        match(report):
+            case 'Отчет по заказам препарата.pdf':
+                template = 'reports/1.html'
+                if d['dn']:
+                    f['order__date__lte'] = default_val(Order, 'date', d['dn'])
+                if d['dk']:
+                    f['order__date__gte'] = default_val(Order, 'date', d['dk'])
+                if d['medicine'] != '':
+                    f['medicine'] = default_val(OrderComposition, 'medicine', int(d['medicine']))
+                context = {
+                    'name': str(Medicine.objects.get(id=int(d['medicine']))) if d['medicine'] != '' else '',
+                    'dn': str(d['dn']),
+                    'dk': str(d['dk']),
+                    'records': [
+                        {
+                            'num': x.order.number,
+                            'date': x.order.date,
+                            'client': str(x.order.physical_person if x.order.physical_person else x.order.legal_entity),
+                            'count': x.quantity,
+                            'summ': x.price * x.quantity
+                        }
+                        for x in (OrderComposition.objects.filter(**f) if len(f.keys()) > 0 else OrderComposition.objects.all())
+                    ]
+                }
+
+            case 'Отчет по поставкам препарата.pdf':
+                template = 'reports/2.html'
+                if d['dn']:
+                    f['receipt__date__lte'] = default_val(Receipt, 'date', d['dn'])
+                if d['dk']:
+                    f['receipt__date__gte'] = default_val(Receipt, 'date', d['dk'])
+                if d['medicine'] != '':
+                    f['medicine'] = default_val(ReceiptItem, 'medicine', int(d['medicine']))
+                context = {
+                    'name': str(Medicine.objects.get(id=int(d['medicine']))) if d['medicine'] != '' else '',
+                    'dn': str(d['dn']),
+                    'dk': str(d['dk']),
+                    'records': [
+                        {
+                            'supplier': str(x.receipt.contract.supplier),
+                            'date': x.receipt.date,
+                            'count': x.quantity,
+                            'price': x.unit_price * x.quantity,
+                        }
+                        for x in (ReceiptItem.objects.filter(**f) if len(f.keys()) > 0 else ReceiptItem.objects.all())
+                    ]
+                }
+
+            case 'Отчет по доходам и расходам.pdf':
+                template = 'reports/3.html'
+                if d['dn']:
+                    f['date__lte'] = default_val(Receipt, 'date', d['dn'])
+                if d['dk']:
+                    f['date__gte'] = default_val(Receipt, 'date', d['dk'])
+                R = Receipt.objects.filter(**f) if len(f.keys()) > 0 else Receipt.objects.all()
+
+                f = {}
+                if d['dn']:
+                    f['date__lte'] = default_val(Order, 'date', d['dn'])
+                if d['dk']:
+                    f['date__gte'] = default_val(Order, 'date', d['dk'])
+                O = Order.objects.filter(**f) if len(f.keys()) > 0 else Order.objects.all()
+
+                context = {
+                    'dn': str(d['dn']),
+                    'dk': str(d['dk']),
+
+                    'receipts': [
+                        {
+                            'date': str(x.date),
+                            'number': x.number,
+                            'summ': sum([y.quantity * y.unit_price for y in ReceiptItem.objects.filter(receipt=x.id)]),
+                        }
+                        for x in R
+                    ],
+                    'orders': [
+                        {
+                            'date': str(x.date),
+                            'number': x.number,
+                            'summ': sum([y.quantity * y.price for y in OrderComposition.objects.filter(order=x.id)]),
+                        }
+                        for x in O
+                    ],
+                    'summ_receipt':sum([y.quantity * y.unit_price for y in ReceiptItem.objects.filter(receipt__in=[x.id for x in R])]),
+                    'summ_order':sum([y.quantity * y.price for y in OrderComposition.objects.filter(order__in=[x.id for x in O])])
+                }
+
+            case 'Отчет по сотрудникам.pdf':
+                template = 'reports/4.html'
+                if d['dn']:
+                    f['date__lte'] = default_val(Order, 'date', d['dn'])
+                if d['dk']:
+                    f['date__gte'] = default_val(Order, 'date', d['dk'])
+                if d['user'] != '':
+                    f['seller'] = default_val(Order, 'seller', int(d['user']))
+                O = Order.objects.filter(**f) if len(f.keys()) > 0 else Order.objects.all()
+                context = {
+                    'user': str(Profile.objects.get(id=int(d['user']))) if d['user'] != '' else '',
+                    'dn': str(d['dn']),
+                    'dk': str(d['dk']),
+                    'records': [
+                        {
+                            'number': x.number,
+                            'date': str(x.date),
+                            'client': str(x.physical_person if x.physical_person else x.legal_entity),
+                            'summ': sum([y.quantity * y.price for y in OrderComposition.objects.filter(order=x.id)])
+                        }
+                        for x in O
+                    ],
+                    'all_summ': sum([y.quantity * y.price for y in OrderComposition.objects.filter(order__in=[x.id for x in O])])
+                }
+
+        pdf = render_pdf(template, context)
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response['Content-Disposition'] = "attachment;"
+        return response
+    else:
+        return redirect('index')
 
 def error_access(request, exception=0):
     custom_context = {

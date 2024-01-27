@@ -169,5 +169,5 @@ def render_pdf(url_template, contexto):
         False,
         options={'encoding': "utf-8", },
         configuration=pdfkit.configuration(wkhtmltopdf=settings.WKHTMLTOPDF_PATH),
-        css=settings.STATIC_ROOT + "/mainapp/css/reports.css"
+        css=settings.STATIC_ROOT + "/../mainapp/static/reports/css/reports.css"
     )

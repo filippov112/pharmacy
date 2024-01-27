@@ -24,26 +24,18 @@
                     <div class="report-title">{{ r.title }}</div>
                     <div class="report-body">
                         <div class="r-r">
-                            {% if r.date_block %}
-                                 <div class="r-c">
-                                    <p>На дату</p>
-                                    <input type="date" name="dat">
-                                </div>
-                            {% endif %}
-                            {% if r.period_block %}
-                                <div class="r-c">
-                                    <p>Начало периода</p>
-                                    <input type="date" name="dn">
-                                </div>
-                                <div class="r-c">
-                                    <p>Конец периода</p>
-                                    <input type="date" name="dk">
-                                </div>
-                            {% endif %}
+                            <div class="r-c">
+                                <p>Начало периода</p>
+                                <input type="date" name="dn">
+                            </div>
+                            <div class="r-c">
+                                <p>Конец периода</p>
+                                <input type="date" name="dk">
+                            </div>
                             {% for l in r.links %}
                                 <div class="r-c">
                                     <p>{{ l.title }}</p>
-                                    <button select select-name="{{ l.table }}" multi>
+                                    <button select select-name="{{ l.table }}">
                                         <input type="text" name="{{ l.name }}">
                                         <p></p>
                                     </button>
