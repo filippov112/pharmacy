@@ -91,6 +91,11 @@ def save_record(record, o, request, side_table_names={}, fsr=[]):
     # Сохраним запись после изменения
     if record == 'new':
         ob = o.objects.create(**obj_record)
+    else:
+        try:
+            ob.save()
+        except:
+            pass
 
     mFiles = {}
     if FILES:

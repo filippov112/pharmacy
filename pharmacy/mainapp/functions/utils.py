@@ -1,4 +1,5 @@
 from _decimal import Decimal
+from datetime import datetime
 
 
 def replace_null(o, field, val):
@@ -10,10 +11,18 @@ def replace_null(o, field, val):
         case 'ForeignKey'|'OneToOneField':
             rem_m = f.remote_field.model
             return rem_m.objects.get(id=val) if val else None
+        case 'IntegerField':
+            return int(val) if val else 0
+        case 'DecimalField':
+            return Decimal(val) if val else 0
+        case 'FloatField':
+            return float(val) if val else 0
+        case 'DateField':
+            return datetime.strptime(val, '%Y-%m-%d') if val else datetime(1900, 1, 1, 0, 0, 0)
     return val
 
 
-def default_val(o, field, val, is_link=False):
+def default_val(o, field, val, is_link=False, is_date=False):
     f = o._meta.get_field(field).get_internal_type()
     match f:
         case 'ForeignKey'|'OneToOneField':
@@ -25,7 +34,10 @@ def default_val(o, field, val, is_link=False):
                 return val.url if val else ''
             return val.name.split('/')[-1] if val else ''
         case 'DateField':
-            return str(val) if val else ''
+            if is_date:
+                return datetime.strptime(val, '%Y-%m-%d') if val else datetime(1900, 1, 1, 0, 0, 0)
+            else:
+                return str(val) if val else ''
         case 'IntegerField':
             return int(val) if val else 0
         case 'DecimalField':

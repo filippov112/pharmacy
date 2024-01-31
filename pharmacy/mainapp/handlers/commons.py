@@ -107,9 +107,9 @@ def report_print(request, report):
             case 'Отчет по заказам препарата.pdf':
                 template = 'reports/1.html'
                 if d['dn']:
-                    f['order__date__lte'] = default_val(Order, 'date', d['dn'])
+                    f['order__date__gte'] = default_val(Order, 'date', d['dn'], is_date=True)
                 if d['dk']:
-                    f['order__date__gte'] = default_val(Order, 'date', d['dk'])
+                    f['order__date__lte'] = default_val(Order, 'date', d['dk'], is_date=True)
                 if d['medicine'] != '':
                     f['medicine'] = default_val(OrderComposition, 'medicine', int(d['medicine']))
                 context = {
@@ -131,9 +131,9 @@ def report_print(request, report):
             case 'Отчет по поставкам препарата.pdf':
                 template = 'reports/2.html'
                 if d['dn']:
-                    f['receipt__date__lte'] = default_val(Receipt, 'date', d['dn'])
+                    f['receipt__date__gte'] = default_val(Receipt, 'date', d['dn'], is_date=True)
                 if d['dk']:
-                    f['receipt__date__gte'] = default_val(Receipt, 'date', d['dk'])
+                    f['receipt__date__lte'] = default_val(Receipt, 'date', d['dk'], is_date=True)
                 if d['medicine'] != '':
                     f['medicine'] = default_val(ReceiptItem, 'medicine', int(d['medicine']))
                 context = {
@@ -154,16 +154,16 @@ def report_print(request, report):
             case 'Отчет по доходам и расходам.pdf':
                 template = 'reports/3.html'
                 if d['dn']:
-                    f['date__lte'] = default_val(Receipt, 'date', d['dn'])
+                    f['date__gte'] = default_val(Receipt, 'date', d['dn'], is_date=True)
                 if d['dk']:
-                    f['date__gte'] = default_val(Receipt, 'date', d['dk'])
+                    f['date__lte'] = default_val(Receipt, 'date', d['dk'], is_date=True)
                 R = Receipt.objects.filter(**f) if len(f.keys()) > 0 else Receipt.objects.all()
 
                 f = {}
                 if d['dn']:
-                    f['date__lte'] = default_val(Order, 'date', d['dn'])
+                    f['date__gte'] = default_val(Order, 'date', d['dn'], is_date=True)
                 if d['dk']:
-                    f['date__gte'] = default_val(Order, 'date', d['dk'])
+                    f['date__lte'] = default_val(Order, 'date', d['dk'], is_date=True)
                 O = Order.objects.filter(**f) if len(f.keys()) > 0 else Order.objects.all()
 
                 context = {
@@ -193,9 +193,9 @@ def report_print(request, report):
             case 'Отчет по сотрудникам.pdf':
                 template = 'reports/4.html'
                 if d['dn']:
-                    f['date__lte'] = default_val(Order, 'date', d['dn'])
+                    f['date__gte'] = default_val(Order, 'date', d['dn'], is_date=True)
                 if d['dk']:
-                    f['date__gte'] = default_val(Order, 'date', d['dk'])
+                    f['date__lte'] = default_val(Order, 'date', d['dk'], is_date=True)
                 if d['user'] != '':
                     f['seller'] = default_val(Order, 'seller', int(d['user']))
                 O = Order.objects.filter(**f) if len(f.keys()) > 0 else Order.objects.all()
