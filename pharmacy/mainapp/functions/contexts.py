@@ -9,7 +9,7 @@ from ..models import Profile
 def get_default_context(_task='', user=None, title='', error=''):
     rez = {
         'title': title,
-        'sidebar': _task != 'login',
+        'sidebar': _task != 'login'and _task != 'index',
         'header': _task != 'login' and _task != 'index',
         'task': _task,
         'error': error,
