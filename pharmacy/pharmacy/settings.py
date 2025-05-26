@@ -77,13 +77,12 @@ WSGI_APPLICATION = 'pharmacy.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": "mssql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "pharmacy_base",
-        "USER": "sa",
-        "PASSWORD": "sa",
-        "HOST": "OVERLORD-ONE\FILSERVER",
-        "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server",
-        },
+        "USER": "admin",
+        "PASSWORD": "ei539EEg8",
+        "HOST": "localhost",
+        "PORT": "5432",
     },
 }
 
